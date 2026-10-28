@@ -1,5 +1,29 @@
 # LaPlaceDIG
 
+## P004 — singularidad clásica del Big Bang como límite computable
+
+**Nuevo laboratorio XI/Ether:** extrapola un universo FLRW plano dominado por radiación hacia a→0+, calculando H(a), temperatura, densidad local de energía, tiempo radiativo aproximado y curvatura de Kretschmann. Registra cada escala como **mantisa × exponente** y marca la primera época con tiempo formal inferior al tiempo de Planck (aproximadamente entre a=10^-31 y a=10^-32).
+
+- **51 épocas** de a=10^-30 a=10^-80, sin intentar materializar infinitos numéricos ni enumerar todas las partículas.
+- **4896 bytes lógicos** de registros físicos codificados en la memoria inversa de Ether; la RAM real de REVERSE-PC se mide por separado.
+- Se preserva la historia cosmológica P003 en **el mismo snapshot RVPC2**, y se comprueba posteriormente que sus 33 épocas originales permanecen intactas.
+- Tests del límite matemático H∼a^-2, energía∼a^-4, curvatura K∼a^-8, temperatura∼a^-1, tiempo∼a², integridad RXE y lectura persistente.
+- Ejecuciones extremas de múltiples rangos con comparación independiente de las mismas ecuaciones.
+
+[Fundamentos, documentación y límites de física conocida](docs/COSMOLOGIA_P004_SINGULARIDAD.md).
+
+    node tools/singularidad.mjs ejemplo singularidad.xi
+    reverse_pc compile singularidad.xi Laplace-P004.rxe
+    reverse_pc init inicio.rvp
+    reverse_pc run Laplace-P004.rxe inicio.rvp resultado.rvp
+
+También está integrado el comando crear-singularidad en tools/laplace.mjs.
+
+**Advertencia científica esencial:** La singularidad clásica **no es una época física cuyo estado hayamos reconstruido**. A=0 no se ejecuta ni devuelve una densidad finita o infinita como dato medido. Los valores por debajo de la escala de Planck son una extrapolación matemática de una teoría fuera de su dominio validado; no demuestran inflación, gravedad cuántica ni que el universo comenzó con un punto físico infinitamente denso.
+
+---
+
+
 ## P003 — expansión del universo temprano y densidad de energía con XI/Ether
 
 **Nuevo experimento cosmológico sobre leyes generales:** LAPLACE calcula la expansión de un universo homogéneo plano ΛCDM, con radiación, materia y energía oscura. Utiliza la ecuación de Friedmann, una representación científica de mantisa/exponente en XI Machine y estados compactos persistidos en Inverse Ether Memory.
