@@ -10,7 +10,7 @@
 - Tests del límite matemático H∼a^-2, energía∼a^-4, curvatura K∼a^-8, temperatura∼a^-1, tiempo∼a², integridad RXE y lectura persistente.
 - Ejecuciones extremas de múltiples rangos con comparación independiente de las mismas ecuaciones.
 
-[Fundamentos, documentación y límites de física conocida](docs/COSMOLOGIA_P004_SINGULARIDAD.md).
+[Fundamentos, documentación y límites de física conocida](docs/COSMOLOGIA_P004_SINGULARIDAD.md). **[Resultados nativos verificados](docs/COSMOLOGIA_P004_RESULTADOS.md): 8/8 pruebas, 128/128 campañas, 3892 estados, primera frontera sub-Planck en a=10^-32; P003 conservado íntegro en Ether.**
 
     node tools/singularidad.mjs ejemplo singularidad.xi
     reverse_pc compile singularidad.xi Laplace-P004.rxe
