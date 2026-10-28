@@ -36,6 +36,8 @@ jobs:
           node --check tools/laplace.mjs
           node --check demonio/modelo.mjs
           node --check demonio/experimento.mjs
+          node --check inteligencia/laplace.mjs
+          node --check inteligencia/experimento.mjs
       - name: Construir únicamente el QuantumRuntime existente
         run: |
           set -euo pipefail
@@ -55,6 +57,11 @@ jobs:
           grep -q '"exactitud_cerrada":"33/33"' ci-evidence/demon-out.jsonl
           grep -q '"prediccion_condicional":"33/33"' ci-evidence/demon-out.jsonl
           grep -q '"divergencia_por_evento_no_observado":9' ci-evidence/demon-out.jsonl
+      - name: Aprender leyes ocultas, sellar pronostico y retirar una ley refutada
+        run: |
+          set -euo pipefail
+          node tools/laplace.mjs experimento-aprendiz ./build-ether/mundo_x_quantum ci-evidence/aprendiz > ci-evidence/aprendiz-out.json
+          node --input-type=module -e 'import {readFileSync} from "node:fs"; import assert from "node:assert/strict"; const r=JSON.parse(readFileSync("ci-evidence/aprendiz/resultado.json")); assert.equal(r.unseen_future.matched_states,32); assert.equal(r.unknown_event.first_divergence,9); assert.equal(r.abstains_after_contradiction,true); assert.equal(r.future_leakage_check,true);'
       - name: Archivar evidencia (sin cotizaciones ficticias)
         uses: actions/upload-artifact@v4
         if: always()

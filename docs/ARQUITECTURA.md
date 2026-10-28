@@ -46,14 +46,20 @@ Fuente idéntica: demonio/modelo.mjs y demonio/experimento.mjs. Original: Mundo 
 
 **Límite de persistencia:** el CLI aislado mundo_x_quantum inicia una sesión nueva para cada ejecución. La fuente persistente es el archivo JSONL; la proyección XI actual verifica fidelidad dentro de una transacción, NO es aún una base mundial persistente ni comprime automáticamente millones de precios.
 
-## 3. La IA que aún falta — hipótesis de investigación
+## 3. Inteligencia de Laplace — primer aprendiz y objetivo restante
 
     Z_t = C_Ether(observaciones conocidas hasta t)
     F_estimado_t = AprenderLeyes(Z_0 ... Z_t)
     pronostico_t_h = P(Y_(t+h) | Z_t, F_estimado_t)
     nueva_observacion -> CorregirModelo(F_estimado_t)
 
-No hay una IA entrenada que implemente todavía esta ecuación. Una fuente geopolítica estructurada puede incorporarse sin una segunda IA; comprender narrativas textuales completas requerirá capacidades adicionales que deben comprobarse.
+E001 implementa un caso restringido de esta ecuación: aprender `F(x)=b XOR A*x` desde transiciones binarias conocidas. El anfitrión calcula el plan de eliminación con las entradas; el XI original aplica ese plan a las salidas, por lo que los coeficientes desconocidos son resultados de operaciones CNOT nativas. El predictor recupera ese estado aprendido y compila sus consecuencias en XI. No recibe las puertas ocultas del mundo de evaluación.
+
+Si el diseño no tiene rango `ancho+1`, conserva la incertidumbre y propone una entrada que aportaría evidencia independiente. Si una combinación nativa deja una contradicción, refuta la hipótesis de una ley afín fija. Estas condiciones producen abstención, sin checkpoint nuevo. El diario completo puede volver a procesarse al llegar observaciones: todavía no hay servicio continuo ni selección autónoma de ventanas ante cambios de régimen.
+
+El checkpoint es un programa XI reproducible con hash y metadatos, no coeficientes autoritativos en JSON. Cada recuperación lo vuelve a ejecutar. La sesión nativa sigue siendo efímera; no se ha agregado persistencia binaria al núcleo.
+
+Las reglas numéricas con ruido, la estimación probabilística y la unión predictiva de las tres familias de hechos históricos siguen pendientes. Una fuente geopolítica estructurada puede incorporarse sin una segunda IA; comprender narrativas textuales completas requerirá capacidades adicionales que deben comprobarse.
 
 La representación Z debe conservar aquello que el problema exige para predecir, no simplemente usar pocos bytes.
 
@@ -75,6 +81,9 @@ La representación Z debe conservar aquello que el problema exige para predecir,
 | Contrato de precios, economía y geopolitica | Implementado |
 | Filtrado temporal y revisiones conocidas | Implementado |
 | Recuperación byte por byte desde XI | Prueba automática con el motor original |
+| Aprendizaje de una ley afín binaria desconocida | E001; reducción de salidas por CNOT nativo |
+| Pronóstico desde reglas aprendidas y checkpoint XI | E001; 32/32 estados futuros en un mundo sintético reservado |
+| Abstención y refutación al incorporar evidencia | E001; rango insuficiente, contradicción y causa externa |
 | Descarga de todo el mercado mundial | No importada |
 | Conectores automáticos Shiller / FRED / GDELT | No instalados |
 | IA que aprende leyes y predice mercados | No construida |

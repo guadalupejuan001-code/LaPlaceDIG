@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 'use strict';
 // LaPlaceDIG: local data ingestion and proof. This is not a trading bot.
-import {readFileSync} from 'node:fs';
+import {readFileSync,writeFileSync} from 'node:fs';
 import {parseJSONL,canonicalLedger,canonicalFact,stringifyJSONL,ledgerHash,
         asOf,persistenceBaseline,timestamp} from '../historia/contrato.mjs';
 import {proveWithOriginalEther} from '../historia/ether-xi.mjs';
+import {parseTransitions,learn,predict} from '../inteligencia/laplace.mjs';
+import {experiment} from '../inteligencia/experimento.mjs';
 
 function usage(){
   process.stdout.write('LaPlaceDIG — laboratorio del demonio digital\n'
@@ -13,6 +15,9 @@ function usage(){
    +'  node tools/laplace.mjs referencia hechos.jsonl CORTE_UTC ACTIVO\n'
    +'  node tools/laplace.mjs verificar-ether hechos.jsonl CORTE_UTC RUTA_MUNDO_X_QUANTUM\n'
    +'  node tools/laplace.mjs convertir-precios precios.csv > hechos.jsonl\n'
+   +'  node tools/laplace.mjs aprender-leyes transiciones.jsonl CORTE_UTC BIN_XI MODELO.json\n'
+   +'  node tools/laplace.mjs predecir-estado MODELO.json ESTADO_BINARIO PASOS BIN_XI\n'
+   +'  node tools/laplace.mjs experimento-aprendiz BIN_XI DIRECTORIO_RESULTADOS\n'
    +'Datos historicos siempre identificados por fuente y fecha de disponibilidad. Sin cotizaciones inventadas.\n');
 }
 function must(v,message){if(!v)throw Error(message)}
@@ -45,6 +50,24 @@ function summary(rows){
 function main(){
   const [, ,command,...params]=process.argv;
   if(!command||['ayuda','help','--help'].includes(command)){usage();return;}
+  if(command==='experimento-aprendiz'){
+    must(params.length===2,'uso: experimento-aprendiz BIN_XI DIRECTORIO_RESULTADOS');
+    console.log(JSON.stringify(experiment(params[0],params[1]),null,2));return;
+  }
+  if(command==='aprender-leyes'){
+    must(params.length===4,'uso: aprender-leyes transiciones.jsonl CORTE_UTC BIN_XI MODELO.json');
+    const result=learn(params[2],parseTransitions(readFileSync(params[0],'utf8')),params[1]);
+    if(result.checkpoint)writeFileSync(params[3],JSON.stringify(result.checkpoint,null,2)+'\n',{flag:'wx'});
+    const {checkpoint,...summary}=result;
+    console.log(JSON.stringify({...summary,checkpoint_file:checkpoint?params[3]:null},null,2));return;
+  }
+  if(command==='predecir-estado'){
+    must(params.length===4,'uso: predecir-estado MODELO.json ESTADO_BINARIO PASOS BIN_XI');
+    must(/^[1-9][0-9]*$/.test(params[2]),'PASOS debe ser entero positivo');
+    const checkpoint=JSON.parse(readFileSync(params[0],'utf8'));
+    const {xi,...forecast}=predict(params[3],checkpoint,params[1],Number(params[2]));
+    console.log(JSON.stringify(forecast,null,2));return;
+  }
   if(command==='convertir-precios'){
     process.stdout.write(convertPriceCSV(params[0]));return;
   }

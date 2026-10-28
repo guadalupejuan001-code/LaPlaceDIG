@@ -19,7 +19,14 @@ No es una nueva app de REVERSE, no es el solucionador de la ecuación espacial d
 | docs/ARQUITECTURA.md | Fórmula objetivo, estado actual y límites de la IA futura |
 | docs/FUENTES.md | Shiller, FRED/ALFRED y GDELT; cobertura y limitaciones reales |
 
-**No se ha descargado todavía toda la historia de precios ni entrenado una IA predictiva.** El núcleo Ether está en Mundo X; LaPlaceDIG lo reutiliza fijando el commit 3d29556eff4d1079c791abab38e203fc209f1722, sin duplicar sus fuentes ni modificar REVERSE/BBY Q.
+**E001 añade el primer aprendiz de leyes:** recibe transiciones binarias, identifica una ley afín desconocida, la conserva como programa XI reproducible y calcula sus consecuencias. Se abstiene con evidencia insuficiente o contradictoria. Está comprobado en mundos sintéticos; todavía no aprende precios, economía ni geopolítica reales. El núcleo Ether está en Mundo X; LaPlaceDIG lo reutiliza fijando el commit 3d29556eff4d1079c791abab38e203fc209f1722.
+
+| Nuevo componente | Función |
+| --- | --- |
+| inteligencia/laplace.mjs | Planificación desde entradas; aprendizaje y pronósticos ejecutados por XI nativo |
+| inteligencia/experimento.mjs | Observación → aprendizaje → pronóstico sellado → contraste → refutación |
+| docs/INTELIGENCIA.md | Contrato, comandos, alcance de las leyes y siguiente investigación |
+| docs/CONTEXTO_LAPLACE.md | Intención del proyecto y punto de continuidad |
 
 ## 1. Comprobar el demonio digital existente
 
@@ -66,7 +73,17 @@ La formulación de trabajo es:
     Predicción: calcular posibles estados Y_(t+h) desde Z_t y las reglas
     Contraste: registrar antes, medir después y corregir el modelo
 
-**El aprendizaje automático y la predicción multivariable todavía no están implementados.** Las pruebas actuales acreditan transporte, cronología y un mundo cerrado, no ganancias financieras.
+El primer ciclo es reproducible con el mismo binario original:
+
+    node tools/laplace.mjs experimento-aprendiz ./build-ether/mundo_x_quantum build-evidence/aprendiz
+
+El aprendiz recibe **48 transiciones observadas de 16 variables**, sin recibir las leyes del generador. Identifica una transformación afín binaria; desde un estado inicial reservado, su pronóstico sellado coincide en **32/32 estados futuros**. Persistencia coincide en 0/32. Una intervención desconocida produce divergencia en el instante 9; incorporar esa evidencia refuta la ley fija y el nuevo aprendizaje se abstiene. Esto mide aprendizaje dentro de una gramática concreta, sin demostrar capacidad financiera ni inteligencia general.
+
+El anfitrión organiza el experimento y planifica pivotes usando solo entradas. XI transforma las salidas observadas mediante CNOT, recupera los coeficientes por Inverse Ether Memory y ejecuta los pronósticos. La persistencia usa **reproducción de un programa XI guardado**, no una sesión nativa que continúe viva. [Detalle y uso](docs/INTELIGENCIA.md).
+
+El aprendizaje numérico con ruido y la predicción de mercados siguen pendientes. No transformar las cifras de este laboratorio en supuesta precisión bursátil.
+
+Evidencia de E001: [resultado reproducible](evidencia/E001.json). La CI regenera los programas y pronósticos completos.
 
 Documentación: [Arquitectura](docs/ARQUITECTURA.md) · [Fuentes públicas](docs/FUENTES.md) · [Demonio XI](demonio/README.md).
 

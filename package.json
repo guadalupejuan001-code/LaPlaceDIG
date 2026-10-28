@@ -1,9 +1,9 @@
 {
   "name": "laplacedig",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Demonio de Laplace digital: Ether/XI + memoria histórica con cronología comprobable",
+  "description": "Demonio de Laplace digital: aprendizaje de leyes binarias en Ether/XI e historia temporal",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "help": "node tools/laplace.mjs --help"
