@@ -42,6 +42,8 @@ jobs:
           test "$(git -C deps/reverse-pc/deps/mundo-x rev-parse HEAD)" = e2778d962af22f6f1a0794058dd4685fc2573966
           node --check fisica/tres-cuerpos.mjs
           node --check tools/gravedad.mjs
+          node --check tools/laplace.mjs
+          node tools/laplace.mjs --help | grep -q 'crear-gravedad'
           node --check tests/tres-cuerpos.test.mjs
           node --check tests/tres-cuerpos-experimento.mjs
           node --test tests/tres-cuerpos.test.mjs
