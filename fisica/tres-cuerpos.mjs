@@ -61,7 +61,7 @@ export function validarEscenario(scenario){
     });
   });
   need(cuerpos.some((a,i)=>cuerpos.some((b,j)=>i<j&&
-    (a.x!==b.x||a.y!==b.y)),'se requieren posiciones distinguibles');
+    (a.x!==b.x||a.y!==b.y))),'se requieren posiciones distinguibles');
   return {modo:'iniciar',pasos,cuerpos};
 }
 
@@ -179,7 +179,7 @@ export function compilarGravedad(scenario){
     emit('mov r7 r5','div r7 '+DT_DENOMINADOR,'add r3 r7',
       'mov r7 r6','div r7 '+DT_DENOMINADOR,'add r4 r7',
       'mov r7 r3','div r7 '+DT_DENOMINADOR,'add r1 r7',
-      'mov r7 r4','div r7 '+DT_DENOMINADOR,'add r2 r7);
+      'mov r7 r4','div r7 '+DT_DENOMINADOR,'add r2 r7');
     for(const [reg,limit] of [[1,500000],[2,500000],[3,MAX_VEL],[4,MAX_VEL]]){
       emit('cmp r'+reg+' '+(-limit),'jlt '+fail,
         'cmp r'+reg+' '+limit,'jgt '+fail);
