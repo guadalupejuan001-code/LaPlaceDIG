@@ -220,6 +220,14 @@ function describeRules(coefficients,width){
   });
 }
 
+export function affineProjection(binary,checkpoint){
+  const restored=readCheckpoint(binary,checkpoint);
+  need(restored.contradictions===0&&checkpoint.rank===checkpoint.width+1,
+    'abstencion: no hay una ley afin identificada para simular');
+  return {width:checkpoint.width,coefficients:restored.reduced.slice(0,checkpoint.width+1),
+    rules:describeRules(restored.reduced.slice(0,checkpoint.width+1),checkpoint.width)};
+}
+
 export function predict(binary,checkpoint,state,steps=1){
   need(Number.isInteger(steps)&&steps>=1&&steps<=MAX_STEPS,'pasos permitidos: 1..'+MAX_STEPS);
   // Replay the learned XI state; JSON never supplies learned coefficients.

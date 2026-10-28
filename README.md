@@ -104,6 +104,24 @@ El control **sintético** usa 128 casos de entrenamiento, 64 de validación y 64
 
 Se añaden hechos `humanitaria`, importadores de capturas ReliefWeb/GDELT y comandos de entrenamiento, consulta y evaluación. Una captura actual nunca se retrofecha como si su contenido hubiera estado disponible antes. [Fórmula, espacio y uso](docs/NARRATIVA.md) · [Evidencia E002](evidencia/E002.json).
 
+## 5. E003 — dos resultados que coexisten y se registran por patrón
+
+Una consulta devuelve una consecuencia condicional calculada por XI y una probabilidad narrativa para **el mismo objetivo**. La primera expresa qué determina una ley identificada; la segunda conserva su incertidumbre estadística. Las dos permanecen separadas y pueden abstenerse independientemente.
+
+Cada ocurrencia se guarda por patrón con su fecha, ambas salidas y versión del modelo. Al llegar el resultado observado, se añade un evento sin reescribir el pronóstico. Las vistas muestran aciertos, errores, cobertura, Brier, refutaciones y diferencias. La ley refutada se retira para ese patrón según cuándo se conoció la evidencia.
+
+    node tools/laplace.mjs experimento-dual ./build-ether/mundo_x_quantum build-evidence/dual-nuevo
+
+El control cerrado produce 64 pares y 64 observaciones, agrupados en cuatro patrones. Es evidencia sintética, no predicción financiera real. [Uso y arquitectura](docs/COEXISTENCIA.md) · [Resultados E003](evidencia/E003.json).
+
+## 6. E004 — masa positiva/negativa de escenarios en XI
+
+El análisis de realidades ejecuta la ley sobre escenarios declarados y suma sus probabilidades con pesos explícitos. Se registra como análisis del patrón sin sustituir las dos salidas ni duplicar pronósticos.
+
+    node tools/laplace.mjs experimento-realidades ./build-ether/mundo_x_quantum build-evidence/realidades-nuevo
+
+El runtime original ejecuta 512 escenarios en **1.536 qubits activos**, divididos en componentes de tres qubits. Obtiene marginales y masas positivas/negativas sin enumerar un estado general exponencial. `?` significa incertidumbre equiprobable declarada; los pesos y leyes del control son sintéticos. [Alcance técnico](docs/COEXISTENCIA.md) · [Resultados E004](evidencia/E004.json).
+
 Documentación: [Arquitectura](docs/ARQUITECTURA.md) · [Fuentes públicas](docs/FUENTES.md) · [Demonio XI](demonio/README.md).
 
 Pruebas locales: node --test tests/*.test.mjs. Las CI compilan también el núcleo QuantumRuntime de Mundo X, fijado por SHA, y verifican el demonio.

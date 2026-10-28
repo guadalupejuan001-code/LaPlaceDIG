@@ -42,6 +42,12 @@ jobs:
           node --check narrativa/modelo.mjs
           node --check narrativa/fuentes.mjs
           node --check narrativa/experimento.mjs
+          node --check coexistencia/modelo.mjs
+          node --check coexistencia/patrones.mjs
+          node --check coexistencia/estado-xi.mjs
+          node --check coexistencia/experimento.mjs
+          node --check coexistencia/realidades.mjs
+          node --check coexistencia/experimento-realidades.mjs
       - name: Construir únicamente el QuantumRuntime existente
         run: |
           set -euo pipefail
@@ -71,6 +77,16 @@ jobs:
           set -euo pipefail
           node tools/laplace.mjs experimento-narrativa ./build-ether/mundo_x_quantum ci-evidence/narrativa > ci-evidence/narrativa-out.json
           node --input-type=module -e 'import {readFileSync} from "node:fs"; import assert from "node:assert/strict"; const r=JSON.parse(readFileSync("ci-evidence/narrativa/resultado.json")); assert.equal(r.synthetic,true); assert.equal(r.test.count,64); assert.ok(r.test.brier<r.test.baseline_brier); assert.equal(r.no_narrative_control.coverage,0); assert.equal(r.financial_edge_demonstrated,false);'
+      - name: Dos resultados y resultados observados agrupados por patron
+        run: |
+          set -euo pipefail
+          node tools/laplace.mjs experimento-dual ./build-ether/mundo_x_quantum ci-evidence/dual > ci-evidence/dual-out.json
+          node --input-type=module -e 'import {readFileSync} from "node:fs"; import assert from "node:assert/strict"; const r=JSON.parse(readFileSync("ci-evidence/dual/resultado.json")); assert.equal(r.closed_world.paired_forecasts,64); assert.equal(r.closed_world.patterns,4); assert.equal(r.closed_world.events,128); assert.equal(r.noisy_world.deterministic_status,"ley_refutada"); assert.equal(r.pattern_ether_proof.exact_roundtrip,true);'
+      - name: Realidades nativas con mas de mil qubits y pesos declarados
+        run: |
+          set -euo pipefail
+          node tools/laplace.mjs experimento-realidades ./build-ether/mundo_x_quantum ci-evidence/realidades > ci-evidence/realidades-out.json
+          node --input-type=module -e 'import {readFileSync} from "node:fs"; import assert from "node:assert/strict"; const r=JSON.parse(readFileSync("ci-evidence/realidades/resultado.json")); assert.equal(r.native.active_qubits,1536); assert.equal(r.scenario_count,512); assert.equal(r.expected_positive_count,256); assert.equal(r.unequal_weights.positive_probability,9.5/11); assert.equal(r.journal.forecasts,1); assert.equal(r.journal.analyses,2);'
       - name: Archivar evidencia y datos de control identificados como sinteticos
         uses: actions/upload-artifact@v4
         if: always()

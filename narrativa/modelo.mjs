@@ -64,19 +64,28 @@ function pricesAsOf(records,config,knownCutoff){
   }
   return prices;
 }
-function samples(records,config,start,end,labelCutoff){
+function outcomeFromPrices(prices,config,when,due){
+  const first=prices.get(when),last=prices.get(due);
+  if(!first||!last)return null;
+  return {decision_at:when,due_at:due,
+    target_known_at:first.known_at>last.known_at?first.known_at:last.known_at,
+    price_ids:[first.id,last.id],...marketOutcome(first.value,last.value,config.cost_bps)};
+}
+export function marketObservation(records,config,cutoff,knownCutoff){
+  const when=timestamp(cutoff),known=timestamp(knownCutoff);
+  const due=new Date(Date.parse(when)+config.horizon_hours*HOUR).toISOString();
+  return outcomeFromPrices(pricesAsOf(records,config,known),config,when,due);
+}
+export function marketSamples(records,config,start,end,labelCutoff){
   const prices=pricesAsOf(records,config,labelCutoff),news=narrativeRows(records);
   const out=[],missing=[];
   for(let t=Date.parse(start);t<Date.parse(end);t+=config.step_hours*HOUR){
     need(out.length+missing.length<MAX_SAMPLES,'demasiadas decisiones de evaluacion');
     const when=new Date(t).toISOString(),due=new Date(t+config.horizon_hours*HOUR).toISOString();
     if(due>end)break; // purge targets crossing the next partition
-    const first=prices.get(when),last=prices.get(due);
-    if(!first||!last){missing.push(when);continue}
-    const target=marketOutcome(first.value,last.value,config.cost_bps);
-    out.push({decision_at:when,due_at:due,
-      target_known_at:first.known_at>last.known_at?first.known_at:last.known_at,
-      price_ids:[first.id,last.id],...target,
+    const target=outcomeFromPrices(prices,config,when,due);
+    if(!target){missing.push(when);continue}
+    out.push({...target,
       state:stateFromNarratives(news,when,config.narrative_hours)});
   }
   return {rows:out,missing};
@@ -115,7 +124,7 @@ export function scores(predictions,prior){
       observed_frequency:bin.count?bin.positives/bin.count:null}))};
 }
 
-function infer(model,state){
+export function inferNarrative(model,state){
   const prior=priorOf(model);
   const applicable=model.rules.filter(rule=>matches(rule.pattern,state));
   // Pick one validated condition rather than multiply correlated probabilities.
@@ -181,8 +190,8 @@ export function restoreNarrative(binary,checkpoint){
 
 export function trainNarrative(binary,rawRecords,rawConfig){
   const config=configuration(rawConfig),records=canonicalLedger([...rawRecords]);
-  const train=samples(records,config,config.start_at,config.train_end,config.train_end);
-  const validation=samples(records,config,config.train_end,config.validation_end,config.validation_end);
+  const train=marketSamples(records,config,config.start_at,config.train_end,config.train_end);
+  const validation=marketSamples(records,config,config.train_end,config.validation_end,config.validation_end);
   const minimum=Math.max(16,config.min_train_support*2);
   if(train.rows.length<minimum||validation.rows.length<Math.max(8,config.min_validation_support)){
     return {status:'evidencia_insuficiente',checkpoint:null,training_samples:train.rows.length,
@@ -225,13 +234,13 @@ export function trainNarrative(binary,rawRecords,rawConfig){
     training_sha256:digest(JSON.stringify(train.rows)),validation_sha256:digest(JSON.stringify(validation.rows)),
     known_evidence_sha256:ledgerHash(records.filter(row=>row.known_at<=config.validation_end)),
     labels:'return_after_assumed_cost_positive',inference_inputs:['geopolitica','humanitaria']};
-  let validationScores=scores(validation.rows.map(row=>({...infer(model,row.state),y:row.y})),prior);
+  let validationScores=scores(validation.rows.map(row=>({...inferNarrative(model,row.state),y:row.y})),prior);
   // Validation approves the complete dispatch policy as well as each rule.
   // No test labels enter selection, ranking, shrinkage or this guard.
   if(validationScores.brier>=validationScores.baseline_brier){
     for(const rule of model.rules)audit.get(patternKey(rule.pattern)).status='politica_sin_mejora';
     model.rules=[];
-    validationScores=scores(validation.rows.map(row=>({...infer(model,row.state),y:row.y})),prior)}
+    validationScores=scores(validation.rows.map(row=>({...inferNarrative(model,row.state),y:row.y})),prior)}
   for(const rule of model.rules)audit.get(patternKey(rule.pattern)).status='seleccionado';
   const packed=pack(binary,model);
   return {status:model.rules.length?'modelo_narrativo_entrenado':'sin_senal_validada',...packed,
@@ -254,7 +263,7 @@ export function predictNarrative(binary,checkpoint,rawRecords,cutoff){
   const forecast={schema:'laplace-narrative-forecast-v1',cutoff:when,
     target:{asset:model.config.asset,horizon_hours:model.config.horizon_hours,cost_bps:model.config.cost_bps},
     model_state_sha256:checkpoint.state_sha256,narrative_state_sha256:state.state_sha256,
-    ...infer(model,state),narrative_sources:state.events,coverage:state.coverage};
+    ...inferNarrative(model,state),narrative_sources:state.events,coverage:state.coverage};
   return {...forecast,forecast_sha256:digest(JSON.stringify(forecast)),native};
 }
 
@@ -262,9 +271,9 @@ export function evaluateNarrative(binary,checkpoint,rawRecords,end){
   const {model}=restoreNarrative(binary,checkpoint),records=canonicalLedger([...rawRecords]);
   const until=timestamp(end,'test end'),start=model.config.validation_end;
   need(until>start,'test debe ser posterior a validacion');
-  const held=samples(records,model.config,start,until,until),prior=priorOf(model);
+  const held=marketSamples(records,model.config,start,until,until),prior=priorOf(model);
   const predictions=held.rows.map(row=>({decision_at:row.decision_at,due_at:row.due_at,
-    ...infer(model,row.state),y:row.y,net_return_bps:row.net_return_bps,
+    ...inferNarrative(model,row.state),y:row.y,net_return_bps:row.net_return_bps,
     narrative_state_sha256:row.state.state_sha256,price_ids:row.price_ids,target_known_at:row.target_known_at}));
   return {schema:'laplace-narrative-evaluation-v1',test_start:start,test_end:until,
     frozen_model_state_sha256:checkpoint.state_sha256,training_prior:prior,

@@ -1,4 +1,5 @@
 node_modules/
+registros/
 deps/
 build/
 build-*/

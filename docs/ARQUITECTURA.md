@@ -98,3 +98,9 @@ La representación Z debe conservar aquello que el problema exige para predecir,
 | Hardware cuántico físico | No existe |
 
 LaPlaceDIG es el repositorio central de la nueva investigación. Mundo X sigue siendo la dependencia de tecnología propia, no otra app de destino.
+
+## 6. E003/E004 — coexistencia y escenarios
+
+El puente dual usa los mismos objetivos de mercado y relatos para devolver `Y_calculado` y `P_estimado(Y=1)`, separados. La ley afín se ejecuta por XI sobre una codificación de temas; la ruta estadística conserva su propia estimación. El diario agrega resultados observados por patrón sin sobrescribir las predicciones. Las refutaciones se aplican según disponibilidad de evidencia y versión de la ley.
+
+E004 ejecuta copias pequeñas de la ley sobre escenarios declarados, obtiene marginales nativas y suma masas con sus pesos. El análisis no altera la probabilidad narrativa ni se cuenta como un nuevo pronóstico. El control medido usa 1.536 qubits activos en componentes de tres, dentro de la familia Clifford compacta del núcleo. No enumera un espacio general de amplitudes. Véase [COEXISTENCIA.md](COEXISTENCIA.md).

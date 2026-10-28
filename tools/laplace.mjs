@@ -10,6 +10,11 @@ import {experiment} from '../inteligencia/experimento.mjs';
 import {trainNarrative,predictNarrative,evaluateNarrative} from '../narrativa/modelo.mjs';
 import {narrativeExperiment} from '../narrativa/experimento.mjs';
 import {importReliefWeb,importGDELT} from '../narrativa/fuentes.mjs';
+import {trainDual,predictDual} from '../coexistencia/modelo.mjs';
+import {registerForecast,registerRealities,reconcileJournal,readJournal,patternResults,provePattern} from '../coexistencia/patrones.mjs';
+import {dualExperiment} from '../coexistencia/experimento.mjs';
+import {simulateRealities} from '../coexistencia/realidades.mjs';
+import {realitiesExperiment} from '../coexistencia/experimento-realidades.mjs';
 
 function usage(){
   process.stdout.write('LaPlaceDIG — laboratorio del demonio digital\n'
@@ -26,6 +31,14 @@ function usage(){
    +'  node tools/laplace.mjs evaluar-narrativa MODELO.json hechos.jsonl FIN_TEST_UTC BIN_XI\n'
    +'  node tools/laplace.mjs experimento-narrativa BIN_XI DIRECTORIO_RESULTADOS\n'
    +'  node tools/laplace.mjs importar-narrativa reliefweb|gdelt CAPTURA.json > hechos.jsonl\n'
+   +'  node tools/laplace.mjs entrenar-dual hechos.jsonl CONFIG.json BIN_XI MODELO_DUAL.json\n'
+   +'  node tools/laplace.mjs pronostico-dual MODELO_DUAL.json hechos.jsonl CORTE_UTC BIN_XI REGISTRO.jsonl\n'
+   +'  node tools/laplace.mjs contrastar-dual REGISTRO.jsonl hechos.jsonl CORTE_UTC\n'
+   +'  node tools/laplace.mjs patrones REGISTRO.jsonl\n'
+   +'  node tools/laplace.mjs verificar-patron REGISTRO.jsonl ID_PATRON BIN_XI\n'
+   +'  node tools/laplace.mjs experimento-dual BIN_XI DIRECTORIO_NUEVO\n'
+   +'  node tools/laplace.mjs analizar-realidades MODELO_DUAL hechos.jsonl CORTE_UTC ESCENARIOS.json BIN_XI REGISTRO.jsonl\n'
+   +'  node tools/laplace.mjs experimento-realidades BIN_XI DIRECTORIO_NUEVO\n'
    +'Datos historicos siempre identificados por fuente y fecha de disponibilidad. Sin cotizaciones inventadas.\n');
 }
 function must(v,message){if(!v)throw Error(message)}
@@ -58,6 +71,46 @@ function summary(rows){
 function main(){
   const [, ,command,...params]=process.argv;
   if(!command||['ayuda','help','--help'].includes(command)){usage();return;}
+  if(command==='analizar-realidades'){
+    must(params.length===6,'uso: analizar-realidades MODELO_DUAL hechos.jsonl CORTE_UTC ESCENARIOS.json BIN_XI REGISTRO.jsonl');
+    const checkpoint=JSON.parse(readFileSync(params[0],'utf8'));
+    const run=simulateRealities(params[4],checkpoint,JSON.parse(readFileSync(params[3],'utf8')));
+    const issued=registerForecast(params[5],predictDual(params[4],checkpoint,readJsonl(params[1]),params[2])).event;
+    console.log(JSON.stringify(registerRealities(params[5],issued.forecast_id,run.analysis),null,2));return;
+  }
+  if(command==='experimento-realidades'){
+    must(params.length===2,'uso: experimento-realidades BIN_XI DIRECTORIO_NUEVO');
+    console.log(JSON.stringify(realitiesExperiment(params[0],params[1]),null,2));return;
+  }
+  if(command==='entrenar-dual'){
+    must(params.length===4,'uso: entrenar-dual hechos.jsonl CONFIG.json BIN_XI MODELO_DUAL.json');
+    const {checkpoint,...summary}=trainDual(params[2],readJsonl(params[0]),JSON.parse(readFileSync(params[1],'utf8')));
+    if(checkpoint)writeFileSync(params[3],JSON.stringify(checkpoint,null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({...summary,checkpoint_file:checkpoint?params[3]:null},null,2));return;
+  }
+  if(command==='pronostico-dual'){
+    must(params.length===5,'uso: pronostico-dual MODELO_DUAL.json hechos.jsonl CORTE_UTC BIN_XI REGISTRO.jsonl');
+    const forecast=predictDual(params[3],JSON.parse(readFileSync(params[0],'utf8')),readJsonl(params[1]),params[2]);
+    const result=registerForecast(params[4],forecast);
+    console.log(JSON.stringify(result,null,2));return;
+  }
+  if(command==='contrastar-dual'){
+    must(params.length===3,'uso: contrastar-dual REGISTRO.jsonl hechos.jsonl CORTE_UTC');
+    console.log(JSON.stringify(reconcileJournal(params[0],readJsonl(params[1]),params[2]),null,2));return;
+  }
+  if(command==='patrones'){
+    must(params.length===1,'uso: patrones REGISTRO.jsonl');
+    console.log(JSON.stringify(patternResults(readJournal(params[0])),null,2));return;
+  }
+  if(command==='verificar-patron'){
+    must(params.length===3,'uso: verificar-patron REGISTRO.jsonl ID_PATRON BIN_XI');
+    const {checkpoint,...proof}=provePattern(params[2],readJournal(params[0]),params[1]);
+    console.log(JSON.stringify(proof,null,2));return;
+  }
+  if(command==='experimento-dual'){
+    must(params.length===2,'uso: experimento-dual BIN_XI DIRECTORIO_NUEVO');
+    console.log(JSON.stringify(dualExperiment(params[0],params[1]),null,2));return;
+  }
   if(command==='importar-narrativa'){
     must(params.length===2&&['reliefweb','gdelt'].includes(params[0]),
       'uso: importar-narrativa reliefweb|gdelt CAPTURA.json');
