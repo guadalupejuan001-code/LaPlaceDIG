@@ -1,5 +1,25 @@
 # LaPlaceDIG
 
+## P005 — desafío exabyte de evolución exacta sobre XI/Ether
+
+**Cálculo verificado:** un anillo de 2^60 celdas binarias (1,15 exabytes a un byte por celda, 144 petabytes si se almacena un bit por celda) evolucionó **1 125 891 316 776 447 generaciones lógicas**, con reglas de evolución local XOR (Regla 90), sin asignar un campo físico denso ni iterar cada generación.
+
+XI calculó la **población global exacta de 2 251 799 813 685 248 celdas activas**, y 224 consultas: 112 celdas encendidas y 112 apagadas. Las 224 coincidieron con una referencia matemática independiente y las siete pruebas nativas se aprobaron, incluida comparación contra simulación densa real en dominios pequeños.
+
+El ejecutor REVERSE-PC utilizó **5632 KiB de RAM física de pico mediano** (5,50 MiB, Linux), y 1426 excepciones clásicas en Inverse Ether Memory. No significa que el campo completo estuviera en RAM. Un ordenador clásico con el mismo atajo algebraico podría resolverlo también; esto comprueba la **ventaja del cálculo bajo demanda respecto al recorrido denso ingenuo**.
+
+[Diseño y prueba](docs/EXABYTE_P005.md) · [Mediciones y resultados](docs/EXABYTE_P005_RESULTADOS.md)
+
+    node tools/exabyte.mjs ejemplo Exabyte-P005.xi manifiesto.json
+    reverse_pc compile Exabyte-P005.xi Exabyte-P005.rxe
+    reverse_pc init inicio.rvp
+    reverse_pc run Exabyte-P005.rxe inicio.rvp resultado.rvp
+
+También está integrado el comando crear-exabyte en la CLI principal de LAPLACE. E005, P001–P004 y Bitcoin no se sustituyen.
+
+---
+
+
 ## P004 — singularidad clásica del Big Bang como límite computable
 
 **Nuevo laboratorio XI/Ether:** extrapola un universo FLRW plano dominado por radiación hacia a→0+, calculando H(a), temperatura, densidad local de energía, tiempo radiativo aproximado y curvatura de Kretschmann. Registra cada escala como **mantisa × exponente** y marca la primera época con tiempo formal inferior al tiempo de Planck (aproximadamente entre a=10^-31 y a=10^-32).
