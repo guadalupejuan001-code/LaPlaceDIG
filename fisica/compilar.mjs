@@ -52,7 +52,7 @@ export function validarSistema(data){
     impulse={at_s,delta_vx_mm_s:dvx,delta_vy_mm_s:dvy};
   }
   return {ancho_mm:width_mm,alto_mm:height_mm,masa_kg:mass_kg,
-    x_mm,y_mm,vx_mm_s,vy_mm_s,horizonte_s,impulso:impulse};
+    x_mm,y_mm,vx_mm_s,vy_mm_s,horizonte_s:horizon_s,impulso:impulse};
 }
 
 export function compilarSistema(data){
