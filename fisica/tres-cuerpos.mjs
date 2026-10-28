@@ -139,7 +139,7 @@ export function compilarGravedad(scenario){
     // Encounter detection at the START of each step, before applying forces.
     const eventDone=label('evento_terminado');
     emit('cmp r8 '+(UMBRAL_ACERCAMIENTO*UMBRAL_ACERCAMIENTO),
-      'jg '+eventDone,'load8 r14 '+EVENTO,
+      'jgt '+eventDone,'load8 r14 '+EVENTO,
       'cmp r14 0','jne '+eventDone,
       'load8 r14 '+RELOJ,'store8 '+EVENTO+' r14',
       'label '+eventDone);
