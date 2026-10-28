@@ -18,7 +18,7 @@ const Q=100000000n; // normalizer used for density terms, not physical Q-bits
 const MEMORY=7000000004000000n;
 const RECORD_BYTES=27;
 export const DEFAULT_PARAMETERS=Object.freeze({
-  min_exp:-30,max_exp:0,
+  min_exp:-30,max_exp:0,detalle:'decadas',
   omega_r_micro:92,omega_m_micro:315000,omega_lambda_micro:684908,
   H0_km_s_Mpc:67.4,T0_K:2.7255,
   H0_mantissa:2184285,H0_exponent:-24,
@@ -42,12 +42,13 @@ function integer(v,name,lo,hi){
 export function validarCosmologia(raw={}){
   need(raw&&typeof raw==='object'&&!Array.isArray(raw),'configuracion cosmologica invalida');
   need(Object.keys(raw).every(k=>[
-    'min_exp','max_exp','omega_r_micro','omega_m_micro','omega_lambda_micro'
+    'min_exp','max_exp','omega_r_micro','omega_m_micro','omega_lambda_micro','detalle'
   ].includes(k)),'se aceptan solo los parametros cosmologicos declarados');
   const x={...DEFAULT_PARAMETERS,...raw};
   integer(x.min_exp,'min_exp',-30,0);
   integer(x.max_exp,'max_exp',-30,0);
   need(x.max_exp>=x.min_exp,'rango cosmologico invertido');
+  need(['decadas','digitos'].includes(x.detalle),'detalle debe ser decadas o digitos');
   for(const k of ['omega_r_micro','omega_m_micro','omega_lambda_micro']){
     integer(x[k],k,1,999998);
   }
@@ -131,7 +132,14 @@ export function compilarCosmologia(raw={}){
     '# Compute address of 27-byte packed Ether epoch record.',
     'mov r2 r0','sub r2 '+p.min_exp
   ];
-  const includesExtras=p.min_exp<=-4&&p.max_exp>=-4;
+  const fine=p.detalle==='digitos';
+  const includesExtras=!fine&&p.min_exp<=-4&&p.max_exp>=-4;
+  const count=fine?Array.from({length:p.max_exp-p.min_exp+1},(_,i)=>
+    p.min_exp+i===0?1:9).reduce((a,b)=>a+b,0):
+    p.max_exp-p.min_exp+1+(includesExtras?2:0);
+  if(fine){
+    source.push('mul r2 9','mov r7 r1','sub r7 1','add r2 r7');
+  }
   if(includesExtras){
     source.push('cmp r0 -4','jle cosmos_index_early',
       'add r2 2','label cosmos_index_early',
@@ -171,14 +179,21 @@ export function compilarCosmologia(raw={}){
       'div r'+component+' r8','print r'+component);
     writeMantissa(component);
   }
-  emit('# The digit=3 and digit=9 probe equality and ~3000 K separately.',
-    'cmp r0 -4','jne cosmos_next_epoch',
-    'cmp r1 1','je cosmos_digit3',
-    'cmp r1 3','je cosmos_digit9',
-    'jmp cosmos_next_epoch',
-    'label cosmos_digit3','set r1 3','jmp cosmos_epoch',
-    'label cosmos_digit9','set r1 9','jmp cosmos_epoch',
-    'label cosmos_next_epoch','set r1 1','add r0 1',
+  if(fine){
+    emit('# Resuelve los digitos 1..9 de cada decada, salvo a=1.',
+      'cmp r0 0','jge cosmos_next_epoch',
+      'cmp r1 9','jge cosmos_next_epoch',
+      'add r1 1','jmp cosmos_epoch');
+  }else{
+    emit('# Muestras extra cerca de igualdad y recombinación.',
+      'cmp r0 -4','jne cosmos_next_epoch',
+      'cmp r1 1','je cosmos_digit3',
+      'cmp r1 3','je cosmos_digit9',
+      'jmp cosmos_next_epoch',
+      'label cosmos_digit3','set r1 3','jmp cosmos_epoch',
+      'label cosmos_digit9','set r1 9','jmp cosmos_epoch');
+  }
+  emit('label cosmos_next_epoch','set r1 1','add r0 1',
     'cmp r0 '+(p.max_exp+1),'jlt cosmos_epoch',
     'mem_stats','qstats','halt',
     'label cosmos_bad','set r7 0','div r7 0','halt');
@@ -190,10 +205,10 @@ export function compilarCosmologia(raw={}){
     config_sha256:hash(JSON.stringify(p)),
     configuration:Object.fromEntries(
       ['min_exp','max_exp','omega_r_micro','omega_m_micro',
-        'omega_lambda_micro','H0_km_s_Mpc','T0_K'].map(k=>[k,p[k]])),
-    epoch_count:p.max_exp-p.min_exp+1+(includesExtras?2:0),
+        'omega_lambda_micro','H0_km_s_Mpc','T0_K','detalle'].map(k=>[k,p[k]])),
+    epoch_count:count,
     memory_base:MEMORY.toString(),record_bytes:RECORD_BYTES,
-    logical_output_bytes:RECORD_BYTES*(p.max_exp-p.min_exp+1+(includesExtras?2:0)),
+    logical_output_bytes:RECORD_BYTES*count,
     units:UNITS,
     physical_scope:'Friedmann flat ΛCDM background extrapolation, not the initial singularity'
   };
