@@ -6,14 +6,15 @@
 
 - **Escala física cubierta:** 33 épocas desde a=10^-30 hasta el valor actual a=1, incluidos los puntos a=3×10^-4 (transición radiación/materia) y a=9×10^-4 (temperatura cercana a 3000 K).
 - **Observables:** H(a), temperatura T(a), densidad energética J/m³, tiempo de Hubble 1/H y participaciones de radiación/materia/vacío. Cada valor procede del cálculo nativo XI, no de resultados precalculados en JavaScript.
-- **Estados mínimos:** 27 bytes lógicos por época, **891 bytes lógicos** en total. No implica que REVERSE-PC utilice solamente 891 bytes de RAM real.
-- **Validación:** tests independientes de Friedmann, lectura completa desde Ether, equivalencia RXE/XI, variación de parámetros cosmológicos y campaña de 128 mundos para medir el error y consumo de memoria física.
+- **Estados mínimos:** 27 bytes lógicos por época: **891 bytes** para 33 épocas de referencia o **7317 bytes** para 271 épocas de alta resolución. La RAM física del proceso es mayor.
+- **Validación:** tests independientes de Friedmann, lectura completa desde Ether, equivalencia RXE/XI, variación de parámetros y campaña extrema de **1024 universos**, más comprobación nativa del modo fino.
 
 [Descripción técnica, ecuaciones y límites](docs/COSMOLOGIA_P003.md)
 
 Para generar el nuevo ejecutable:
 
     node tools/cosmos.mjs universo universo.xi
+    node tools/cosmos.mjs fino universo-fino.xi
     reverse_pc compile universo.xi LAPLACE-Cosmos-P003.rxe
     reverse_pc init universo-inicial.rvp
     reverse_pc run LAPLACE-Cosmos-P003.rxe universo-inicial.rvp universo-final.rvp
