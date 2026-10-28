@@ -61,6 +61,11 @@ jobs:
           set -euo pipefail
           mkdir -p ci-gravedad
           node tests/tres-cuerpos-experimento.mjs ./build-reverse/reverse_pc ci-gravedad/resultado.json
+      - name: Pronosticar un acercamiento gravitatorio en el mundo de tres cuerpos
+        run: |
+          set -euo pipefail
+          node --check tests/tres-cuerpos-encuentro.mjs
+          node tests/tres-cuerpos-encuentro.mjs ./build-reverse/reverse_pc ci-gravedad/encuentro.json
       - name: Construir y ejecutar programa gravitatorio .rxe
         run: |
           set -euo pipefail
