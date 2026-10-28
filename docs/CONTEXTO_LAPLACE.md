@@ -76,3 +76,9 @@ La consola solo consulta trazas calculadas por el ejecutor nativo; no propaga ma
 ## Exploración futura sin bloqueo por validación
 
 El usuario aclaró que busca explorar el futuro y rechazó convertir la falta de pruebas de largo plazo en una prohibición de cálculo. Se retiraron los topes de 7 días en la vista y de 32 pasos en el ejecutor nativo. El perfil conserva una traza diaria completa hasta el 31 de diciembre de 2030 para cada estado inicial aprendido, con masa positiva, negativa y distribución narrativa. La matriz aprendida se mantiene durante la proyección y puede converger a un equilibrio. La prueba histórica sigue cubriendo 0–7 días; ese dato no bloquea ninguna fecha del calendario. No se alteraron entrenamiento, objetivo diario ni resultados históricos para conseguir una curva distinta.
+
+## Lectura sencilla del panel
+
+El usuario indicó que la interfaz no se entendía. La vista principal ahora guía con dos pasos: elegir una fecha y leer las dos posibilidades. Expresa el objetivo como «Sube más de 0,10% en 24 horas» y el complemento como «No supera esa subida», aclarando que incluye subir menos, mantenerse o bajar. Añade un ejemplo con $100.000 y $100.100. Los controles de noticias, gráfica, explicación técnica y archivo de pruebas anteriores comienzan cerrados. El botón de captura se llama «Actualizar precio y noticias». Se conservaron el perfil numérico, los contextos manipulables, la comparación histórica, la exportación completa y la proyección hasta 2030.
+
+Fuente publicada: `87eb4ab345f67e9cfa38c81f47b5b27a88937397`. La comprobación HTTP, el significado de las dos tarjetas y la igualdad del perfil se registran en `evidencia/BTC-INTERFAZ.json`. TypeScript y compilación pasan; la revisión visual sigue sin verificar por un fallo de conexión de la previsualización.
