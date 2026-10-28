@@ -1,0 +1,65 @@
+name: LaPlaceDIG - demonio Ether XI y verdad temporal
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: LaPlaceDIG exact commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Ether original de Mundo X, referencia reproducible
+        uses: actions/checkout@v4
+        with:
+          repository: guadalupejuan001-code/mundo-X
+          ref: 3d29556eff4d1079c791abab38e203fc209f1722
+          path: deps/mundo-X
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: "Procedencia: núcleo XI del demonio migrado sin cambios"
+        run: |
+          set -euo pipefail
+          test "$(git -C deps/mundo-X rev-parse HEAD)" = 3d29556eff4d1079c791abab38e203fc209f1722
+          cmp demonio/modelo.mjs deps/mundo-X/demonio-laplace/modelo.mjs
+          cmp demonio/experimento.mjs deps/mundo-X/demonio-laplace/experimento.mjs
+          node --check historia/contrato.mjs
+          node --check historia/ether-xi.mjs
+          node --check tools/laplace.mjs
+          node --check demonio/modelo.mjs
+          node --check demonio/experimento.mjs
+      - name: Construir únicamente el QuantumRuntime existente
+        run: |
+          set -euo pipefail
+          cmake -S deps/mundo-X/quantum-runtime -B build-ether -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-ether --target mundo_x_quantum --parallel 2
+      - name: Pruebas cronológicas y equivalencia real InverseMemory/XI
+        env:
+          MUNDO_X_QUANTUM: ./build-ether/mundo_x_quantum
+        run: |
+          set -euo pipefail
+          node --test tests/*.test.mjs
+      - name: Reproducir predicción del mundo cerrado y el evento desconocido
+        run: |
+          set -euo pipefail
+          mkdir -p ci-evidence
+          node demonio/experimento.mjs ./build-ether/mundo_x_quantum ci-evidence | tee ci-evidence/demon-out.jsonl
+          grep -q '"exactitud_cerrada":"33/33"' ci-evidence/demon-out.jsonl
+          grep -q '"prediccion_condicional":"33/33"' ci-evidence/demon-out.jsonl
+          grep -q '"divergencia_por_evento_no_observado":9' ci-evidence/demon-out.jsonl
+      - name: Archivar evidencia (sin cotizaciones ficticias)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: LaPlaceDIG-Ether-XI-proof
+          path: ci-evidence/**
+          retention-days: 30
+          if-no-files-found: warn
