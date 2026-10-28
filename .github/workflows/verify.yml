@@ -25,7 +25,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
-      - name: Procedencia: núcleo XI del demonio migrado sin cambios
+      - name: "Procedencia: núcleo XI del demonio migrado sin cambios"
         run: |
           set -euo pipefail
           test "$(git -C deps/mundo-X rev-parse HEAD)" = 3d29556eff4d1079c791abab38e203fc209f1722
