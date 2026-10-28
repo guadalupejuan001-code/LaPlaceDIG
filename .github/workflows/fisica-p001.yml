@@ -39,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git -C deps/reverse-pc rev-parse HEAD)" = 01829217cfb0a3a704d37f0c0f66527a23ec149d
-          test "$(git -C deps/reverse-pc/deps/mundo-x rev-parse HEAD)" = e2778d962af22f6f1a0794058fc2573966
+          test "$(git -C deps/reverse-pc/deps/mundo-x rev-parse HEAD)" = e2778d962af22f6f1a0794058dd4685fc2573966
           node --check fisica/compilar.mjs
           node --check tools/fisica.mjs
           node --check tools/laplace.mjs
