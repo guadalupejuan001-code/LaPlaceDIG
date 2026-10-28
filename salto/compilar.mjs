@@ -40,6 +40,9 @@ export function compilarSalto({coefficients,initial,steps,modelo_sha256='experim
   requireValid(/^(0|[1-9][0-9]{0,12})$/.test(h),'horizonte debe ser entero decimal no negativo');
   const bigint=BigInt(h);
   requireValid(bigint<=HORIZONTE_MAX,'horizonte máximo experimental: '+HORIZONTE_MAX);
+  requireValid(typeof modelo_sha256==='string' &&
+    (modelo_sha256==='experimento_sintetico'||/^[a-f0-9]{64}$/.test(modelo_sha256)),
+    'identificador de modelo invalido: usar un SHA-256 o experimento_sintetico');
   const N=w+1;
   const matrix=[];
   for(let output=0;output<w;output++){
