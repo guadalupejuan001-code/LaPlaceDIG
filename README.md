@@ -1,5 +1,27 @@
 # LaPlaceDIG
 
+## P002 — Gravedad y acercamientos de tres cuerpos en XI/Ether
+
+**Nuevo experimento de dinámica no lineal:** tres masas interactúan gravitacionalmente en 2D; XI calcula fuerzas, integra posiciones y velocidades, detecta el primer acercamiento y guarda la evolución en Inverse Ether Memory. El ejecutor es REVERSE-PC con el QuantumRuntime de Mundo X, no un nuevo motor externo.
+
+**Evidencia física reproducible:** 8/8 pruebas nativas aprobadas; deriva relativa de energía de 0.00764 % en 64 pasos de un escenario orbital idealizado; primer acercamiento a distancia <=0.25 registrado en el paso 114 frente al paso 113 de una referencia numérica independiente; nueve condiciones iniciales produjeron ventanas de acercamiento entre los pasos 107 y 121. Estos nueve casos no son probabilidades naturales calibradas.
+
+[Modelo, unidades y límites](docs/FISICA_P002_TRES_CUERPOS.md) · [Resultados y evidencias](docs/FISICA_P002_RESULTADOS_2026-10-28.md)
+
+Para crear el programa gravitacional propio:
+
+    node tools/gravedad.mjs ejemplo 32 gravitacion.xi
+    reverse_pc compile gravitacion.xi Gravedad-P002.rxe
+    reverse_pc init estado-inicial.rvp
+    reverse_pc run Gravedad-P002.rxe estado-inicial.rvp estado-32.rvp
+
+La misma función también está disponible mediante `node tools/laplace.mjs crear-gravedad escenario.json programa.xi`. Use solamente snapshots de laboratorio, no la memoria personal del escritorio. P002 se agrega sin retirar P001, E005 ni el observatorio Bitcoin.
+
+**Límite de interpretación:** se trata de gravedad suavizada Plummer con G=1 en unidades normalizadas, paso temporal 1/1024 y aritmética fija. No predice las posiciones de planetas reales ni demuestra caos o aceleración cuántica. A diferencia de E005, la dinámica no lineal todavía exige integrar pasos acotados.
+
+---
+
+
 ## FISICA P001 — laboratorio mecánico en XI/Ether
 
 **Nuevo sistema físico ideal en LaPlaceDIG:** una partícula en caja bidimensional, con masa, posición, velocidad, choques perfectamente elásticos contra paredes y un impulso externo opcional. El motor es [XI](fisica/billar.xi) y ejecuta la evolución en REVERSE-PC / Inverse Ether Memory sin recorrer los instantes intermedios. Hasta 10^12 segundos de horizonte dentro del dominio de enteros y límites declarados.
