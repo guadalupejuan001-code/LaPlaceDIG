@@ -1,0 +1,12 @@
+{
+  "name": "laplacedig",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Demonio de Laplace digital: Ether/XI + memoria histórica con cronología comprobable",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "help": "node tools/laplace.mjs --help"
+  },
+  "engines": {"node": ">=20"}
+}
