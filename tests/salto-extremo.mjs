@@ -55,13 +55,14 @@ function parseRun(output,width,steps){
    steps.toString(2).replace(/0/g,'').length+steps.toString(2).length-1;
  assert.equal(nums.at(-1),expectedMultiplications,'wrong power decomposition / product count');
  const mem=rows.filter(x=>x.type==='memory_stats');
- const core=rows.filter(x=>x.type==='stats');
+ const core=rows.filter(x=>x.type==='quantum_stats');
  assert.equal(mem.length,1);
  assert.equal(core.length,1);
- assert.equal(core[0].active_qubits,0,'classical affine forecast must not claim quantum qubits');
+ const quantumComponents=core[0].clifford_components+core[0].adaptive_components+core[0].reduced_components;
+ assert.equal(quantumComponents,0,'affine forecast must not materialize quantum components');
  need(mem[0].overrides <= 3*(width+1)**2+3*(width+1),'logical state storage exceeds the fixed matrix and vectors');
  return {bits,multiplies:nums.at(-1),memory_overrides:mem[0].overrides,
-   active_qubits:core[0].active_qubits,tableau_bytes:core[0].tableau_bytes,address_bytes:core[0].address_bytes};
+   quantum_components:quantumComponents,quantum_payload_bytes:core[0].payload_bytes};
 }
 const report={schema:'laplace-E005-adversarial-v1',as_of:startedAt,runtime:'REVERSE-PC / XI Machine / Inverse Ether Memory',
   reference:'independent finite-state cycle enumerator',random_seed:'0xE0052026',
