@@ -66,3 +66,7 @@ Las pruebas automáticas comprueban que alterar precios posteriores al corte de 
 - [Manual de códigos CAMEO](https://data.gdeltproject.org/documentation/CAMEO.Manual.1.1b3.pdf).
 
 El siguiente entrenamiento debe usar nuevas observaciones y nuevos períodos reservados. Reajustar sobre estos mismos 42 casos y volver a llamarlos prueba final contaminaría la evaluación.
+
+Vista local de la comparación histórica, usando los mismos 42 casos servidos por el observatorio publicado. La tabla muestra tanto fallos como coincidencias; el filtro permite revisar también las abstenciones.
+
+![Comparación entre predicciones retrospectivas y cierres observados](../evidencia/bitcoin-pasado-1793162360385.jpg)
