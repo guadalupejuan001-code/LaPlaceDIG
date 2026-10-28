@@ -18,7 +18,7 @@ const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed};
 const H0=67.4/3.0856775814913673e19,rho0=7.668947767821908e-10;
 const root=mkdtempSync(join(tmpdir(),'laplace-p003-stress-'));
 const results={schema:'LAPLACE_P003_LCDM_STRESS_V1',seed:'0xC05A001',
-  cases:128,epochs_per_case:33,cosmic_states_calculated:0,passed:0,failed:0,
+  cases:1024,epochs_per_case:33,cosmic_states_calculated:0,passed:0,failed:0,
   first_failure:null,max_relative_error:{H:0,T:0,energy:0,hubble_time:0},
   max_fraction_error_parts_100000:0,min_memory_overrides:null,
   max_memory_overrides:0,xi_elapsed_ms:[],rss_kib:[],sample:null};
@@ -73,7 +73,7 @@ try{
    results.min_memory_overrides=Math.min(results.min_memory_overrides??Infinity,
      parsed.memory.overrides);
    results.max_memory_overrides=Math.max(results.max_memory_overrides,parsed.memory.overrides);
-   if(id===0||id===127)results.sample={id,config:input,
+   if(id===0||id===results.cases-1)results.sample={id,config:input,
      first:parsed.epochs[0],last:parsed.epochs.at(-1),
      program_bytes:Buffer.byteLength(config.xi),
      memory_overrides:parsed.memory.overrides};
@@ -103,7 +103,7 @@ try{
    [...results.xi_elapsed_ms].sort((a,b)=>a-b)[Math.floor(results.xi_elapsed_ms.length/2)]:null;
  results.rss_median_kib=results.rss_kib.length?
    [...results.rss_kib].sort((a,b)=>a-b)[1]:null;
- results.pass=results.failed===0&&results.passed===128;
+ results.pass=results.failed===0&&results.passed===results.cases;
  mkdirSync(dirname(resolve(path)),{recursive:true});
  writeFileSync(path,JSON.stringify(results,null,2)+'\n');
  rmSync(root,{recursive:true,force:true});
