@@ -1,6 +1,6 @@
 # Fuentes públicas históricas para LaPlaceDIG
 
-**Estado:** catálogo comprobado de fuentes, NO una base de datos descargada. Este repositorio no contiene cotizaciones ni noticias presentadas como reales. No inventar fechas de publicación.
+**Estado:** catálogo de fuentes generales y una muestra real de Bitcoin/GDELT. El agente actual, las capturas verificadas y la prueba retrospectiva se documentan en [BITCOIN.md](BITCOIN.md). La disponibilidad histórica original de las velas descargadas no está certificada; el modo estricto se abstiene. No inventar fechas de publicación.
 
 ## Precios: Shiller
 
@@ -48,10 +48,22 @@ Todo dato debe contener:
 
 No deducir known_at = observed_at salvo evidencia. Tampoco asumir que descargar un dato hoy significa que ese mismo dato estaba publicado históricamente entonces. Un historial reconstruido podría ser útil para investigación descriptiva, pero no autoriza evaluar supuestas predicciones antiguas sin controlar su cronología.
 
-El importador ya admite archivos locales JSONL y CSV estrictos de precios. Las descargas automáticas y la unificación de calendarios siguen pendientes de implementación y licencia/revisión de cada proveedor.
+El importador admite archivos locales JSONL y CSV estrictos de precios. El módulo Bitcoin agrega capturas actuales y descarga acotada de velas BTC/USD y archivos GDELT. Los demás proveedores y la unificación general de calendarios siguen pendientes.
 
 ## Atribución y derechos
 
 La accesibilidad pública no implica derecho universal a copiar o redistribuir una base. Revisar términos de cada fuente antes de almacenar masivamente o publicar muestras. Los datos reales del usuario no se incluyen automáticamente en este repositorio público.
 
 No prometer todos los precios de todos los activos desde el origen histórico: su cobertura, calidad, cambios de símbolo, splits, supervivencia y datos faltantes varían según la fuente.
+
+## E002 — capturas de narrativa y objetivo de mercado
+
+Se agrega `humanitaria` al contrato, con los mismos campos y controles de procedencia que `geopolitica`. El predictor E002 utiliza únicamente estas dos familias como entrada; precio es etiqueta y economía permanece excluida de la inferencia.
+
+[ReliefWeb](https://apidoc.reliefweb.int/) permite consultar reportes humanitarios y exige un `appname` previamente aprobado. Los [campos de reportes](https://apidoc.reliefweb.int/read/resources/reports/) separan `date.original`, `date.created` y `date.changed`. La importación local conserva esos límites y no retrofecha la versión de contenido capturada.
+
+Hay importadores de capturas JSON ReliefWeb y GDELT DOC. Ambos exigen `captured_at` real y mantienen esa disponibilidad mínima. Una consulta actual no se convierte automáticamente en archivo histórico punto en el tiempo. Los títulos GDELT tienen cobertura textual limitada; su país de fuente periodística no es el país del evento.
+
+Las [velas de Coinbase Exchange](https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles) ofrecen precios históricos públicos, con posibles intervalos ausentes. Su tiempo es el inicio del intervalo y no prueba por sí solo disponibilidad histórica de la versión descargada. No hay un importador que invente esa fecha.
+
+Detalles de entrenamiento y fuentes estadísticas: [NARRATIVA.md](NARRATIVA.md). El control E002 permanece sintético. La muestra real posterior y su resultado negativo se registran por separado en [BITCOIN.md](BITCOIN.md).

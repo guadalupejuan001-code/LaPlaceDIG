@@ -1,5 +1,17 @@
 # LaPlaceDIG
 
+## E005 — nuevo prototipo de salto temporal XI/Ether
+
+**Prototipo activo de experimentación fundamental:** compone una ley afín binaria para calcular el estado de un sistema a horizontes de hasta 10^12 pasos mediante potenciación por cuadrados sucesivos en XI Machine, alojada por REVERSE-PC. El cómputo ocurre en el programa [salto/nucleo.xi](salto/nucleo.xi), utilizando Inverse Ether Memory; el anfitrión solo serializa las entradas. El aprendiz E001 entrega leyes desde observaciones. [Diseño, límites y reproducción](docs/SALTO_E005.md).
+
+Generar una fuente de demostración: `node tools/salto.mjs ejemplo 1000000 1011 salto-e005.xi`. Compilarla con REVERSE: `reverse_pc compile salto-e005.xi Laplace-Salto.rxe`. Ejecutar únicamente en sesión de prueba. Se eliminó el bootstrap anterior `bitcoin/tiempo.mjs` y su comando `preparar-tiempo`; Git conserva su historial. El simulador de mercado `dinamica/` continúa como investigación independiente: no es una predicción cierta ni el nuevo núcleo E005.
+
+---
+
+**Bitcoin actual:** [abrir el observatorio privado](https://laplace-bitcoin-observatorio.guadalupejuan001.chatgpt.site). El botón «Actualizar ahora» guarda cotización BTC/USD, noticias y anuncios oficiales. Se agregó una calibración histórica corta con datos reales: seis ventanas y 42 decisiones reservadas. En esa muestra la narrativa y su calibración no superaron la referencia; el predictor en vivo sigue sin activar. [Comandos, resultados y limitación de disponibilidad histórica](docs/BITCOIN.md).
+
+**Núcleo temporal nativo:** aprende siete estados y sus transiciones; propaga su distribución sobre Inverse Ether Memory con operaciones nativas de Laplace. El navegador consulta esas trazas. Cada día hasta 2030 tiene una proyección nativa positiva y negativa; los siete días de pruebas retrospectivas son información del modelo y no bloquean la exploración. El modelo actual usa 90 etiquetas BTC; la prueba de un día de anticipación obtuvo Brier 0.246410 frente a 0.245788 de referencia. Todavía no hay ventaja financiera confirmada. [Ejecución, examen y reproducción](docs/DINAMICA.md).
+
 ## Demonio de Laplace digital — un proyecto independiente
 
 **Misión:** representar el estado de un sistema, conocer o descubrir sus reglas y calcular qué puede ocurrir en el tiempo. Se fundamenta en la idea original de Ether: estados de fondo, relaciones, excepciones y consultas bajo demanda.
@@ -12,14 +24,21 @@ No es una nueva app de REVERSE, no es el solucionador de la ecuación espacial d
 | --- | --- |
 | demonio/modelo.mjs | **Copia exacta** del mundo reversible XI de Mundo X |
 | demonio/experimento.mjs | **Copia exacta** del auditor que ejecuta el runtime real |
-| historia/contrato.mjs | Fechas de observación/publicación, tres familias de hechos, revisiones |
+| historia/contrato.mjs | Fechas de observación/publicación, cuatro familias de hechos, revisiones |
 | historia/ether-xi.mjs | Proyección y lectura sin pérdida en Inverse Ether Memory original |
 | tools/laplace.mjs | Comandos locales para consultar, filtrar y comprobar archivos históricos |
 | tests/historia.test.mjs | Regresiones de fuga de futuro y reconstrucción de registros |
 | docs/ARQUITECTURA.md | Fórmula objetivo, estado actual y límites de la IA futura |
 | docs/FUENTES.md | Shiller, FRED/ALFRED y GDELT; cobertura y limitaciones reales |
 
-**No se ha descargado todavía toda la historia de precios ni entrenado una IA predictiva.** El núcleo Ether está en Mundo X; LaPlaceDIG lo reutiliza fijando el commit 3d29556eff4d1079c791abab38e203fc209f1722, sin duplicar sus fuentes ni modificar REVERSE/BBY Q.
+**E001 añade el primer aprendiz de leyes:** recibe transiciones binarias, identifica una ley afín desconocida, la conserva como programa XI reproducible y calcula sus consecuencias. Se abstiene con evidencia insuficiente o contradictoria. Ese experimento está comprobado en mundos sintéticos; el nuevo módulo Bitcoin ensaya asociaciones narrativas reales sin demostrar capacidad predictiva financiera. El núcleo Ether está en Mundo X; LaPlaceDIG lo reutiliza fijando el commit 3d29556eff4d1079c791abab38e203fc209f1722.
+
+| Nuevo componente | Función |
+| --- | --- |
+| inteligencia/laplace.mjs | Planificación desde entradas; aprendizaje y pronósticos ejecutados por XI nativo |
+| inteligencia/experimento.mjs | Observación → aprendizaje → pronóstico sellado → contraste → refutación |
+| docs/INTELIGENCIA.md | Contrato, comandos, alcance de las leyes y siguiente investigación |
+| docs/CONTEXTO_LAPLACE.md | Intención del proyecto y punto de continuidad |
 
 ## 1. Comprobar el demonio digital existente
 
@@ -51,7 +70,7 @@ Para importar un CSV de precios, se exige exactamente este encabezado (sin colum
 
 - observed_at y known_at deben ser timestamps UTC ISO-8601 terminados en Z.
 - value es decimal como texto, no número convertido en coma flotante.
-- price_basis es raw_close, adjusted_close o monthly_average.
+- price_basis es raw_close, adjusted_close, monthly_average o spot_quote; el entrenamiento BTC exige raw_close.
 - source_url es URL HTTPS que identifica la fuente original.
 - Para economía y geopolítica, utilizar JSONL con los campos descritos en docs/ARQUITECTURA.md; no reinterpretar datos faltantes como ceros.
 
@@ -66,7 +85,54 @@ La formulación de trabajo es:
     Predicción: calcular posibles estados Y_(t+h) desde Z_t y las reglas
     Contraste: registrar antes, medir después y corregir el modelo
 
-**El aprendizaje automático y la predicción multivariable todavía no están implementados.** Las pruebas actuales acreditan transporte, cronología y un mundo cerrado, no ganancias financieras.
+El primer ciclo es reproducible con el mismo binario original:
+
+    node tools/laplace.mjs experimento-aprendiz ./build-ether/mundo_x_quantum build-evidence/aprendiz
+
+El aprendiz recibe **48 transiciones observadas de 16 variables**, sin recibir las leyes del generador. Identifica una transformación afín binaria; desde un estado inicial reservado, su pronóstico sellado coincide en **32/32 estados futuros**. Persistencia coincide en 0/32. Una intervención desconocida produce divergencia en el instante 9; incorporar esa evidencia refuta la ley fija y el nuevo aprendizaje se abstiene. Esto mide aprendizaje dentro de una gramática concreta, sin demostrar capacidad financiera ni inteligencia general.
+
+El anfitrión organiza el experimento y planifica pivotes usando solo entradas. XI transforma las salidas observadas mediante CNOT, recupera los coeficientes por Inverse Ether Memory y ejecuta los pronósticos. La persistencia usa **reproducción de un programa XI guardado**, no una sesión nativa que continúe viva. [Detalle y uso](docs/INTELIGENCIA.md).
+
+Las reglas numéricas generales y la validación en mercados reales siguen pendientes. No transformar las cifras de este laboratorio en supuesta precisión bursátil.
+
+Evidencia de E001: [resultado reproducible](evidencia/E001.json). La CI regenera los programas y pronósticos completos.
+
+## 4. E002 — probabilidad desde narrativa geopolítica y humanitaria
+
+**Objetivo inicial:** estimar si el retorno BTC/USD a 24 horas supera un coste total **supuesto** de 10 puntos básicos. Los precios producen las etiquetas de entrenamiento y evaluación; el predictor recibe exclusivamente relatos geopolíticos y humanitarios conocidos al corte.
+
+    Z_t = Estado(narrativa geopolítica + humanitaria conocida en la ventana)
+    Y_t = 1 si 10000 * (P_(t+24h)/P_t - 1) > coste_bps
+    p0 = (positivos_globales + 1) / (casos_globales + 2)
+    p_t = (positivos_del_patron + kappa*p0) / (casos_del_patron + kappa)
+
+El espacio incluye temas individuales, contexto regional, combinaciones y secuencias de publicación. La extracción es simbólica con vocabulario declarado en español/inglés. Cada patrón observado recibe una auditoría de soporte, probabilidad y validación; solo condiciones validadas pueden producir una predicción. No se multiplican señales correlacionadas. Sin patrón validado, el modelo se abstiene.
+
+El entrenamiento reserva tres tramos cronológicos: entrenamiento → selección por validación → prueba final con modelo congelado. Se miden Brier, log-loss, calibración por intervalos y cobertura, incluyendo abstenciones mediante la referencia fija para el resultado global. Se excluyen objetivos todavía no publicados y horizontes que crucen de partición.
+
+    node tools/laplace.mjs experimento-narrativa ./build-ether/mundo_x_quantum build-evidence/narrativa
+
+El control **sintético** usa 128 casos de entrenamiento, 64 de validación y 64 de prueba. Recupera interacciones entre ambos dominios. La aritmética probabilística y la selección ocurren en el anfitrión; el único estado guardado de reglas y estadísticas se recupera desde Inverse Ether Memory mediante el XI original. No hay un servicio continuo ni un modelo financiero real ya validado.
+
+Se añaden hechos `humanitaria`, importadores de capturas ReliefWeb/GDELT y comandos de entrenamiento, consulta y evaluación. Una captura actual nunca se retrofecha como si su contenido hubiera estado disponible antes. [Fórmula, espacio y uso](docs/NARRATIVA.md) · [Evidencia E002](evidencia/E002.json).
+
+## 5. E003 — dos resultados que coexisten y se registran por patrón
+
+Una consulta devuelve una consecuencia condicional calculada por XI y una probabilidad narrativa para **el mismo objetivo**. La primera expresa qué determina una ley identificada; la segunda conserva su incertidumbre estadística. Las dos permanecen separadas y pueden abstenerse independientemente.
+
+Cada ocurrencia se guarda por patrón con su fecha, ambas salidas y versión del modelo. Al llegar el resultado observado, se añade un evento sin reescribir el pronóstico. Las vistas muestran aciertos, errores, cobertura, Brier, refutaciones y diferencias. La ley refutada se retira para ese patrón según cuándo se conoció la evidencia.
+
+    node tools/laplace.mjs experimento-dual ./build-ether/mundo_x_quantum build-evidence/dual-nuevo
+
+El control cerrado produce 64 pares y 64 observaciones, agrupados en cuatro patrones. Es evidencia sintética, no predicción financiera real. [Uso y arquitectura](docs/COEXISTENCIA.md) · [Resultados E003](evidencia/E003.json).
+
+## 6. E004 — masa positiva/negativa de escenarios en XI
+
+El análisis de realidades ejecuta la ley sobre escenarios declarados y suma sus probabilidades con pesos explícitos. Se registra como análisis del patrón sin sustituir las dos salidas ni duplicar pronósticos.
+
+    node tools/laplace.mjs experimento-realidades ./build-ether/mundo_x_quantum build-evidence/realidades-nuevo
+
+El runtime original ejecuta 512 escenarios en **1.536 qubits activos**, divididos en componentes de tres qubits. Obtiene marginales y masas positivas/negativas sin enumerar un estado general exponencial. `?` significa incertidumbre equiprobable declarada; los pesos y leyes del control son sintéticos. [Alcance técnico](docs/COEXISTENCIA.md) · [Resultados E004](evidencia/E004.json).
 
 Documentación: [Arquitectura](docs/ARQUITECTURA.md) · [Fuentes públicas](docs/FUENTES.md) · [Demonio XI](demonio/README.md).
 

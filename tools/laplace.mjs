@@ -1,10 +1,24 @@
 #!/usr/bin/env node
 'use strict';
 // LaPlaceDIG: local data ingestion and proof. This is not a trading bot.
-import {readFileSync} from 'node:fs';
+import {readFileSync,writeFileSync} from 'node:fs';
 import {parseJSONL,canonicalLedger,canonicalFact,stringifyJSONL,ledgerHash,
-        asOf,persistenceBaseline,timestamp} from '../historia/contrato.mjs';
+        asOf,persistenceBaseline,timestamp,KIND} from '../historia/contrato.mjs';
 import {proveWithOriginalEther} from '../historia/ether-xi.mjs';
+import {parseTransitions,learn,predict} from '../inteligencia/laplace.mjs';
+import {experiment} from '../inteligencia/experimento.mjs';
+import {trainNarrative,predictNarrative,evaluateNarrative} from '../narrativa/modelo.mjs';
+import {narrativeExperiment} from '../narrativa/experimento.mjs';
+import {importReliefWeb,importGDELT} from '../narrativa/fuentes.mjs';
+import {trainDual,predictDual} from '../coexistencia/modelo.mjs';
+import {registerForecast,registerRealities,reconcileJournal,readJournal,patternResults,provePattern} from '../coexistencia/patrones.mjs';
+import {dualExperiment} from '../coexistencia/experimento.mjs';
+import {simulateRealities} from '../coexistencia/realidades.mjs';
+import {realitiesExperiment} from '../coexistencia/experimento-realidades.mjs';
+import {collectBitcoin,exportCaptureFacts} from '../bitcoin/agente.mjs';
+import {downloadHistory} from '../bitcoin/historico.mjs';
+import {calibrateHistory,pastComparisons,MODES} from '../bitcoin/calibracion.mjs';
+import {temporalExperiment,liveTemporalProfile,queryTemporal} from '../dinamica/modelo.mjs';
 
 function usage(){
   process.stdout.write('LaPlaceDIG — laboratorio del demonio digital\n'
@@ -13,6 +27,28 @@ function usage(){
    +'  node tools/laplace.mjs referencia hechos.jsonl CORTE_UTC ACTIVO\n'
    +'  node tools/laplace.mjs verificar-ether hechos.jsonl CORTE_UTC RUTA_MUNDO_X_QUANTUM\n'
    +'  node tools/laplace.mjs convertir-precios precios.csv > hechos.jsonl\n'
+   +'  node tools/laplace.mjs aprender-leyes transiciones.jsonl CORTE_UTC BIN_XI MODELO.json\n'
+   +'  node tools/laplace.mjs predecir-estado MODELO.json ESTADO_BINARIO PASOS BIN_XI\n'
+   +'  node tools/laplace.mjs experimento-aprendiz BIN_XI DIRECTORIO_RESULTADOS\n'
+   +'  node tools/laplace.mjs entrenar-narrativa hechos.jsonl CONFIG.json BIN_XI MODELO.json\n'
+   +'  node tools/laplace.mjs probabilidad-narrativa MODELO.json hechos.jsonl CORTE_UTC BIN_XI\n'
+   +'  node tools/laplace.mjs evaluar-narrativa MODELO.json hechos.jsonl FIN_TEST_UTC BIN_XI\n'
+   +'  node tools/laplace.mjs experimento-narrativa BIN_XI DIRECTORIO_RESULTADOS\n'
+   +'  node tools/laplace.mjs importar-narrativa reliefweb|gdelt CAPTURA.json > hechos.jsonl\n'
+   +'  node tools/laplace.mjs entrenar-dual hechos.jsonl CONFIG.json BIN_XI MODELO_DUAL.json\n'
+   +'  node tools/laplace.mjs pronostico-dual MODELO_DUAL.json hechos.jsonl CORTE_UTC BIN_XI REGISTRO.jsonl\n'
+   +'  node tools/laplace.mjs contrastar-dual REGISTRO.jsonl hechos.jsonl CORTE_UTC\n'
+   +'  node tools/laplace.mjs patrones REGISTRO.jsonl\n'
+   +'  node tools/laplace.mjs verificar-patron REGISTRO.jsonl ID_PATRON BIN_XI\n'
+   +'  node tools/laplace.mjs experimento-dual BIN_XI DIRECTORIO_NUEVO\n'
+   +'  node tools/laplace.mjs analizar-realidades MODELO_DUAL hechos.jsonl CORTE_UTC ESCENARIOS.json BIN_XI REGISTRO.jsonl\n'
+   +'  node tools/laplace.mjs experimento-realidades BIN_XI DIRECTORIO_NUEVO\n'
+   +'  node tools/laplace.mjs actualizar-bitcoin CAPTURA_NUEVA.json [HECHOS_NUEVOS.jsonl]\n'
+   +'  node tools/laplace.mjs descargar-bitcoin INICIO_UTC FIN_UTC HISTORIA_NUEVA.json\n'
+   +'  node tools/laplace.mjs calibrar-bitcoin HISTORIA.json BIN_XI INFORME_NUEVO.json strict|exploratory_close_availability [CASOS_NUEVOS.json]\n'
+   +'  node tools/laplace.mjs entrenar-dinamica HISTORIA.json BIN_NATIVO INFORME_NUEVO.json strict|exploratory_close_availability\n'
+   +'  node tools/laplace.mjs perfil-dinamica HISTORIA.json INFORME.json BIN_NATIVO PERFIL_NUEVO.json\n'
+   +'  node tools/laplace.mjs consultar-dinamica CHECKPOINT.json MASCARA PASOS BIN_NATIVO\n'
    +'Datos historicos siempre identificados por fuente y fecha de disponibilidad. Sin cotizaciones inventadas.\n');
 }
 function must(v,message){if(!v)throw Error(message)}
@@ -35,16 +71,140 @@ function convertPriceCSV(filename){
 function summary(rows){
   return {
     status:'ARCHIVO_LOCAL_VALIDADO',count:rows.length,
-    kinds:Object.fromEntries(['precio','economia','geopolitica'].map(k=>[k,rows.filter(x=>x.kind===k).length])),
+    kinds:Object.fromEntries(KIND.map(k=>[k,rows.filter(x=>x.kind===k).length])),
     historical_sha256:ledgerHash(rows),
     earliest_known_at:rows[0]?.known_at??null,
     latest_known_at:rows.at(-1)?.known_at??null,
     warning:'No implica que los precios ni fechas sean autenticos: verifica procedencia y licencia de la fuente'
   };
 }
-function main(){
+async function main(){
   const [, ,command,...params]=process.argv;
   if(!command||['ayuda','help','--help'].includes(command)){usage();return;}
+  if(command==='entrenar-dinamica'){
+    must(params.length===4&&MODES.includes(params[3]),'uso: entrenar-dinamica HISTORIA.json BIN_NATIVO INFORME_NUEVO.json strict|exploratory_close_availability');
+    const report=temporalExperiment(params[1],JSON.parse(readFileSync(params[0],'utf8')),{mode:params[3]});
+    writeFileSync(params[2],JSON.stringify(report,null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({file:params[2],folds:report.folds.length,horizons:report.horizons,live_activation:report.live_activation},null,2));return;
+  }
+  if(command==='perfil-dinamica'){
+    must(params.length===4,'uso: perfil-dinamica HISTORIA.json INFORME.json BIN_NATIVO PERFIL_NUEVO.json');
+    const profile=liveTemporalProfile(params[2],JSON.parse(readFileSync(params[0],'utf8')),JSON.parse(readFileSync(params[1],'utf8')));
+    writeFileSync(params[3],JSON.stringify(profile,null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({file:params[3],states:profile.model.state_masks.length,labels:profile.model.labels,native:profile.native,profile_sha256:profile.profile_sha256},null,2));return;
+  }
+  if(command==='consultar-dinamica'){
+    must(params.length===4&&/^\d+$/.test(params[1])&&/^\d+$/.test(params[2]),'uso: consultar-dinamica CHECKPOINT.json MASCARA PASOS BIN_NATIVO');
+    console.log(JSON.stringify(queryTemporal(params[3],JSON.parse(readFileSync(params[0],'utf8')),[{mask:Number(params[1]),steps:Number(params[2])}]),null,2));return;
+  }
+  if(command==='actualizar-bitcoin'){
+    must(params.length===1||params.length===2,'uso: actualizar-bitcoin CAPTURA_NUEVA.json [HECHOS_NUEVOS.jsonl]');
+    const capture=await collectBitcoin();
+    writeFileSync(params[0],JSON.stringify(capture,null,2)+'\n',{flag:'wx'});
+    if(params[1])writeFileSync(params[1],stringifyJSONL(exportCaptureFacts(capture)),{flag:'wx'});
+    console.log(JSON.stringify({id:capture.id,status:capture.status,asset:capture.asset,quote:capture.quote,
+      news:capture.news.length,successful_sources:capture.successful_sources,total_sources:capture.total_sources,
+      capture_file:params[0],facts_file:params[1]??null},null,2));return;
+  }
+  if(command==='descargar-bitcoin'){
+    must(params.length===3,'uso: descargar-bitcoin INICIO_UTC FIN_UTC HISTORIA_NUEVA.json');
+    const history=await downloadHistory({start:params[0],end:params[1]});
+    writeFileSync(params[2],JSON.stringify(history,null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({file:params[2],records:history.records.length,ledger_sha256:history.ledger_sha256,
+      archives_ok:history.archives.filter(row=>row.status==='ok').length,archives_failed:history.archives.filter(row=>row.status==='error').length},null,2));return;
+  }
+  if(command==='calibrar-bitcoin'){
+    must([4,5].includes(params.length)&&MODES.includes(params[3]),'uso: calibrar-bitcoin HISTORIA.json BIN_XI INFORME_NUEVO.json strict|exploratory_close_availability [CASOS_NUEVOS.json]');
+    const history=JSON.parse(readFileSync(params[0],'utf8'));
+    const result=calibrateHistory(params[1],history,{mode:params[3]});
+    writeFileSync(params[2],JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+    if(params[4])writeFileSync(params[4],JSON.stringify(pastComparisons(history,result),null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({file:params[2],status:result.status,mode:result.mode,raw:result.raw,calibrated:result.calibrated,
+      folds:result.folds.length,availability_assumption:result.availability_assumption,live_activation:result.live_activation},null,2));return;
+  }
+  if(command==='analizar-realidades'){
+    must(params.length===6,'uso: analizar-realidades MODELO_DUAL hechos.jsonl CORTE_UTC ESCENARIOS.json BIN_XI REGISTRO.jsonl');
+    const checkpoint=JSON.parse(readFileSync(params[0],'utf8'));
+    const run=simulateRealities(params[4],checkpoint,JSON.parse(readFileSync(params[3],'utf8')));
+    const issued=registerForecast(params[5],predictDual(params[4],checkpoint,readJsonl(params[1]),params[2])).event;
+    console.log(JSON.stringify(registerRealities(params[5],issued.forecast_id,run.analysis),null,2));return;
+  }
+  if(command==='experimento-realidades'){
+    must(params.length===2,'uso: experimento-realidades BIN_XI DIRECTORIO_NUEVO');
+    console.log(JSON.stringify(realitiesExperiment(params[0],params[1]),null,2));return;
+  }
+  if(command==='entrenar-dual'){
+    must(params.length===4,'uso: entrenar-dual hechos.jsonl CONFIG.json BIN_XI MODELO_DUAL.json');
+    const {checkpoint,...summary}=trainDual(params[2],readJsonl(params[0]),JSON.parse(readFileSync(params[1],'utf8')));
+    if(checkpoint)writeFileSync(params[3],JSON.stringify(checkpoint,null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({...summary,checkpoint_file:checkpoint?params[3]:null},null,2));return;
+  }
+  if(command==='pronostico-dual'){
+    must(params.length===5,'uso: pronostico-dual MODELO_DUAL.json hechos.jsonl CORTE_UTC BIN_XI REGISTRO.jsonl');
+    const forecast=predictDual(params[3],JSON.parse(readFileSync(params[0],'utf8')),readJsonl(params[1]),params[2]);
+    const result=registerForecast(params[4],forecast);
+    console.log(JSON.stringify(result,null,2));return;
+  }
+  if(command==='contrastar-dual'){
+    must(params.length===3,'uso: contrastar-dual REGISTRO.jsonl hechos.jsonl CORTE_UTC');
+    console.log(JSON.stringify(reconcileJournal(params[0],readJsonl(params[1]),params[2]),null,2));return;
+  }
+  if(command==='patrones'){
+    must(params.length===1,'uso: patrones REGISTRO.jsonl');
+    console.log(JSON.stringify(patternResults(readJournal(params[0])),null,2));return;
+  }
+  if(command==='verificar-patron'){
+    must(params.length===3,'uso: verificar-patron REGISTRO.jsonl ID_PATRON BIN_XI');
+    const {checkpoint,...proof}=provePattern(params[2],readJournal(params[0]),params[1]);
+    console.log(JSON.stringify(proof,null,2));return;
+  }
+  if(command==='experimento-dual'){
+    must(params.length===2,'uso: experimento-dual BIN_XI DIRECTORIO_NUEVO');
+    console.log(JSON.stringify(dualExperiment(params[0],params[1]),null,2));return;
+  }
+  if(command==='importar-narrativa'){
+    must(params.length===2&&['reliefweb','gdelt'].includes(params[0]),
+      'uso: importar-narrativa reliefweb|gdelt CAPTURA.json');
+    const raw=JSON.parse(readFileSync(params[1],'utf8'));
+    process.stdout.write(stringifyJSONL(params[0]==='reliefweb'?importReliefWeb(raw):importGDELT(raw)));return;
+  }
+  if(command==='experimento-narrativa'){
+    must(params.length===2,'uso: experimento-narrativa BIN_XI DIRECTORIO_RESULTADOS');
+    console.log(JSON.stringify(narrativeExperiment(params[0],params[1]),null,2));return;
+  }
+  if(command==='entrenar-narrativa'){
+    must(params.length===4,'uso: entrenar-narrativa hechos.jsonl CONFIG.json BIN_XI MODELO.json');
+    const result=trainNarrative(params[2],readJsonl(params[0]),JSON.parse(readFileSync(params[1],'utf8')));
+    const {checkpoint,...summary}=result;
+    if(checkpoint)writeFileSync(params[3],JSON.stringify(checkpoint,null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({...summary,checkpoint_file:checkpoint?params[3]:null},null,2));return;
+  }
+  if(['probabilidad-narrativa','evaluar-narrativa'].includes(command)){
+    must(params.length===4,'uso: '+command+' MODELO.json hechos.jsonl CORTE_UTC BIN_XI');
+    const checkpoint=JSON.parse(readFileSync(params[0],'utf8')),records=readJsonl(params[1]);
+    const result=command==='probabilidad-narrativa'
+      ?predictNarrative(params[3],checkpoint,records,params[2])
+      :evaluateNarrative(params[3],checkpoint,records,params[2]);
+    console.log(JSON.stringify(result,null,2));return;
+  }
+  if(command==='experimento-aprendiz'){
+    must(params.length===2,'uso: experimento-aprendiz BIN_XI DIRECTORIO_RESULTADOS');
+    console.log(JSON.stringify(experiment(params[0],params[1]),null,2));return;
+  }
+  if(command==='aprender-leyes'){
+    must(params.length===4,'uso: aprender-leyes transiciones.jsonl CORTE_UTC BIN_XI MODELO.json');
+    const result=learn(params[2],parseTransitions(readFileSync(params[0],'utf8')),params[1]);
+    if(result.checkpoint)writeFileSync(params[3],JSON.stringify(result.checkpoint,null,2)+'\n',{flag:'wx'});
+    const {checkpoint,...summary}=result;
+    console.log(JSON.stringify({...summary,checkpoint_file:checkpoint?params[3]:null},null,2));return;
+  }
+  if(command==='predecir-estado'){
+    must(params.length===4,'uso: predecir-estado MODELO.json ESTADO_BINARIO PASOS BIN_XI');
+    must(/^[1-9][0-9]*$/.test(params[2]),'PASOS debe ser entero positivo');
+    const checkpoint=JSON.parse(readFileSync(params[0],'utf8'));
+    const {xi,...forecast}=predict(params[3],checkpoint,params[1],Number(params[2]));
+    console.log(JSON.stringify(forecast,null,2));return;
+  }
   if(command==='convertir-precios'){
     process.stdout.write(convertPriceCSV(params[0]));return;
   }
@@ -66,4 +226,4 @@ function main(){
   }
   throw Error('unknown command '+command);
 }
-try{main()}catch(error){console.error('LaPlaceDIG: '+error.message);process.exitCode=1;}
+try{await main()}catch(error){console.error('LaPlaceDIG: '+error.message);process.exitCode=1;}

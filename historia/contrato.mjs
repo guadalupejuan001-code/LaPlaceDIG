@@ -9,7 +9,8 @@ import {createHash} from 'node:crypto';
 const REQUIRED={
   precio:['id','kind','observed_at','known_at','source_url','asset','price_basis','currency','value'],
   economia:['id','kind','observed_at','known_at','source_url','series_id','unit','value'],
-  geopolitica:['id','kind','observed_at','known_at','source_url','event_code','summary','region']
+  geopolitica:['id','kind','observed_at','known_at','source_url','event_code','summary','region'],
+  humanitaria:['id','kind','observed_at','known_at','source_url','event_code','summary','region']
 };
 export const KIND=Object.freeze(Object.keys(REQUIRED));
 export const MAX_RECORDS=10000;
@@ -51,7 +52,7 @@ export function canonicalFact(entry){
     out.asset=text(entry.asset,'asset',32);
     need(/^[A-Z0-9.^_-]{1,32}$/.test(out.asset),'asset should be uppercase identifier');
     out.price_basis=text(entry.price_basis,'price_basis',40);
-    need(['raw_close','adjusted_close','monthly_average'].includes(out.price_basis),
+    need(['raw_close','adjusted_close','monthly_average','spot_quote'].includes(out.price_basis),
       'unknown price basis');
     out.currency=text(entry.currency,'currency',12);
     need(/^[A-Z]{3,12}$/.test(out.currency),'currency must be uppercase');
