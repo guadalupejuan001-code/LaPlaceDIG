@@ -66,6 +66,11 @@ jobs:
           set -euo pipefail
           node --check tests/tres-cuerpos-encuentro.mjs
           node tests/tres-cuerpos-encuentro.mjs ./build-reverse/reverse_pc ci-gravedad/encuentro.json
+      - name: Medir la ventana de futuro en nueve condiciones iniciales
+        run: |
+          set -euo pipefail
+          node --check tests/tres-cuerpos-escenarios.mjs
+          node tests/tres-cuerpos-escenarios.mjs ./build-reverse/reverse_pc ci-gravedad/escenarios.json
       - name: Construir y ejecutar programa gravitatorio .rxe
         run: |
           set -euo pipefail
