@@ -1,5 +1,30 @@
 # LaPlaceDIG
 
+## P003 — expansión del universo temprano y densidad de energía con XI/Ether
+
+**Nuevo experimento cosmológico sobre leyes generales:** LAPLACE calcula la expansión de un universo homogéneo plano ΛCDM, con radiación, materia y energía oscura. Utiliza la ecuación de Friedmann, una representación científica de mantisa/exponente en XI Machine y estados compactos persistidos en Inverse Ether Memory.
+
+- **Escala física cubierta:** 33 épocas desde a=10^-30 hasta el valor actual a=1, incluidos los puntos a=3×10^-4 (transición radiación/materia) y a=9×10^-4 (temperatura cercana a 3000 K).
+- **Observables:** H(a), temperatura T(a), densidad energética J/m³, tiempo de Hubble 1/H y participaciones de radiación/materia/vacío. Cada valor procede del cálculo nativo XI, no de resultados precalculados en JavaScript.
+- **Estados mínimos:** 27 bytes lógicos por época, **891 bytes lógicos** en total. No implica que REVERSE-PC utilice solamente 891 bytes de RAM real.
+- **Validación:** tests independientes de Friedmann, lectura completa desde Ether, equivalencia RXE/XI, variación de parámetros cosmológicos y campaña de 128 mundos para medir el error y consumo de memoria física.
+
+[Descripción técnica, ecuaciones y límites](docs/COSMOLOGIA_P003.md)
+
+Para generar el nuevo ejecutable:
+
+    node tools/cosmos.mjs universo universo.xi
+    reverse_pc compile universo.xi LAPLACE-Cosmos-P003.rxe
+    reverse_pc init universo-inicial.rvp
+    reverse_pc run LAPLACE-Cosmos-P003.rxe universo-inicial.rvp universo-final.rvp
+
+También existe el comando `node tools/laplace.mjs crear-cosmos parametros.json salida.xi`.
+
+**Limitación esencial:** se simula el fondo cosmológico y una extrapolación muy temprana, no la singularidad inicial del Big Bang, la gravedad cuántica, inflación, formación de partículas ni la aparición de galaxias. La densidad energética local no es energía total global del universo.
+
+---
+
+
 ## P002 — Gravedad y acercamientos de tres cuerpos en XI/Ether
 
 **Nuevo experimento de dinámica no lineal:** tres masas interactúan gravitacionalmente en 2D; XI calcula fuerzas, integra posiciones y velocidades, detecta el primer acercamiento y guarda la evolución en Inverse Ether Memory. El ejecutor es REVERSE-PC con el QuantumRuntime de Mundo X, no un nuevo motor externo.
