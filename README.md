@@ -6,6 +6,8 @@
 
 Generar una fuente de demostración: `node tools/salto.mjs ejemplo 1000000 1011 salto-e005.xi`. Compilarla con REVERSE: `reverse_pc compile salto-e005.xi Laplace-Salto.rxe`. Ejecutar únicamente en sesión de prueba. Se eliminó el bootstrap anterior `bitcoin/tiempo.mjs` y su comando `preparar-tiempo`; Git conserva su historial. El simulador de mercado `dinamica/` continúa como investigación independiente: no es una predicción cierta ni el nuevo núcleo E005.
 
+**Auditoría del 28 de octubre de 2026:** 92/92 pruebas extremas correctas (1..8 variables y horizontes hasta 10^12), cadena E001→E005 verificada y benchmark XI frente a XI con RAM física. [Resultados, límites y metodología](docs/SALTO_E005_AUDITORIA_2026-10-28.md).
+
 ---
 
 **Bitcoin actual:** [abrir el observatorio privado](https://laplace-bitcoin-observatorio.guadalupejuan001.chatgpt.site). El botón «Actualizar ahora» guarda cotización BTC/USD, noticias y anuncios oficiales. Se agregó una calibración histórica corta con datos reales: seis ventanas y 42 decisiones reservadas. En esa muestra la narrativa y su calibración no superaron la referencia; el predictor en vivo sigue sin activar. [Comandos, resultados y limitación de disponibilidad histórica](docs/BITCOIN.md).
