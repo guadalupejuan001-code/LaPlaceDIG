@@ -18,7 +18,6 @@ import {realitiesExperiment} from '../coexistencia/experimento-realidades.mjs';
 import {collectBitcoin,exportCaptureFacts} from '../bitcoin/agente.mjs';
 import {downloadHistory} from '../bitcoin/historico.mjs';
 import {calibrateHistory,pastComparisons,MODES} from '../bitcoin/calibracion.mjs';
-import {createTimeProfile} from '../bitcoin/perfil-tiempo.mjs';
 import {temporalExperiment,liveTemporalProfile,queryTemporal} from '../dinamica/modelo.mjs';
 
 function usage(){
@@ -47,7 +46,6 @@ function usage(){
    +'  node tools/laplace.mjs actualizar-bitcoin CAPTURA_NUEVA.json [HECHOS_NUEVOS.jsonl]\n'
    +'  node tools/laplace.mjs descargar-bitcoin INICIO_UTC FIN_UTC HISTORIA_NUEVA.json\n'
    +'  node tools/laplace.mjs calibrar-bitcoin HISTORIA.json BIN_XI INFORME_NUEVO.json strict|exploratory_close_availability [CASOS_NUEVOS.json]\n'
-   +'  node tools/laplace.mjs preparar-tiempo HISTORIA.json INFORME.json BIN_XI PERFIL_NUEVO.json\n'
    +'  node tools/laplace.mjs entrenar-dinamica HISTORIA.json BIN_NATIVO INFORME_NUEVO.json strict|exploratory_close_availability\n'
    +'  node tools/laplace.mjs perfil-dinamica HISTORIA.json INFORME.json BIN_NATIVO PERFIL_NUEVO.json\n'
    +'  node tools/laplace.mjs consultar-dinamica CHECKPOINT.json MASCARA PASOS BIN_NATIVO\n'
@@ -98,13 +96,6 @@ async function main(){
   if(command==='consultar-dinamica'){
     must(params.length===4&&/^\d+$/.test(params[1])&&/^\d+$/.test(params[2]),'uso: consultar-dinamica CHECKPOINT.json MASCARA PASOS BIN_NATIVO');
     console.log(JSON.stringify(queryTemporal(params[3],JSON.parse(readFileSync(params[0],'utf8')),[{mask:Number(params[1]),steps:Number(params[2])}]),null,2));return;
-  }
-  if(command==='preparar-tiempo'){
-    must(params.length===4,'uso: preparar-tiempo HISTORIA.json INFORME.json BIN_XI PERFIL_NUEVO.json');
-    const profile=createTimeProfile(params[2],JSON.parse(readFileSync(params[0],'utf8')),JSON.parse(readFileSync(params[1],'utf8')));
-    writeFileSync(params[3],JSON.stringify(profile,null,2)+'\n',{flag:'wx'});
-    console.log(JSON.stringify({file:params[3],profile_sha256:profile.profile_sha256,range:[profile.range_start,profile.range_end],
-      training_samples:profile.training_samples,native:profile.native,future_observations:0},null,2));return;
   }
   if(command==='actualizar-bitcoin'){
     must(params.length===1||params.length===2,'uso: actualizar-bitcoin CAPTURA_NUEVA.json [HECHOS_NUEVOS.jsonl]');

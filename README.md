@@ -1,5 +1,13 @@
 # LaPlaceDIG
 
+## E005 — nuevo prototipo de salto temporal XI/Ether
+
+**Prototipo activo de experimentación fundamental:** compone una ley afín binaria para calcular el estado de un sistema a horizontes de hasta 10^12 pasos mediante potenciación por cuadrados sucesivos en XI Machine, alojada por REVERSE-PC. El cómputo ocurre en el programa [salto/nucleo.xi](salto/nucleo.xi), utilizando Inverse Ether Memory; el anfitrión solo serializa las entradas. El aprendiz E001 entrega leyes desde observaciones. [Diseño, límites y reproducción](docs/SALTO_E005.md).
+
+Generar una fuente de demostración: `node tools/salto.mjs ejemplo 1000000 1011 salto-e005.xi`. Compilarla con REVERSE: `reverse_pc compile salto-e005.xi Laplace-Salto.rxe`. Ejecutar únicamente en sesión de prueba. Se eliminó el bootstrap anterior `bitcoin/tiempo.mjs` y su comando `preparar-tiempo`; Git conserva su historial. El simulador de mercado `dinamica/` continúa como investigación independiente: no es una predicción cierta ni el nuevo núcleo E005.
+
+---
+
 **Bitcoin actual:** [abrir el observatorio privado](https://laplace-bitcoin-observatorio.guadalupejuan001.chatgpt.site). El botón «Actualizar ahora» guarda cotización BTC/USD, noticias y anuncios oficiales. Se agregó una calibración histórica corta con datos reales: seis ventanas y 42 decisiones reservadas. En esa muestra la narrativa y su calibración no superaron la referencia; el predictor en vivo sigue sin activar. [Comandos, resultados y limitación de disponibilidad histórica](docs/BITCOIN.md).
 
 **Núcleo temporal nativo:** aprende siete estados y sus transiciones; propaga su distribución sobre Inverse Ether Memory con operaciones nativas de Laplace. El navegador consulta esas trazas. Cada día hasta 2030 tiene una proyección nativa positiva y negativa; los siete días de pruebas retrospectivas son información del modelo y no bloquean la exploración. El modelo actual usa 90 etiquetas BTC; la prueba de un día de anticipación obtuvo Brier 0.246410 frente a 0.245788 de referencia. Todavía no hay ventaja financiera confirmada. [Ejecución, examen y reproducción](docs/DINAMICA.md).
