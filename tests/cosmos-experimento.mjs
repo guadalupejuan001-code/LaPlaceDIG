@@ -12,7 +12,8 @@ import {createHash} from 'node:crypto';
 import {compilarCosmologia,EJEMPLO,interpretarCosmos,valorCientifico,
   decodificarMemoria,leerProgramaMemoria} from '../cosmos/lcdm.mjs';
 
-const [,,binary,filename]=process.argv;
+const [,,binary,filename,resolution]=process.argv;
+if(resolution&&resolution!=='fino')throw Error('resolucion debe ser fino');
 if(!binary||!filename)throw Error('uso: node tests/cosmos-experimento.mjs REVERSE_PC_BIN RESULT.json');
 const dir=dirname(resolve(filename));mkdirSync(dir,{recursive:true});
 const sha=x=>createHash('sha256').update(x).digest('hex');
@@ -28,7 +29,7 @@ const xiFile=join(dir,'universe.xi');
 const rxeFile=join(dir,'Laplace-Cosmos-P003.rxe');
 const readXIFile=join(dir,'read-ether.xi');
 const readRvp=join(dir,'read-ether.rvp');
-const compiled=compilarCosmologia(EJEMPLO);
+const compiled=compilarCosmologia(resolution==='fino'?{...EJEMPLO,detalle:'digitos'}:EJEMPLO);
 writeFileSync(xiFile,compiled.xi,{flag:'wx'});
 const startManifest={schema:compiled.schema,as_of:new Date().toISOString(),
   parameters:compiled.configuration,xi_sha256:compiled.xi_sha256,
