@@ -51,6 +51,8 @@ jobs:
           node --check bitcoin/agente.mjs
           node --check bitcoin/historico.mjs
           node --check bitcoin/calibracion.mjs
+          node --check bitcoin/tiempo.mjs
+          node --check bitcoin/perfil-tiempo.mjs
       - name: Construir únicamente el QuantumRuntime existente
         run: |
           set -euo pipefail

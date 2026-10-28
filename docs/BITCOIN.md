@@ -1,5 +1,33 @@
 # Bitcoin: observación actual y calibración histórica
 
+## Consola temporal hasta 2030
+
+El control principal permite mover la fecha desde el 12 de septiembre de 2026 hasta el **31 de diciembre de 2030**. El calendario, el deslizador, las flechas de un día y los saltos de año consultan el mismo cálculo. El recorrido futuro completo se prepara en un Web Worker y se guarda en memoria; mover la fecha no vuelve a sortear sus trayectorias. Cambiar narrativa, cantidad de trayectorias o semilla crea un cálculo nuevo y reproducible.
+
+Para el pasado se recuperan los 42 pronósticos archivados y sus resultados, sin reescribirlos con hipótesis del usuario. Las abstenciones siguen sin probabilidad y las fechas sin pronóstico muestran su ausencia. Los controles narrativos se bloquean y muestran los temas que estaban registrados en ese corte.
+
+Para el futuro se calcula una **simulación condicional**, con origen fijo en el 28 de octubre de 2026. La narrativa inicial corresponde al último archivo disponible, del 27 de octubre. Las casillas declaran qué temas se suponen presentes durante el horizonte; no son noticias del futuro. Los temas sin condiciones aprendidas se identifican como «sin soporte» y no reciben un efecto inventado.
+
+`bitcoin/perfil-tiempo.mjs` recupera el último checkpoint del informe mediante el runtime XI original. Exporta una copia de consulta con su hash, las condiciones y las magnitudes de retorno de **solo los 28 días de entrenamiento**. La autoridad del modelo permanece en el checkpoint nativo. La estimación numérica y el muestreo del navegador son clásicos.
+
+Para un patrón con `s` positivos y `n` observaciones, cada trayectoria extrae una probabilidad diaria de `Beta(s + 8*p0, n - s + 8*(1-p0))`, donde `p0` es la referencia del entrenamiento. Si no hay patrón, la ruta narrativa se abstiene y la simulación se identifica como referencia histórica, con `Beta(S+1, N-S+1)`. No se disfraza esa referencia como señal narrativa.
+
+Se mantiene esa probabilidad dentro de cada trayectoria y se muestrean retornos logarítmicos diarios de la clase positiva o negativa del entrenamiento. Se suman hasta cada fecha. La fracción de trayectorias cuyo retorno compuesto supera +0,10% produce la probabilidad del escenario, junto con los conteos positivos y negativos. Este objetivo acumulado difiere del objetivo histórico de 24 horas y se identifica así en la consola. No se generan anuncios ni cotizaciones futuras como si fueran observaciones.
+
+La semilla inicial es 271828; se permiten 1.024, 4.096 u 8.192 trayectorias en la interfaz. El botón de exportación guarda fecha, semilla, hipótesis, conteos y hashes. El muestreo es una adaptación propia de simulación por trayectorias y remuestreo empírico; [Hyndman y Athanasopoulos explican simulación de futuros mediante bootstrap](https://otexts.com/fpp3/toolbox.html). El modelo añadido supone independencia condicional diaria y estabilidad del escenario; no se ha demostrado que esas hipótesis describan Bitcoin hasta 2030. El resultado negativo de la prueba histórica permanece visible.
+
+Reproducir el perfil verificado:
+
+```bash
+node tools/laplace.mjs preparar-tiempo evidencia/BTC-HISTORICO.json evidencia/BTC-CALIBRACION.json ./build-ether/mundo_x_quantum registros/perfil-tiempo-001.json
+```
+
+`evidencia/BTC-TIEMPO.json` contiene el perfil y `BTC-TIEMPO-RESULTADO.json` los cálculos reproducibles en cinco fechas. Las pruebas contrastan las condiciones portables con el modelo nativo en las **2.048 combinaciones** del vocabulario y verifican límites, fechas bisiestas, conteos, repetición de semilla y conservación del pasado.
+
+Vista local del control temporal, con la fecha de 2030 y el mismo cálculo reproducible servido en el sitio:
+
+![Consola temporal de Laplace con fecha manipulable hasta 2030](../evidencia/laplace-tiempo-1793163411158.jpg)
+
 El objetivo de mercado de Laplace queda limitado a **BTC-USD**. Los módulos E001–E004 y el runtime original permanecen disponibles. Los dos resultados de E003 conservan su significado; este agente recoge evidencia y la calibración actúa sobre la ruta probabilística, sin convertirla en una ley determinista.
 
 ## Observatorio privado

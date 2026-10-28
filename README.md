@@ -2,6 +2,8 @@
 
 **Bitcoin actual:** [abrir el observatorio privado](https://laplace-bitcoin-observatorio.guadalupejuan001.chatgpt.site). El botón «Actualizar ahora» guarda cotización BTC/USD, noticias y anuncios oficiales. Se agregó una calibración histórica corta con datos reales: seis ventanas y 42 decisiones reservadas. En esa muestra la narrativa y su calibración no superaron la referencia; el predictor en vivo sigue sin activar. [Comandos, resultados y limitación de disponibilidad histórica](docs/BITCOIN.md).
 
+**Control temporal:** mueve el calendario o el deslizador hasta el **31 de diciembre de 2030**. El pasado recupera los pronósticos archivados y sus resultados. El futuro muestra simulaciones condicionales precalculadas, con controles narrativos, conteos positivos/negativos, semilla reproducible y exportación. Son escenarios experimentales derivados del modelo XI y sus etiquetas de entrenamiento; no se presentan como hechos futuros conocidos.
+
 ## Demonio de Laplace digital — un proyecto independiente
 
 **Misión:** representar el estado de un sistema, conocer o descubrir sus reglas y calcular qué puede ocurrir en el tiempo. Se fundamenta en la idea original de Ether: estados de fondo, relaciones, excepciones y consultas bajo demanda.

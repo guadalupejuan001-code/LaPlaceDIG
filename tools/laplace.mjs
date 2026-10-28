@@ -18,6 +18,7 @@ import {realitiesExperiment} from '../coexistencia/experimento-realidades.mjs';
 import {collectBitcoin,exportCaptureFacts} from '../bitcoin/agente.mjs';
 import {downloadHistory} from '../bitcoin/historico.mjs';
 import {calibrateHistory,pastComparisons,MODES} from '../bitcoin/calibracion.mjs';
+import {createTimeProfile} from '../bitcoin/perfil-tiempo.mjs';
 
 function usage(){
   process.stdout.write('LaPlaceDIG — laboratorio del demonio digital\n'
@@ -45,6 +46,7 @@ function usage(){
    +'  node tools/laplace.mjs actualizar-bitcoin CAPTURA_NUEVA.json [HECHOS_NUEVOS.jsonl]\n'
    +'  node tools/laplace.mjs descargar-bitcoin INICIO_UTC FIN_UTC HISTORIA_NUEVA.json\n'
    +'  node tools/laplace.mjs calibrar-bitcoin HISTORIA.json BIN_XI INFORME_NUEVO.json strict|exploratory_close_availability [CASOS_NUEVOS.json]\n'
+   +'  node tools/laplace.mjs preparar-tiempo HISTORIA.json INFORME.json BIN_XI PERFIL_NUEVO.json\n'
    +'Datos historicos siempre identificados por fuente y fecha de disponibilidad. Sin cotizaciones inventadas.\n');
 }
 function must(v,message){if(!v)throw Error(message)}
@@ -77,6 +79,13 @@ function summary(rows){
 async function main(){
   const [, ,command,...params]=process.argv;
   if(!command||['ayuda','help','--help'].includes(command)){usage();return;}
+  if(command==='preparar-tiempo'){
+    must(params.length===4,'uso: preparar-tiempo HISTORIA.json INFORME.json BIN_XI PERFIL_NUEVO.json');
+    const profile=createTimeProfile(params[2],JSON.parse(readFileSync(params[0],'utf8')),JSON.parse(readFileSync(params[1],'utf8')));
+    writeFileSync(params[3],JSON.stringify(profile,null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({file:params[3],profile_sha256:profile.profile_sha256,range:[profile.range_start,profile.range_end],
+      training_samples:profile.training_samples,native:profile.native,future_observations:0},null,2));return;
+  }
   if(command==='actualizar-bitcoin'){
     must(params.length===1||params.length===2,'uso: actualizar-bitcoin CAPTURA_NUEVA.json [HECHOS_NUEVOS.jsonl]');
     const capture=await collectBitcoin();
