@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feat/laplace-salto-temporal-xi-e005
+      - test/laplace-e005-extreme-20261028
   pull_request:
     branches:
       - feat/laplace-aprende-leyes-xi
@@ -55,6 +56,17 @@ jobs:
         run: |
           set -euo pipefail
           node --test tests/salto.test.mjs
+      - name: Pruebas adversariales hasta 10^12 pasos con referencia de ciclos independiente
+        run: |
+          set -euo pipefail
+          mkdir -p ci-evidence
+          node --check tests/salto-extremo.mjs
+          node tests/salto-extremo.mjs ./build-reverse/reverse_pc ci-evidence/extremo.json
+      - name: Benchmark de tiempo y RAM real, XI vs XI
+        run: |
+          set -euo pipefail
+          node --check tests/salto-rendimiento.mjs
+          node tests/salto-rendimiento.mjs ./build-reverse/reverse_pc ci-evidence/rendimiento.json
       - name: Guardar ejemplo reproducible y verificar bytecode RXE
         run: |
           set -euo pipefail
