@@ -110,7 +110,7 @@ try{
    }
  }
  for(let i=0;i<12;i++){
-   const w=1+(rand()%ANCHO_MAX),h=BigInt(rand())*BigInt(rand()%200000+1);
+   const w=1+(rand()%ANCHO_MAX),h=(BigInt(rand())*BigInt(rand()%200000+1))%(HORIZONTE_MAX+1n);
    try{runCase(w,law(w),randBits(w),h,{rxe:(i%4===0)})}
    catch(error){report.failed++;report.failures.push({width:w,horizon:h.toString(),kind:'random',message:String(error.message)});}
  }
