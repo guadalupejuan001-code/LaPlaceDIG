@@ -90,7 +90,7 @@ try{
  });
  assert.equal(sha(JSON.stringify(report.baseline.map(x=>({
    tick:x.tick,states:x.bodies,xi_sha256:x.xi_sha256
- }))),seal,'sealed forecast mutated');
+ })))),seal,'sealed forecast mutated');
  assert.ok(report.comparison.at(-1).max_separation>0,'perturbation had no observable consequence');
  assert.ok(report.baseline.every(s=>s.quantum_components===0),'no quantum states should be claimed');
  assert.ok(report.perturbed.every(s=>s.quantum_components===0));
