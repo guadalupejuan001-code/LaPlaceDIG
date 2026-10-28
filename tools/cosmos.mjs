@@ -4,6 +4,7 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {compilarCosmologia,EJEMPLO} from '../cosmos/lcdm.mjs';
 const usage='LAPLACE P003 / historia del universo en XI/Ether\n'
  +'  node tools/cosmos.mjs universo SALIDA.xi\n'
+ +'  node tools/cosmos.mjs fino SALIDA.xi\n'
  +'  node tools/cosmos.mjs rango MIN_EXP MAX_EXP SALIDA.xi\n'
  +'  node tools/cosmos.mjs modelo PARAMETROS.json SALIDA.xi\n\n'
  +'  reverse_pc compile SALIDA.xi Cosmos-P003.rxe\n'
@@ -17,6 +18,8 @@ try{
   let source,out;
   if(action==='universo'&&args.length===1){
     source=EJEMPLO;out=args[0];
+  }else if(action==='fino'&&args.length===1){
+    source={...EJEMPLO,detalle:'digitos'};out=args[0];
   }else if(action==='rango'&&args.length===3){
     source={...EJEMPLO,min_exp:Number(args[0]),max_exp:Number(args[1])};out=args[2];
   }else if(action==='modelo'&&args.length===2){
