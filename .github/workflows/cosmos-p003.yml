@@ -43,6 +43,9 @@ jobs:
           node --check cosmos/lcdm.mjs
           node --check tests/cosmos.test.mjs
           node --check tests/cosmos-experimento.mjs
+          node --check tests/cosmos-extremo.mjs
+          node --check tools/laplace.mjs
+          node tools/laplace.mjs --help | grep -q crear-cosmos
           node --check tools/cosmos.mjs
           node --test tests/cosmos.test.mjs
       - name: Construir REVERSE-PC y XI Machine sin copiar otro runtime
@@ -61,6 +64,10 @@ jobs:
           set -euo pipefail
           mkdir -p ci-cosmos
           node tests/cosmos-experimento.mjs ./build-reverse/reverse_pc ci-cosmos/resultado.json
+      - name: Someter el universo virtual a 128 parámetros cosmológicos distintos
+        run: |
+          set -euo pipefail
+          node tests/cosmos-extremo.mjs ./build-reverse/reverse_pc ci-cosmos/extremo.json
       - name: Comprobar ejecutable RXE completo y manifest
         run: |
           set -euo pipefail
