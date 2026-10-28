@@ -1,5 +1,14 @@
 # LaPlaceDIG
 
+## FISICA P001 — laboratorio mecánico en XI/Ether
+
+**Nuevo sistema físico ideal en LaPlaceDIG:** una partícula en caja bidimensional, con masa, posición, velocidad, choques perfectamente elásticos contra paredes y un impulso externo opcional. El motor es [XI](fisica/billar.xi) y ejecuta la evolución en REVERSE-PC / Inverse Ether Memory sin recorrer los instantes intermedios. Hasta 10^12 segundos de horizonte dentro del dominio de enteros y límites declarados.
+
+La configuración y las unidades físicas están definidas en [FISICA_P001.md](docs/FISICA_P001.md). **Pruebas reales:** 8/8 nativas aprobadas, primera divergencia del evento externo en t=9, 33/33 coincidencias cuando se conoce la intervención, y consulta hasta 10^12 s. [Resultados reproducibles](docs/FISICA_P001_RESULTADOS.md). El CLI principal incluye la orden `node tools/laplace.mjs crear-fisica escena.json salida.xi`, y el ejemplo predeterminado se genera con `node tools/fisica.mjs ejemplo 1000000 billar.xi`. REVERSE-PC puede compilarlo como `Billar-Laplace.rxe`. Este laboratorio conserva E001-E005, el sistema temporal Bitcoin y las fuentes anteriores; no predice por sí solo el mundo real ni es un emulador gráfico.
+
+---
+
+
 ## E005 — nuevo prototipo de salto temporal XI/Ether
 
 **Prototipo activo de experimentación fundamental:** compone una ley afín binaria para calcular el estado de un sistema a horizontes de hasta 10^12 pasos mediante potenciación por cuadrados sucesivos en XI Machine, alojada por REVERSE-PC. El cómputo ocurre en el programa [salto/nucleo.xi](salto/nucleo.xi), utilizando Inverse Ether Memory; el anfitrión solo serializa las entradas. El aprendiz E001 entrega leyes desde observaciones. [Diseño, límites y reproducción](docs/SALTO_E005.md).

@@ -19,6 +19,7 @@ import {collectBitcoin,exportCaptureFacts} from '../bitcoin/agente.mjs';
 import {downloadHistory} from '../bitcoin/historico.mjs';
 import {calibrateHistory,pastComparisons,MODES} from '../bitcoin/calibracion.mjs';
 import {temporalExperiment,liveTemporalProfile,queryTemporal} from '../dinamica/modelo.mjs';
+import {compilarSistema} from '../fisica/compilar.mjs';
 
 function usage(){
   process.stdout.write('LaPlaceDIG — laboratorio del demonio digital\n'
@@ -49,6 +50,7 @@ function usage(){
    +'  node tools/laplace.mjs entrenar-dinamica HISTORIA.json BIN_NATIVO INFORME_NUEVO.json strict|exploratory_close_availability\n'
    +'  node tools/laplace.mjs perfil-dinamica HISTORIA.json INFORME.json BIN_NATIVO PERFIL_NUEVO.json\n'
    +'  node tools/laplace.mjs consultar-dinamica CHECKPOINT.json MASCARA PASOS BIN_NATIVO\n'
+   +'  node tools/laplace.mjs crear-fisica ESCENARIO.json SALIDA.xi\n'
    +'Datos historicos siempre identificados por fuente y fecha de disponibilidad. Sin cotizaciones inventadas.\n');
 }
 function must(v,message){if(!v)throw Error(message)}
@@ -81,6 +83,16 @@ function summary(rows){
 async function main(){
   const [, ,command,...params]=process.argv;
   if(!command||['ayuda','help','--help'].includes(command)){usage();return;}
+  if(command==='crear-fisica'){
+    must(params.length===2,'uso: crear-fisica ESCENARIO.json SALIDA.xi');
+    const program=compilarSistema(JSON.parse(readFileSync(params[0],'utf8')));
+    writeFileSync(params[1],program.xi,{flag:'wx'});
+    console.log(JSON.stringify({path:params[1],schema:program.schema,
+      xi_sha256:program.xi_sha256,config_sha256:program.configuration_sha256,
+      horizon:program.configuration.horizonte_s,
+      fisica:'billar elastico 2D en REVERSE XI / Inverse Ether Memory'},null,2));
+    return;
+  }
   if(command==='entrenar-dinamica'){
     must(params.length===4&&MODES.includes(params[3]),'uso: entrenar-dinamica HISTORIA.json BIN_NATIVO INFORME_NUEVO.json strict|exploratory_close_availability');
     const report=temporalExperiment(params[1],JSON.parse(readFileSync(params[0],'utf8')),{mode:params[3]});
