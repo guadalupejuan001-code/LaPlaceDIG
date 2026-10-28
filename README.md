@@ -1,5 +1,7 @@
 # LaPlaceDIG
 
+**Bitcoin actual:** [abrir el observatorio privado](https://laplace-bitcoin-observatorio.guadalupejuan001.chatgpt.site). El botón «Actualizar ahora» guarda cotización BTC/USD, noticias y anuncios oficiales. Se agregó una calibración histórica corta con datos reales: seis ventanas y 42 decisiones reservadas. En esa muestra la narrativa y su calibración no superaron la referencia; el predictor en vivo sigue sin activar. [Comandos, resultados y limitación de disponibilidad histórica](docs/BITCOIN.md).
+
 ## Demonio de Laplace digital — un proyecto independiente
 
 **Misión:** representar el estado de un sistema, conocer o descubrir sus reglas y calcular qué puede ocurrir en el tiempo. Se fundamenta en la idea original de Ether: estados de fondo, relaciones, excepciones y consultas bajo demanda.
@@ -19,7 +21,7 @@ No es una nueva app de REVERSE, no es el solucionador de la ecuación espacial d
 | docs/ARQUITECTURA.md | Fórmula objetivo, estado actual y límites de la IA futura |
 | docs/FUENTES.md | Shiller, FRED/ALFRED y GDELT; cobertura y limitaciones reales |
 
-**E001 añade el primer aprendiz de leyes:** recibe transiciones binarias, identifica una ley afín desconocida, la conserva como programa XI reproducible y calcula sus consecuencias. Se abstiene con evidencia insuficiente o contradictoria. Está comprobado en mundos sintéticos; todavía no aprende precios, economía ni geopolítica reales. El núcleo Ether está en Mundo X; LaPlaceDIG lo reutiliza fijando el commit 3d29556eff4d1079c791abab38e203fc209f1722.
+**E001 añade el primer aprendiz de leyes:** recibe transiciones binarias, identifica una ley afín desconocida, la conserva como programa XI reproducible y calcula sus consecuencias. Se abstiene con evidencia insuficiente o contradictoria. Ese experimento está comprobado en mundos sintéticos; el nuevo módulo Bitcoin ensaya asociaciones narrativas reales sin demostrar capacidad predictiva financiera. El núcleo Ether está en Mundo X; LaPlaceDIG lo reutiliza fijando el commit 3d29556eff4d1079c791abab38e203fc209f1722.
 
 | Nuevo componente | Función |
 | --- | --- |
@@ -58,7 +60,7 @@ Para importar un CSV de precios, se exige exactamente este encabezado (sin colum
 
 - observed_at y known_at deben ser timestamps UTC ISO-8601 terminados en Z.
 - value es decimal como texto, no número convertido en coma flotante.
-- price_basis es raw_close, adjusted_close o monthly_average.
+- price_basis es raw_close, adjusted_close, monthly_average o spot_quote; el entrenamiento BTC exige raw_close.
 - source_url es URL HTTPS que identifica la fuente original.
 - Para economía y geopolítica, utilizar JSONL con los campos descritos en docs/ARQUITECTURA.md; no reinterpretar datos faltantes como ceros.
 

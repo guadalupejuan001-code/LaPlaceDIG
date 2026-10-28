@@ -48,6 +48,9 @@ jobs:
           node --check coexistencia/experimento.mjs
           node --check coexistencia/realidades.mjs
           node --check coexistencia/experimento-realidades.mjs
+          node --check bitcoin/agente.mjs
+          node --check bitcoin/historico.mjs
+          node --check bitcoin/calibracion.mjs
       - name: Construir únicamente el QuantumRuntime existente
         run: |
           set -euo pipefail

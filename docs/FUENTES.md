@@ -1,6 +1,6 @@
 # Fuentes públicas históricas para LaPlaceDIG
 
-**Estado:** catálogo comprobado de fuentes, NO una base de datos descargada. Este repositorio no contiene cotizaciones ni noticias presentadas como reales. No inventar fechas de publicación.
+**Estado:** catálogo de fuentes generales y una muestra real de Bitcoin/GDELT. El agente actual, las capturas verificadas y la prueba retrospectiva se documentan en [BITCOIN.md](BITCOIN.md). La disponibilidad histórica original de las velas descargadas no está certificada; el modo estricto se abstiene. No inventar fechas de publicación.
 
 ## Precios: Shiller
 
@@ -48,7 +48,7 @@ Todo dato debe contener:
 
 No deducir known_at = observed_at salvo evidencia. Tampoco asumir que descargar un dato hoy significa que ese mismo dato estaba publicado históricamente entonces. Un historial reconstruido podría ser útil para investigación descriptiva, pero no autoriza evaluar supuestas predicciones antiguas sin controlar su cronología.
 
-El importador ya admite archivos locales JSONL y CSV estrictos de precios. Las descargas automáticas y la unificación de calendarios siguen pendientes de implementación y licencia/revisión de cada proveedor.
+El importador admite archivos locales JSONL y CSV estrictos de precios. El módulo Bitcoin agrega capturas actuales y descarga acotada de velas BTC/USD y archivos GDELT. Los demás proveedores y la unificación general de calendarios siguen pendientes.
 
 ## Atribución y derechos
 
@@ -66,4 +66,4 @@ Hay importadores de capturas JSON ReliefWeb y GDELT DOC. Ambos exigen `captured_
 
 Las [velas de Coinbase Exchange](https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles) ofrecen precios históricos públicos, con posibles intervalos ausentes. Su tiempo es el inicio del intervalo y no prueba por sí solo disponibilidad histórica de la versión descargada. No hay un importador que invente esa fecha.
 
-Detalles de entrenamiento y fuentes estadísticas: [NARRATIVA.md](NARRATIVA.md). El control publicado de E002 es sintético; no incorpora estos servicios como un corpus financiero real ya validado.
+Detalles de entrenamiento y fuentes estadísticas: [NARRATIVA.md](NARRATIVA.md). El control E002 permanece sintético. La muestra real posterior y su resultado negativo se registran por separado en [BITCOIN.md](BITCOIN.md).

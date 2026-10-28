@@ -15,6 +15,9 @@ import {registerForecast,registerRealities,reconcileJournal,readJournal,patternR
 import {dualExperiment} from '../coexistencia/experimento.mjs';
 import {simulateRealities} from '../coexistencia/realidades.mjs';
 import {realitiesExperiment} from '../coexistencia/experimento-realidades.mjs';
+import {collectBitcoin,exportCaptureFacts} from '../bitcoin/agente.mjs';
+import {downloadHistory} from '../bitcoin/historico.mjs';
+import {calibrateHistory,pastComparisons,MODES} from '../bitcoin/calibracion.mjs';
 
 function usage(){
   process.stdout.write('LaPlaceDIG — laboratorio del demonio digital\n'
@@ -39,6 +42,9 @@ function usage(){
    +'  node tools/laplace.mjs experimento-dual BIN_XI DIRECTORIO_NUEVO\n'
    +'  node tools/laplace.mjs analizar-realidades MODELO_DUAL hechos.jsonl CORTE_UTC ESCENARIOS.json BIN_XI REGISTRO.jsonl\n'
    +'  node tools/laplace.mjs experimento-realidades BIN_XI DIRECTORIO_NUEVO\n'
+   +'  node tools/laplace.mjs actualizar-bitcoin CAPTURA_NUEVA.json [HECHOS_NUEVOS.jsonl]\n'
+   +'  node tools/laplace.mjs descargar-bitcoin INICIO_UTC FIN_UTC HISTORIA_NUEVA.json\n'
+   +'  node tools/laplace.mjs calibrar-bitcoin HISTORIA.json BIN_XI INFORME_NUEVO.json strict|exploratory_close_availability [CASOS_NUEVOS.json]\n'
    +'Datos historicos siempre identificados por fuente y fecha de disponibilidad. Sin cotizaciones inventadas.\n');
 }
 function must(v,message){if(!v)throw Error(message)}
@@ -68,9 +74,34 @@ function summary(rows){
     warning:'No implica que los precios ni fechas sean autenticos: verifica procedencia y licencia de la fuente'
   };
 }
-function main(){
+async function main(){
   const [, ,command,...params]=process.argv;
   if(!command||['ayuda','help','--help'].includes(command)){usage();return;}
+  if(command==='actualizar-bitcoin'){
+    must(params.length===1||params.length===2,'uso: actualizar-bitcoin CAPTURA_NUEVA.json [HECHOS_NUEVOS.jsonl]');
+    const capture=await collectBitcoin();
+    writeFileSync(params[0],JSON.stringify(capture,null,2)+'\n',{flag:'wx'});
+    if(params[1])writeFileSync(params[1],stringifyJSONL(exportCaptureFacts(capture)),{flag:'wx'});
+    console.log(JSON.stringify({id:capture.id,status:capture.status,asset:capture.asset,quote:capture.quote,
+      news:capture.news.length,successful_sources:capture.successful_sources,total_sources:capture.total_sources,
+      capture_file:params[0],facts_file:params[1]??null},null,2));return;
+  }
+  if(command==='descargar-bitcoin'){
+    must(params.length===3,'uso: descargar-bitcoin INICIO_UTC FIN_UTC HISTORIA_NUEVA.json');
+    const history=await downloadHistory({start:params[0],end:params[1]});
+    writeFileSync(params[2],JSON.stringify(history,null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({file:params[2],records:history.records.length,ledger_sha256:history.ledger_sha256,
+      archives_ok:history.archives.filter(row=>row.status==='ok').length,archives_failed:history.archives.filter(row=>row.status==='error').length},null,2));return;
+  }
+  if(command==='calibrar-bitcoin'){
+    must([4,5].includes(params.length)&&MODES.includes(params[3]),'uso: calibrar-bitcoin HISTORIA.json BIN_XI INFORME_NUEVO.json strict|exploratory_close_availability [CASOS_NUEVOS.json]');
+    const history=JSON.parse(readFileSync(params[0],'utf8'));
+    const result=calibrateHistory(params[1],history,{mode:params[3]});
+    writeFileSync(params[2],JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+    if(params[4])writeFileSync(params[4],JSON.stringify(pastComparisons(history,result),null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({file:params[2],status:result.status,mode:result.mode,raw:result.raw,calibrated:result.calibrated,
+      folds:result.folds.length,availability_assumption:result.availability_assumption,live_activation:result.live_activation},null,2));return;
+  }
   if(command==='analizar-realidades'){
     must(params.length===6,'uso: analizar-realidades MODELO_DUAL hechos.jsonl CORTE_UTC ESCENARIOS.json BIN_XI REGISTRO.jsonl');
     const checkpoint=JSON.parse(readFileSync(params[0],'utf8'));
@@ -175,4 +206,4 @@ function main(){
   }
   throw Error('unknown command '+command);
 }
-try{main()}catch(error){console.error('LaPlaceDIG: '+error.message);process.exitCode=1;}
+try{await main()}catch(error){console.error('LaPlaceDIG: '+error.message);process.exitCode=1;}

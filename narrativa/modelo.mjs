@@ -25,6 +25,7 @@ export function configuration(raw){
   need(config.start_at<config.train_end&&config.train_end<config.validation_end,'cortes cronologicos invalidos');
   need(typeof config.asset==='string'&&typeof config.currency==='string'&&
     /^[A-Z0-9.^_-]{1,32}$/.test(config.asset)&&/^[A-Z]{3,12}$/.test(config.currency),'activo/moneda invalidos');
+  need(config.asset==='BTC-USD'&&config.currency==='USD','Laplace de mercado se centra en Bitcoin BTC-USD');
   need(config.price_basis==='raw_close','E002 requiere raw_close, sin ajustes retrospectivos');
   for(const key of ['horizon_hours','step_hours','narrative_hours','prior_strength','min_train_support','min_validation_support']){
     need(Number.isInteger(config[key])&&config[key]>=1&&config[key]<=168,key+' debe ser entero entre 1 y 168');
