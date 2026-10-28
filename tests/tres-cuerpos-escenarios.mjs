@@ -20,7 +20,7 @@ const base=[
 ];
 function run(...args){
  const p=spawnSync(resolve(binary),args,{encoding:'utf8',timeout:60000,maxBuffer:4*1024*1024});
- assert.equal(p.status,0,(p.stderr||p.error?.message||p.status).slice(-700));
+ assert.equal(p.status,0,String(p.stderr||p.error?.message||p.status).slice(-700));
  return p.stdout;
 }
 const evidence={suite:'LAPLACE_P002_ENSAYO_ESCENARIOS',threshold:0.25,
