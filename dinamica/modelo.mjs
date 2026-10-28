@@ -89,7 +89,7 @@ export function fitTemporal(binary,rows,{alpha=4,prior_strength=8,cutoff}={}){
 export function queryTemporal(binary,checkpoint,queries){
   validateCheckpoint(checkpoint);need(Array.isArray(queries)&&queries.length<=256,'presupuesto de consultas temporales excedido');
   for(const query of queries){
-    need(Number.isInteger(query.mask)&&query.mask>=0&&query.mask<2048&&Number.isInteger(query.steps)&&query.steps>=0&&query.steps<=32,'consulta temporal invalida');
+    need(Number.isInteger(query.mask)&&query.mask>=0&&query.mask<2048&&Number.isInteger(query.steps)&&query.steps>=0&&query.steps<=0xffffffff,'consulta temporal invalida');
     if(query.origin_at)need(timestamp(query.origin_at)>=checkpoint.cutoff,'el modelo contiene informacion posterior al origen solicitado');
   }
   const xi=checkpoint.xi+queries.map(query=>`laplace_evolve ${query.mask} ${query.steps}`).join('\n')+'\nmem_stats\nstats\n';
@@ -180,9 +180,11 @@ export function liveTemporalProfile(binary,history,report,{as_of=new Date().toIS
   need(records.every(row=>row.known_at<=known),'el perfil vivo no puede usar registros aun desconocidos');
   const alpha=report.folds.at(-1)?.selected_alpha??4;
   const fitted=fitTemporal(binary,trainingFrames(records,{start:history.start,end:history.end,label_cutoff:known}),{alpha,cutoff:known});
-  const run=queryTemporal(binary,fitted.checkpoint,fitted.learned.state_masks.map(mask=>({mask,steps:7})));
   const news=records.filter(row=>['geopolitica','humanitaria'].includes(row.kind));
   const lastSeen=news.map(row=>row.known_at).sort().at(-1),initial=frameAt(records,lastSeen);
+  const rangeEnd='2030-12-31',projectionSteps=Math.round((Date.parse(rangeEnd+'T00:00:00Z')-Date.parse(lastSeen.slice(0,10)+'T00:00:00Z'))/DAY);
+  need(projectionSteps>=0,'el calendario de proyeccion termina antes de los datos');
+  const run=queryTemporal(binary,fitted.checkpoint,fitted.learned.state_masks.map(mask=>({mask,steps:projectionSteps})));
   const supported=report.horizons.filter(row=>row.eligible_for_confirmation).map(row=>row.horizon_days);
   const prices=new Map(records.filter(row=>row.kind==='precio'&&row.price_basis==='raw_close').map(row=>[row.observed_at,row]));
   const historical=[];
@@ -197,8 +199,8 @@ export function liveTemporalProfile(binary,history,report,{as_of=new Date().toIS
       narrative_themes:forecast.initial_mask===65535?[]:maskThemes(forecast.initial_mask)});
   }
   const body={schema:DYNAMIC_VERSION,as_of:known,origin_date:addDays(known.slice(0,10)+'T00:00:00Z',1).slice(0,10),last_observed_date:lastSeen.slice(0,10),
-    range_start:historical[0]?.decision_at.slice(0,10)??history.start.slice(0,10),range_end:'2030-12-31',
-    max_computed_horizon_days:7,validated_horizon_days:supported,features:FEATURES,default_mask:initial.mask,
+    range_start:historical[0]?.decision_at.slice(0,10)??history.start.slice(0,10),range_end:rangeEnd,
+    max_computed_horizon_days:projectionSteps,tested_horizon_days:HORIZONS,validated_horizon_days:supported,features:FEATURES,default_mask:initial.mask,
     default_themes:initial.themes,native:{...fitted.native,propagated_in_native:true},model:fitted.learned,
     checkpoint_xi_sha256:fitted.checkpoint.xi_sha256,executor_source_sha256:EXECUTOR_SOURCE_SHA256,
     source_ledger_sha256:ledgerHash(records),native_program:run.xi,native_program_sha256:run.xi_sha256,native_output_sha256:run.output_sha256,
@@ -207,6 +209,6 @@ export function liveTemporalProfile(binary,history,report,{as_of=new Date().toIS
     initial_narrative_sources:news.filter(row=>initial.news_ids.includes(row.id)).map(row=>({id:row.id,url:row.source_url,known_at:row.known_at})),
     live_activation:false,financial_edge_demonstrated:false,temporal_model:'learned finite-state Markov transitions',
     target:'BTC-USD return above 10 bps during the 24h AFTER the selected date',
-    long_horizon_status:'abstencion_horizonte_sin_evidencia',original_runtime_modified:false};
+    long_horizon_status:'proyeccion_nativa_disponible',projection_assumptions:['learned_transition_matrix_held_constant','daily_BTC_target_held_constant'],original_runtime_modified:false};
   return {...body,profile_sha256:digest(JSON.stringify(body))};
 }

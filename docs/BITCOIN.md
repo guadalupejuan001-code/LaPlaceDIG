@@ -2,7 +2,7 @@
 
 ## Núcleo temporal vigente
 
-La proyección bootstrap descrita a continuación **fue retirada de la interfaz**. El núcleo vigente aprende y propaga transiciones narrativas en operaciones nativas sobre la memoria original. Conserva 2030 en el calendario y se abstiene fuera del horizonte examinado. [Dinámica nativa, resultados y reproducción](DINAMICA.md).
+La proyección bootstrap descrita a continuación **fue retirada de la interfaz**. El núcleo vigente aprende y propaga transiciones narrativas en operaciones nativas sobre la memoria original. Proyecta cada día hasta 2030 con sus probabilidades positiva y negativa, sin bloquear fechas por el alcance de las pruebas. [Dinámica nativa, resultados y reproducción](DINAMICA.md).
 
 ## Experimento temporal anterior, conservado para auditoría
 

@@ -48,9 +48,11 @@ Menor Brier es mejor. Las diferencias diminutas favorables en algunos horizontes
 
 El modelo actual sí puede entrenarse **ahora** con cierres ya descargados y conocidos ahora. Ajusta 7 estados, 89 transiciones y 90 etiquetas. Su corte real de entrenamiento se conserva en `as_of`, y la primera fecha futura mostrada comienza después de ese corte. El último estado narrativo archivado es del 27 de octubre; los días intermedios se propagan, no se rellenan con noticias inventadas.
 
-## Límite de fechas y publicación
+## Proyección futura y publicación
 
-El calendario llega al 31 de diciembre de 2030, pero el examen actual solo cubre hasta siete días de anticipación. Fuera de esa ventana se muestra **abstención por horizonte sin evidencia**. Dentro de ella se muestran estimaciones nativas experimentales con su distribución; no hay horizonte financiero confirmado.
+El calendario calcula una **proyección diaria completa hasta el 31 de diciembre de 2030**, con probabilidad positiva, negativa y distribución de estados. Los siete días examinados retrospectivamente son información del modelo, no un límite para explorar. El ejecutor ya no impone el anterior tope de 32 pasos.
+
+La extrapolación utiliza la misma ley aprendida `d(h+1)=d(h)T`, conservando `T` y las emisiones durante todos los pasos. Puede converger a una distribución estacionaria; no se agrega variación aleatoria para que la curva parezca cambiar. Cada resultado sigue referido al retorno de las 24 horas posteriores a su fecha. La prueba de exactitud del software comprueba 1.526 pasos de un ciclo conocido sin convertir ese examen en precisión demostrada de Bitcoin. Las combinaciones narrativas no observadas continúan identificándose como tales; no se les asignan pesos inventados.
 
 El sitio consulta trazas nativas precalculadas. El botón de cotización actualiza precio y noticias; no compila ni ejecuta C++ dentro de Cloudflare Workers. El modelo temporal se vuelve a entrenar con los comandos siguientes y después se publica su nuevo perfil. La fecha del ajuste queda visible en la procedencia del archivo.
 
@@ -79,7 +81,7 @@ node tools/laplace.mjs perfil-dinamica evidencia/BTC-HISTORICO.json registros/di
 MUNDO_X_QUANTUM=./build-ether/mundo_x_quantum LAPLACE_TEMPORAL=./build-laplace/laplace_temporal node --test tests/*.test.mjs
 ```
 
-Los informes guardados son `BTC-DINAMICA.json`, `BTC-DINAMICA-ESTRICTA.json` y `BTC-DINAMICA-PERFIL.json`. El perfil de consulta contiene hashes del ejecutor, programa, salida nativa y ledger. Las pruebas verifican un ciclo temporal desconocido hasta 32 pasos, recuperación del estado propagado en memoria original, corrupción rechazada, estados nuevos, ausencia de etiquetas, separación cronológica y conservación de pronósticos cuando se alteran precios del test.
+Los informes guardados son `BTC-DINAMICA.json`, `BTC-DINAMICA-ESTRICTA.json` y `BTC-DINAMICA-PERFIL.json`. El perfil de consulta contiene hashes del ejecutor, programa, salida nativa y ledger. Las pruebas verifican un ciclo temporal desconocido hasta 1.526 pasos, recuperación del estado propagado en memoria original, corrupción rechazada, estados nuevos, ausencia de etiquetas, separación cronológica y conservación de pronósticos cuando se alteran precios del test.
 
 Se comprobó también la exportación del navegador para el 25 de septiembre: el programa exportado reproduce exactamente `0.43315340909090916` en el ejecutor nativo. El programa y la comprobación se conservan en `BTC-DINAMICA-REPLAY.xi` y `BTC-DINAMICA-REPLAY.json`. Puede repetirse sin el navegador:
 
@@ -87,10 +89,8 @@ Se comprobó también la exportación del navegador para el 25 de septiembre: el
 ./build-laplace/laplace_temporal evidencia/BTC-DINAMICA-REPLAY.xi
 ```
 
-La publicación se verificó mediante acceso autorizado al sitio privado: el perfil y el adaptador publicados coinciden con sus fuentes, todas las trazas vuelven a producirse exactamente en el ejecutor nativo y los dos scripts anteriores responden 404. `BTC-DINAMICA-VERIFICACION.json` conserva estados HTTP, hashes y la abstención de 2030, sin credenciales.
+La publicación se verificó mediante acceso autorizado al sitio privado: el perfil y el adaptador publicados coinciden con sus fuentes, todas las trazas vuelven a producirse exactamente en el ejecutor nativo y los dos scripts anteriores responden 404. `BTC-DINAMICA-VERIFICACION.json` conserva la verificación de la versión anterior. `BTC-PROYECCION-2030.json` registra la nueva proyección, sus masas y su reproducción, sin credenciales.
 
-Vista local del mismo código publicado, con el calendario en 2030:
-
-![Abstención temporal al seleccionar el 31 de diciembre de 2030](../evidencia/laplace-dinamica-2030.jpg)
+La compilación del panel y las 77 pruebas pasaron. La comprobación visual de esta revisión quedó sin verificar porque la dirección de la previsualización rechazó la conexión del navegador; no se presenta una captura de la versión anterior como evidencia de la nueva.
 
 Referencias metodológicas: [cadenas de Markov, Marco Taboga](https://www.statlect.com/fundamentals-of-statistics/Markov-chains) y [validación con origen temporal móvil, Hyndman y Athanasopoulos](https://otexts.com/fpp3/tscv.html). La implementación nativa y sus límites son propios de LaPlaceDIG; esas fuentes no validan este modelo de Bitcoin.

@@ -19,7 +19,7 @@ namespace {
 using Runtime=mundo_x::QuantumRuntime;
 using Bytes=std::vector<std::uint8_t>;
 constexpr std::uint64_t MODEL=2000000,STATE=3000000;
-constexpr std::size_t MAX_STATES=16,MAX_ROWS=256,MAX_STEPS=32;
+constexpr std::size_t MAX_STATES=16,MAX_ROWS=256;
 void require(bool ok,const char* message){if(!ok)throw std::runtime_error(message);}
 std::uint32_t integer(const std::string& raw){
   return mundo_x::infinite_program_detail::decimal<std::uint32_t>(raw,"Laplace integer");
@@ -124,13 +124,13 @@ std::vector<double> read_state(const Runtime& runtime,std::size_t k){
   require(std::abs(std::accumulate(out.begin(),out.end(),0.0)-1)<1e-9,"temporal probability mass not conserved");return out;
 }
 void evolve(Runtime& runtime,unsigned mask,unsigned steps,std::ostream& out){
-  require(mask<2048&&steps<=MAX_STEPS,"temporal query exceeds budget");const auto m=load_model(runtime);const auto k=m.masks.size();
+  require(mask<2048,"invalid temporal narrative mask");const auto m=load_model(runtime);const auto k=m.masks.size();
   const auto found=std::find(m.masks.begin(),m.masks.end(),mask);
   if(found==m.masks.end()){out<<"{\"type\":\"temporal_evolution\",\"initial_mask\":"<<mask<<",\"status\":\"abstencion_estado_no_observado\",\"trace\":[]}\n";return;}
   std::vector<double> initial(k,0);initial[found-m.masks.begin()]=1;write_state(runtime,initial);
   const auto transition=matrix(m),emit=emissions(m);
   out<<"{\"type\":\"temporal_evolution\",\"initial_mask\":"<<mask<<",\"status\":\"evolucion_nativa_calculada\",\"arithmetic\":\"native-classical\",\"state_memory_address\":"<<STATE<<",\"trace\":[";
-  for(unsigned step=0;step<=steps;step++){
+  for(std::uint64_t step=0;step<=steps;step++){
     const auto distribution=read_state(runtime,k);if(step)out<<',';
     out<<"{\"step\":"<<step<<",\"probability\":";
     if(m.labels){
@@ -138,6 +138,7 @@ void evolve(Runtime& runtime,unsigned mask,unsigned steps,std::ostream& out){
       out<<positive<<",\"negative_probability\":"<<1-positive;
     }else out<<"null,\"negative_probability\":null";
     out<<",\"distribution\":";array(out,distribution);out<<'}';
+    require(out.tellp()<=8*1024*1024,"Laplace response exceeds budget");
     if(step<steps){std::vector<double> next(k,0);for(std::size_t i=0;i<k;i++)for(std::size_t j=0;j<k;j++)next[j]+=distribution[i]*transition[i*k+j];write_state(runtime,next);}
   }out<<"],\"model_checksum\":\""<<checksum(encode(m))<<"\"}\n";
 }

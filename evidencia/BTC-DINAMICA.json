@@ -1,6 +1,6 @@
 {
   "schema": "laplace-native-temporal-v1",
-  "generated_at": "2026-10-28T05:45:14.265Z",
+  "generated_at": "2026-10-28T14:29:18.116Z",
   "mode": "exploratory_close_availability",
   "plan": {
     "training_days": 42,
@@ -16,7 +16,7 @@
     "prior_strength": 8
   },
   "source_ledger_sha256": "2bf20b40356e0055d35177e17c9b720909fd6c02707516c84ac5c6d0d547d4c1",
-  "executor_source_sha256": "22795816c08762765cc7e1c3be31ae6e711e52f6b7f268ccb2c5ac5e65da7c61",
+  "executor_source_sha256": "a331e13c529f7a5d828af109bd34518ec7d5e94caa6e181621c9b82de900c2e4",
   "runtime_ref": "3d29556eff4d1079c791abab38e203fc209f1722",
   "folds": [
     {
@@ -192,7 +192,7 @@
       "checkpoint": {
         "schema": "laplace-native-temporal-v1",
         "runtime_ref": "3d29556eff4d1079c791abab38e203fc209f1722",
-        "executor_source_sha256": "22795816c08762765cc7e1c3be31ae6e711e52f6b7f268ccb2c5ac5e65da7c61",
+        "executor_source_sha256": "a331e13c529f7a5d828af109bd34518ec7d5e94caa6e181621c9b82de900c2e4",
         "extractor_sha256": "1256cb97f9d05b82a214de366b5ff7238181cd1dd6c68dac69d4128b79adac11",
         "cutoff": "2026-09-24T00:00:00.000Z",
         "training_sha256": "958765c9054f87512c611cbe047c10c772046e887a5867f71d7bfa10c3c02b6d",
@@ -200,7 +200,7 @@
         "xi": "# LaPlaceDIG temporal: evidencia en Ether original, ajuste nativo\nmem_reset 0\nmem_store 1000000 26\nmem_store 1000001 3\nmem_store 1000002 1\nmem_store 1000003 1\nmem_store 1000004 24\nmem_store 1000005 3\nmem_store 1000007 1\nmem_store 1000008 26\nmem_store 1000009 1\nmem_store 1000011 1\nmem_store 1000012 26\nmem_store 1000013 1\nmem_store 1000014 1\nmem_store 1000015 1\nmem_store 1000016 24\nmem_store 1000017 3\nmem_store 1000019 1\nmem_store 1000020 24\nmem_store 1000021 3\nmem_store 1000022 1\nmem_store 1000023 1\nmem_store 1000024 26\nmem_store 1000025 3\nmem_store 1000026 1\nmem_store 1000027 1\nmem_store 1000028 24\nmem_store 1000029 1\nmem_store 1000031 1\nmem_store 1000032 24\nmem_store 1000033 3\nmem_store 1000034 1\nmem_store 1000035 1\nmem_store 1000036 24\nmem_store 1000037 3\nmem_store 1000039 1\nmem_store 1000040 26\nmem_store 1000041 3\nmem_store 1000043 1\nmem_store 1000044 26\nmem_store 1000045 1\nmem_store 1000047 1\nmem_store 1000048 24\nmem_store 1000049 1\nmem_store 1000051 1\nmem_store 1000052 24\nmem_store 1000053 3\nmem_store 1000055 1\nmem_store 1000056 26\nmem_store 1000057 1\nmem_store 1000059 1\nmem_store 1000060 26\nmem_store 1000061 1\nmem_store 1000063 1\nmem_store 1000064 24\nmem_store 1000065 1\nmem_store 1000067 1\nmem_store 1000068 26\nmem_store 1000069 1\nmem_store 1000071 1\nmem_store 1000072 24\nmem_store 1000073 3\nmem_store 1000074 1\nmem_store 1000075 1\nmem_store 1000076 26\nmem_store 1000077 1\nmem_store 1000078 1\nmem_store 1000079 1\nmem_store 1000080 24\nmem_store 1000081 3\nmem_store 1000082 1\nmem_store 1000083 1\nmem_store 1000084 24\nmem_store 1000085 3\nmem_store 1000086 1\nmem_store 1000087 1\nmem_store 1000088 24\nmem_store 1000089 3\nmem_store 1000090 1\nmem_store 1000091 1\nmem_store 1000092 24\nmem_store 1000093 3\nmem_store 1000095 1\nmem_store 1000096 24\nmem_store 1000097 3\nmem_store 1000098 1\nmem_store 1000099 1\nmem_store 1000100 24\nmem_store 1000101 3\nmem_store 1000102 1\nmem_store 1000103 1\nmem_store 1000104 26\nmem_store 1000105 1\nmem_store 1000107 1\nmem_store 1000108 26\nmem_store 1000109 3\nmem_store 1000110 1\nmem_store 1000111 1\nmem_store 1000112 24\nmem_store 1000113 3\nmem_store 1000114 1\nmem_store 1000115 1\nmem_store 1000116 24\nmem_store 1000117 3\nmem_store 1000119 1\nmem_store 1000120 24\nmem_store 1000121 1\nmem_store 1000122 1\nmem_store 1000123 1\nmem_store 1000124 24\nmem_store 1000125 1\nmem_store 1000127 1\nmem_store 1000128 24\nmem_store 1000129 1\nmem_store 1000130 1\nmem_store 1000131 1\nmem_store 1000132 26\nmem_store 1000133 3\nmem_store 1000135 1\nmem_store 1000136 24\nmem_store 1000137 1\nmem_store 1000139 1\nmem_store 1000140 26\nmem_store 1000141 3\nmem_store 1000142 1\nmem_store 1000143 1\nmem_store 1000144 24\nmem_store 1000145 3\nmem_store 1000147 1\nmem_store 1000148 26\nmem_store 1000149 2\nmem_store 1000150 1\nmem_store 1000151 1\nmem_store 1000152 26\nmem_store 1000153 3\nmem_store 1000154 1\nmem_store 1000155 1\nmem_store 1000156 26\nmem_store 1000157 3\nmem_store 1000159 1\nmem_store 1000160 24\nmem_store 1000161 1\nmem_store 1000163 1\nmem_store 1000164 24\nmem_store 1000165 3\nmem_store 1000167 1\nmem_store 1000168 24\nmem_store 1000169 3\nmem_store 1000170 2\nlaplace_fit 1000000 43 0 8\n",
         "training_cutoff": "2026-09-10T00:00:00.000Z",
         "selection_sha256": "e2896403c391e77a939083d4297609d5a8bce8854a6e9ac759ded0393f856276",
-        "checkpoint_sha256": "c9841a829fd39fe11dcdfb1b20f1a2184921ef8a0f8b8413ce3f5450298fc4bb"
+        "checkpoint_sha256": "1c8fa0e8912b7f5881e350d81cbddc8cc1d5da0715d86b53e585c0ee734ba5c7"
       },
       "forecasts": [
         {
@@ -3429,7 +3429,7 @@
       "checkpoint": {
         "schema": "laplace-native-temporal-v1",
         "runtime_ref": "3d29556eff4d1079c791abab38e203fc209f1722",
-        "executor_source_sha256": "22795816c08762765cc7e1c3be31ae6e711e52f6b7f268ccb2c5ac5e65da7c61",
+        "executor_source_sha256": "a331e13c529f7a5d828af109bd34518ec7d5e94caa6e181621c9b82de900c2e4",
         "extractor_sha256": "1256cb97f9d05b82a214de366b5ff7238181cd1dd6c68dac69d4128b79adac11",
         "cutoff": "2026-10-08T00:00:00.000Z",
         "training_sha256": "5e5da749ed8726e1427050de80fcbc8b601fb88a19d3e2c3ec6198c3bee68de6",
@@ -3437,7 +3437,7 @@
         "xi": "# LaPlaceDIG temporal: evidencia en Ether original, ajuste nativo\nmem_reset 0\nmem_store 1000000 26\nmem_store 1000001 1\nmem_store 1000003 1\nmem_store 1000004 26\nmem_store 1000005 1\nmem_store 1000007 1\nmem_store 1000008 24\nmem_store 1000009 1\nmem_store 1000011 1\nmem_store 1000012 26\nmem_store 1000013 1\nmem_store 1000015 1\nmem_store 1000016 24\nmem_store 1000017 3\nmem_store 1000018 1\nmem_store 1000019 1\nmem_store 1000020 26\nmem_store 1000021 1\nmem_store 1000022 1\nmem_store 1000023 1\nmem_store 1000024 24\nmem_store 1000025 3\nmem_store 1000026 1\nmem_store 1000027 1\nmem_store 1000028 24\nmem_store 1000029 3\nmem_store 1000030 1\nmem_store 1000031 1\nmem_store 1000032 24\nmem_store 1000033 3\nmem_store 1000034 1\nmem_store 1000035 1\nmem_store 1000036 24\nmem_store 1000037 3\nmem_store 1000039 1\nmem_store 1000040 24\nmem_store 1000041 3\nmem_store 1000042 1\nmem_store 1000043 1\nmem_store 1000044 24\nmem_store 1000045 3\nmem_store 1000046 1\nmem_store 1000047 1\nmem_store 1000048 26\nmem_store 1000049 1\nmem_store 1000051 1\nmem_store 1000052 26\nmem_store 1000053 3\nmem_store 1000054 1\nmem_store 1000055 1\nmem_store 1000056 24\nmem_store 1000057 3\nmem_store 1000058 1\nmem_store 1000059 1\nmem_store 1000060 24\nmem_store 1000061 3\nmem_store 1000063 1\nmem_store 1000064 24\nmem_store 1000065 1\nmem_store 1000066 1\nmem_store 1000067 1\nmem_store 1000068 24\nmem_store 1000069 1\nmem_store 1000071 1\nmem_store 1000072 24\nmem_store 1000073 1\nmem_store 1000074 1\nmem_store 1000075 1\nmem_store 1000076 26\nmem_store 1000077 3\nmem_store 1000079 1\nmem_store 1000080 24\nmem_store 1000081 1\nmem_store 1000083 1\nmem_store 1000084 26\nmem_store 1000085 3\nmem_store 1000086 1\nmem_store 1000087 1\nmem_store 1000088 24\nmem_store 1000089 3\nmem_store 1000091 1\nmem_store 1000092 26\nmem_store 1000093 2\nmem_store 1000094 1\nmem_store 1000095 1\nmem_store 1000096 26\nmem_store 1000097 3\nmem_store 1000098 1\nmem_store 1000099 1\nmem_store 1000100 26\nmem_store 1000101 3\nmem_store 1000103 1\nmem_store 1000104 24\nmem_store 1000105 1\nmem_store 1000107 1\nmem_store 1000108 24\nmem_store 1000109 3\nmem_store 1000111 1\nmem_store 1000112 24\nmem_store 1000113 3\nmem_store 1000115 1\nmem_store 1000116 24\nmem_store 1000117 3\nmem_store 1000118 1\nmem_store 1000119 1\nmem_store 1000120 24\nmem_store 1000121 3\nmem_store 1000123 1\nmem_store 1000124 26\nmem_store 1000125 1\nmem_store 1000127 1\nmem_store 1000128 24\nmem_store 1000129 1\nmem_store 1000130 1\nmem_store 1000131 1\nmem_store 1000132 24\nmem_store 1000133 3\nmem_store 1000135 1\nmem_store 1000136 24\nmem_store 1000137 3\nmem_store 1000138 1\nmem_store 1000139 1\nmem_store 1000140 26\nmem_store 1000141 1\nmem_store 1000142 1\nmem_store 1000143 1\nmem_store 1000144 24\nmem_store 1000145 3\nmem_store 1000146 1\nmem_store 1000147 1\nmem_store 1000148 24\nmem_store 1000149 3\nmem_store 1000150 1\nmem_store 1000151 1\nmem_store 1000152 26\nmem_store 1000153 1\nmem_store 1000155 1\nmem_store 1000156 16\nmem_store 1000157 3\nmem_store 1000158 1\nmem_store 1000159 1\nmem_store 1000160 24\nmem_store 1000161 3\nmem_store 1000163 1\nmem_store 1000164 26\nmem_store 1000165 3\nmem_store 1000167 1\nmem_store 1000168 26\nmem_store 1000169 3\nmem_store 1000170 2\nlaplace_fit 1000000 43 16 8\n",
         "training_cutoff": "2026-09-24T00:00:00.000Z",
         "selection_sha256": "8f8f4b75b89ae3f45e224c79a459845b3242b27247ede2fef20dba5597386850",
-        "checkpoint_sha256": "9dd9d8ab37d7a068e5f49aec80e9ed613fa5565ee175e4f4b1c0f032eee4e268"
+        "checkpoint_sha256": "cb201267fbf58ebc94a1697dd55b28b58f1d91d3ba08e89da4b69d9828708683"
       },
       "forecasts": [
         {

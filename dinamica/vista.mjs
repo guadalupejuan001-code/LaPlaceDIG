@@ -19,12 +19,11 @@ export function selectNativeTime(profile,date,themes=profile.default_themes){
     return row?{...row,mode:'historical',date}:{mode:'historical_unavailable',date,probability:null};
   }
   const horizon=dayNumber(date)-dayNumber(profile.last_observed_date);
-  if(horizon<0||horizon>profile.max_computed_horizon_days)return {mode:'unsupported_horizon',date,horizon_days:horizon,probability:null,
-    status:'abstencion_horizonte_sin_evidencia',max_horizon_days:profile.max_computed_horizon_days};
+  need(horizon>=0&&horizon<=profile.max_computed_horizon_days,'perfil incompleto para la fecha solicitada');
   const mask=selectionMask(profile,themes),forecast=profile.forecasts.find(row=>row.initial_mask===mask);
   if(!forecast?.trace?.[horizon])return {mode:'unseen_state',date,initial_mask:mask,probability:null,status:'abstencion_estado_no_observado'};
   const row=forecast.trace[horizon];
   return {...row,mode:'native',date,horizon_days:horizon,initial_mask:mask,
-    validated:profile.validated_horizon_days.includes(horizon),native_program_sha256:profile.native_program_sha256,
+    tested:(profile.tested_horizon_days??[]).includes(horizon),validated:profile.validated_horizon_days.includes(horizon),native_program_sha256:profile.native_program_sha256,
     native_output_sha256:profile.native_output_sha256,arithmetic:'native-classical'};
 }

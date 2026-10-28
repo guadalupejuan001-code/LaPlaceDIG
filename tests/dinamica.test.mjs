@@ -12,11 +12,12 @@ const profile=read('BTC-DINAMICA-PERFIL.json');
 const cycle=()=>Array.from({length:60},(_,i)=>({date:addDays('2020-01-01T00:00:00Z',i),mask:[1,2,4][i%3],y:i%3===1?0:1,
   target_known_at:addDays('2020-01-01T00:00:00Z',i+1),link:i<59}));
 const cutoff=addDays('2020-01-01T00:00:00Z',60);
-test('native learner discovers ordered transitions and executes a held-out cycle without JS propagation',native,()=>{
+test('native learner propagates an unseen cycle for 1526 days without a forecast-horizon gate or JS propagation',native,()=>{
   const fitted=fitTemporal(binary,cycle(),{alpha:0,cutoff});
   assert.deepEqual(fitted.learned.state_masks,[1,2,4]);assert.equal(fitted.learned.labels,60);
   assert.deepEqual(fitted.learned.transition_matrix,[0,1,0,0,0,1,1,0,0]);
-  const run=queryTemporal(binary,fitted.checkpoint,[{mask:1,steps:32}]);
+  const run=queryTemporal(binary,fitted.checkpoint,[{mask:1,steps:1526}]);
+  assert.equal(run.forecasts[0].trace.length,1527);
   for(const row of run.forecasts[0].trace){
     assert.equal(row.distribution[row.step%3],1);
     assert.ok(Math.abs(row.probability+row.negative_probability-1)<1e-14);
@@ -46,7 +47,7 @@ test('unobserved states and unknown prices abstain while retaining learned narra
   assert.ok(Math.abs(run.forecasts[0].trace[7].distribution.reduce((a,b)=>a+b,0)-1)<1e-12);
   assert.equal(run.forecasts[1].status,'abstencion_estado_no_observado');
   assert.deepEqual(run.forecasts[1].trace,[]);
-  assert.throws(()=>queryTemporal(binary,fitted.checkpoint,[{mask:1,steps:33}]),/consulta/);
+  assert.throws(()=>queryTemporal(binary,fitted.checkpoint,[{mask:1,steps:1.5}]),/consulta/);
   assert.throws(()=>queryTemporal(binary,{...fitted.checkpoint,xi:fitted.checkpoint.xi+'x 1\n'},[]),/hash/);
   assert.throws(()=>queryTemporal(binary,{...fitted.checkpoint,cutoff:'1900-01-01T00:00:00.000Z'},[]),/hash/);
   assert.throws(()=>fitTemporal(binary,cycle().map(row=>({...row,target_known_at:row.date})),{cutoff}),/horizonte/);
@@ -74,13 +75,17 @@ test('held-out future prices cannot change model selection, checkpoint or sealed
   assert.equal(second.folds[0].checkpoint.xi_sha256,original.folds[0].checkpoint.xi_sha256);
   assert.equal(second.folds[0].forecasts_sha256,original.folds[0].forecasts_sha256);
 });
-test('display adapter only returns native results and withholds the unsupported year 2030',()=>{
+test('display adapter exposes native projections through 2030 regardless of the tested horizon',()=>{
   const date=addDays(profile.origin_date,1).slice(0,10),selected=selectNativeTime(profile,date);
   assert.equal(selected.mode,'native');
   const stored=profile.forecasts.find(row=>row.initial_mask===profile.default_mask).trace[selected.horizon_days];
   assert.equal(selected.probability,stored.probability);assert.equal(selected.negative_probability,stored.negative_probability);
-  assert.equal(selectNativeTime(profile,'2030-12-31').probability,null);
-  assert.equal(selectNativeTime(profile,'2030-12-31').mode,'unsupported_horizon');
+  const future=selectNativeTime(profile,'2030-12-31');
+  assert.equal(future.mode,'native');assert.equal(future.tested,false);
+  assert.ok(Number.isFinite(future.probability));
+  assert.ok(Math.abs(future.probability+future.negative_probability-1)<1e-12);
+  assert.equal(future.probability,profile.forecasts.find(row=>row.initial_mask===profile.default_mask).trace[future.horizon_days].probability);
+  assert.ok(Math.abs(future.distribution.reduce((a,b)=>a+b,0)-1)<1e-9);
   assert.equal(selectNativeTime(profile,profile.origin_date,[]).mode,'unseen_state');
   assert.throws(()=>selectionMask(profile,['BITCOIN_PRICE']),/desconocidos/);
   const first=profile.history[0];assert.equal(selectNativeTime(profile,first.decision_at.slice(0,10)).probability,first.probability);

@@ -2,7 +2,7 @@
 
 **Bitcoin actual:** [abrir el observatorio privado](https://laplace-bitcoin-observatorio.guadalupejuan001.chatgpt.site). El botón «Actualizar ahora» guarda cotización BTC/USD, noticias y anuncios oficiales. Se agregó una calibración histórica corta con datos reales: seis ventanas y 42 decisiones reservadas. En esa muestra la narrativa y su calibración no superaron la referencia; el predictor en vivo sigue sin activar. [Comandos, resultados y limitación de disponibilidad histórica](docs/BITCOIN.md).
 
-**Núcleo temporal nativo:** aprende siete estados y sus transiciones; propaga su distribución sobre Inverse Ether Memory con operaciones nativas de Laplace. El navegador consulta esas trazas. La proyección bootstrap a 2030 fue retirada: el calendario conserva esa fecha, pero el cálculo se abstiene fuera de los siete días examinados. El modelo actual usa 90 etiquetas BTC; la prueba de un día de anticipación obtuvo Brier 0.246410 frente a 0.245788 de referencia. Todavía no hay ventaja financiera confirmada. [Ejecución, examen y reproducción](docs/DINAMICA.md).
+**Núcleo temporal nativo:** aprende siete estados y sus transiciones; propaga su distribución sobre Inverse Ether Memory con operaciones nativas de Laplace. El navegador consulta esas trazas. Cada día hasta 2030 tiene una proyección nativa positiva y negativa; los siete días de pruebas retrospectivas son información del modelo y no bloquean la exploración. El modelo actual usa 90 etiquetas BTC; la prueba de un día de anticipación obtuvo Brier 0.246410 frente a 0.245788 de referencia. Todavía no hay ventaja financiera confirmada. [Ejecución, examen y reproducción](docs/DINAMICA.md).
 
 ## Demonio de Laplace digital — un proyecto independiente
 
