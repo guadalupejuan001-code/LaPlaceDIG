@@ -51,7 +51,7 @@ Cada época ocupa un **registro lógico de 27 bytes**, compuesto de:
 - H, temperatura, densidad energética y tiempo de Hubble como mantisas de tres bytes y exponentes ZigZag de un byte cada uno;
 - tres fracciones del presupuesto cósmico, cada una en tres bytes.
 
-Total: **891 bytes lógicos para 33 épocas**. Eso NO significa que el motor completo ocupe 891 bytes de RAM física. Los metadatos del runtime, memoria inversa, instrucciones y snapshots tienen un coste adicional medible por separado.
+Total: **891 bytes lógicos para 33 épocas**. En modo **detalle=digitos**, XI evalúa también las mantisas decimales 1..9 de cada década (sin crear millones de partículas): **271 épocas** y **7317 bytes lógicos**. Las dos resoluciones utilizan exactamente las mismas ecuaciones cosmológicas y se verifican por separado. Eso NO significa que el motor completo ocupe 891 bytes de RAM física. Los metadatos del runtime, memoria inversa, instrucciones y snapshots tienen un coste adicional medible por separado.
 
 La representación de grandes potencias no equivale a simular todos los grados de libertad del universo: P003 trata únicamente un fondo homogéneo de tres componentes energéticas.
 
@@ -64,8 +64,9 @@ Generar fuente cosmológica con parámetros predeterminados:
 O definir un rango de exponentes y generar otro programa:
 
     node tools/cosmos.mjs rango -12 0 universo-reciente.xi
+    node tools/cosmos.mjs fino universo-271.xi
 
-Un escenario parametrizado puede incluir min_exp, max_exp y omega_r_micro, omega_m_micro, omega_lambda_micro, que deben sumar un millón. La entrada se valida contra instrucciones XI maliciosas, rangos y densidades incoherentes.
+Un escenario parametrizado puede incluir min_exp, max_exp, detalle ('decadas' o 'digitos') y omega_r_micro, omega_m_micro, omega_lambda_micro, que deben sumar un millón. La entrada se valida contra instrucciones XI maliciosas, rangos y densidades incoherentes.
 
     node tools/cosmos.mjs modelo parametros.json universo.xi
 
@@ -81,7 +82,7 @@ También se integra con la interfaz principal del laboratorio como comando crear
 
 1. Todas las magnitudes estimadas desde XI se comparan con un oráculo numérico independiente que evalúa Friedmann en doble precisión.
 2. Se verifica una historia completa y cronológicamente ordenada de 33 épocas, desde universo caliente dominado por radiación hasta un presente dominado por energía oscura.
-3. Se mide el error relativo de H(a), T(a), ρc²(a) y 1/H(a); se contrastan fracciones por componente.
+3. Se mide el error relativo de H(a), T(a), ρc²(a) y 1/H(a); se contrastan fracciones por componente. La batería extrema prueba 1024 cosmologías planas independientes (33792 estados en modo normal).
 4. Se recuperan los 891 bytes de Inverse Ether Memory desde un snapshot RVPC2 y se exige igualdad exacta con las 33 observaciones que emitió XI.
 5. La fuente y su ejecutable RXE deben producir observaciones idénticas sobre el mismo runtime y con igual estado inicial.
 6. Se rechazan condiciones fuera de dominio, cosmología no plana sin la curvatura requerida, inyecciones de comandos y programas corruptos.
