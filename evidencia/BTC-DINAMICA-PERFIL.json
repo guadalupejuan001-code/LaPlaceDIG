@@ -1,0 +1,2221 @@
+{
+  "schema": "laplace-native-temporal-v1",
+  "as_of": "2026-10-28T05:34:48.748Z",
+  "origin_date": "2026-10-29",
+  "last_observed_date": "2026-10-27",
+  "range_start": "2026-09-25",
+  "range_end": "2030-12-31",
+  "max_computed_horizon_days": 7,
+  "validated_horizon_days": [],
+  "features": [
+    "AID_BLOCKED",
+    "CEASEFIRE",
+    "CIVILIAN_HARM",
+    "CONFLICT_ESCALATION",
+    "DIPLOMATIC_COOPERATION",
+    "DISPLACEMENT",
+    "FOOD_INSECURITY",
+    "HEALTH_EMERGENCY",
+    "RELIEF_ACCESS",
+    "SANCTIONS",
+    "SHIPPING_DISRUPTION"
+  ],
+  "default_mask": 282,
+  "default_themes": [
+    "CEASEFIRE",
+    "CONFLICT_ESCALATION",
+    "DIPLOMATIC_COOPERATION",
+    "RELIEF_ACCESS"
+  ],
+  "native": {
+    "backend": "original-inverse-ether-memory",
+    "arithmetic": "native-classical",
+    "active_qubits": 0,
+    "memory_overrides": 389,
+    "learned_in_native": true,
+    "propagation_backend": "native-classical",
+    "propagated_in_native": true
+  },
+  "model": {
+    "type": "temporal_model",
+    "backend": "original-inverse-ether-memory",
+    "arithmetic": "native-classical",
+    "state_masks": [
+      280,
+      282,
+      536,
+      538,
+      784,
+      792,
+      794
+    ],
+    "visits": [
+      16,
+      15,
+      1,
+      1,
+      1,
+      35,
+      21
+    ],
+    "label_counts": [
+      16,
+      15,
+      1,
+      1,
+      1,
+      35,
+      21
+    ],
+    "positive_counts": [
+      5,
+      6,
+      0,
+      1,
+      1,
+      16,
+      11
+    ],
+    "transition_counts": [
+      4,
+      3,
+      0,
+      0,
+      0,
+      7,
+      2,
+      3,
+      2,
+      0,
+      0,
+      1,
+      6,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      6,
+      8,
+      0,
+      1,
+      0,
+      14,
+      6,
+      3,
+      2,
+      1,
+      0,
+      0,
+      7,
+      8
+    ],
+    "transition_matrix": [
+      0.21262886597938144,
+      0.1762242268041237,
+      0.010309278350515464,
+      0.010309278350515464,
+      0.010309278350515464,
+      0.40431701030927836,
+      0.1759020618556701,
+      0.19347079037800688,
+      0.15463917525773194,
+      0.01099656357388316,
+      0.01099656357388316,
+      0.04432989690721649,
+      0.39793814432989694,
+      0.18762886597938142,
+      0.16494845360824742,
+      0.15524560339599758,
+      0.019405700424499697,
+      0.019405700424499697,
+      0.019405700424499697,
+      0.3493026076409946,
+      0.27228623408126135,
+      0.16494845360824742,
+      0.15524560339599758,
+      0.019405700424499697,
+      0.019405700424499697,
+      0.019405700424499697,
+      0.3493026076409946,
+      0.27228623408126135,
+      0.16494845360824742,
+      0.15524560339599758,
+      0.019405700424499697,
+      0.019405700424499697,
+      0.019405700424499697,
+      0.40812613705275924,
+      0.21346270466949666,
+      0.17262987669294524,
+      0.20861127956337172,
+      0.006468566808166565,
+      0.026076409945421465,
+      0.006468566808166565,
+      0.3909440064685668,
+      0.18880129371336163,
+      0.15686820841460017,
+      0.1253831150738367,
+      0.03594315965449986,
+      0.008916132627472834,
+      0.008916132627472834,
+      0.3496795764837002,
+      0.3142936751184174
+    ],
+    "emissions": [
+      0.35688405797101447,
+      0.4158790170132325,
+      0.3961352657004831,
+      0.5072463768115942,
+      0.5072463768115942,
+      0.455005055611729,
+      0.5022488755622189
+    ],
+    "state_reference": [
+      0.17525773195876287,
+      0.16494845360824742,
+      0.020618556701030927,
+      0.020618556701030927,
+      0.020618556701030927,
+      0.3711340206185567,
+      0.2268041237113402
+    ],
+    "samples": 90,
+    "labels": 90,
+    "alpha": 16,
+    "prior_strength": 8,
+    "training_prior": 0.44565217391304346,
+    "checksum": "4836627662360851344"
+  },
+  "checkpoint_xi_sha256": "20d74a09720fc5dabeebffd8f376cc56c542364699e960d091bf566c49edc332",
+  "executor_source_sha256": "22795816c08762765cc7e1c3be31ae6e711e52f6b7f268ccb2c5ac5e65da7c61",
+  "source_ledger_sha256": "2bf20b40356e0055d35177e17c9b720909fd6c02707516c84ac5c6d0d547d4c1",
+  "native_program": "# LaPlaceDIG temporal: evidencia en Ether original, ajuste nativo\nmem_reset 0\nmem_store 1000000 26\nmem_store 1000001 3\nmem_store 1000002 1\nmem_store 1000003 1\nmem_store 1000004 24\nmem_store 1000005 3\nmem_store 1000007 1\nmem_store 1000008 26\nmem_store 1000009 1\nmem_store 1000011 1\nmem_store 1000012 26\nmem_store 1000013 1\nmem_store 1000014 1\nmem_store 1000015 1\nmem_store 1000016 24\nmem_store 1000017 3\nmem_store 1000019 1\nmem_store 1000020 24\nmem_store 1000021 3\nmem_store 1000022 1\nmem_store 1000023 1\nmem_store 1000024 26\nmem_store 1000025 3\nmem_store 1000026 1\nmem_store 1000027 1\nmem_store 1000028 24\nmem_store 1000029 1\nmem_store 1000031 1\nmem_store 1000032 24\nmem_store 1000033 3\nmem_store 1000034 1\nmem_store 1000035 1\nmem_store 1000036 24\nmem_store 1000037 3\nmem_store 1000039 1\nmem_store 1000040 26\nmem_store 1000041 3\nmem_store 1000043 1\nmem_store 1000044 26\nmem_store 1000045 1\nmem_store 1000047 1\nmem_store 1000048 24\nmem_store 1000049 1\nmem_store 1000051 1\nmem_store 1000052 24\nmem_store 1000053 3\nmem_store 1000055 1\nmem_store 1000056 26\nmem_store 1000057 1\nmem_store 1000059 1\nmem_store 1000060 26\nmem_store 1000061 1\nmem_store 1000063 1\nmem_store 1000064 24\nmem_store 1000065 1\nmem_store 1000067 1\nmem_store 1000068 26\nmem_store 1000069 1\nmem_store 1000071 1\nmem_store 1000072 24\nmem_store 1000073 3\nmem_store 1000074 1\nmem_store 1000075 1\nmem_store 1000076 26\nmem_store 1000077 1\nmem_store 1000078 1\nmem_store 1000079 1\nmem_store 1000080 24\nmem_store 1000081 3\nmem_store 1000082 1\nmem_store 1000083 1\nmem_store 1000084 24\nmem_store 1000085 3\nmem_store 1000086 1\nmem_store 1000087 1\nmem_store 1000088 24\nmem_store 1000089 3\nmem_store 1000090 1\nmem_store 1000091 1\nmem_store 1000092 24\nmem_store 1000093 3\nmem_store 1000095 1\nmem_store 1000096 24\nmem_store 1000097 3\nmem_store 1000098 1\nmem_store 1000099 1\nmem_store 1000100 24\nmem_store 1000101 3\nmem_store 1000102 1\nmem_store 1000103 1\nmem_store 1000104 26\nmem_store 1000105 1\nmem_store 1000107 1\nmem_store 1000108 26\nmem_store 1000109 3\nmem_store 1000110 1\nmem_store 1000111 1\nmem_store 1000112 24\nmem_store 1000113 3\nmem_store 1000114 1\nmem_store 1000115 1\nmem_store 1000116 24\nmem_store 1000117 3\nmem_store 1000119 1\nmem_store 1000120 24\nmem_store 1000121 1\nmem_store 1000122 1\nmem_store 1000123 1\nmem_store 1000124 24\nmem_store 1000125 1\nmem_store 1000127 1\nmem_store 1000128 24\nmem_store 1000129 1\nmem_store 1000130 1\nmem_store 1000131 1\nmem_store 1000132 26\nmem_store 1000133 3\nmem_store 1000135 1\nmem_store 1000136 24\nmem_store 1000137 1\nmem_store 1000139 1\nmem_store 1000140 26\nmem_store 1000141 3\nmem_store 1000142 1\nmem_store 1000143 1\nmem_store 1000144 24\nmem_store 1000145 3\nmem_store 1000147 1\nmem_store 1000148 26\nmem_store 1000149 2\nmem_store 1000150 1\nmem_store 1000151 1\nmem_store 1000152 26\nmem_store 1000153 3\nmem_store 1000154 1\nmem_store 1000155 1\nmem_store 1000156 26\nmem_store 1000157 3\nmem_store 1000159 1\nmem_store 1000160 24\nmem_store 1000161 1\nmem_store 1000163 1\nmem_store 1000164 24\nmem_store 1000165 3\nmem_store 1000167 1\nmem_store 1000168 24\nmem_store 1000169 3\nmem_store 1000171 1\nmem_store 1000172 24\nmem_store 1000173 3\nmem_store 1000174 1\nmem_store 1000175 1\nmem_store 1000176 24\nmem_store 1000177 3\nmem_store 1000179 1\nmem_store 1000180 26\nmem_store 1000181 1\nmem_store 1000183 1\nmem_store 1000184 24\nmem_store 1000185 1\nmem_store 1000186 1\nmem_store 1000187 1\nmem_store 1000188 24\nmem_store 1000189 3\nmem_store 1000191 1\nmem_store 1000192 24\nmem_store 1000193 3\nmem_store 1000194 1\nmem_store 1000195 1\nmem_store 1000196 26\nmem_store 1000197 1\nmem_store 1000198 1\nmem_store 1000199 1\nmem_store 1000200 24\nmem_store 1000201 3\nmem_store 1000202 1\nmem_store 1000203 1\nmem_store 1000204 24\nmem_store 1000205 3\nmem_store 1000206 1\nmem_store 1000207 1\nmem_store 1000208 26\nmem_store 1000209 1\nmem_store 1000211 1\nmem_store 1000212 16\nmem_store 1000213 3\nmem_store 1000214 1\nmem_store 1000215 1\nmem_store 1000216 24\nmem_store 1000217 3\nmem_store 1000219 1\nmem_store 1000220 26\nmem_store 1000221 3\nmem_store 1000223 1\nmem_store 1000224 26\nmem_store 1000225 3\nmem_store 1000227 1\nmem_store 1000228 26\nmem_store 1000229 3\nmem_store 1000231 1\nmem_store 1000232 26\nmem_store 1000233 3\nmem_store 1000234 1\nmem_store 1000235 1\nmem_store 1000236 24\nmem_store 1000237 3\nmem_store 1000239 1\nmem_store 1000240 24\nmem_store 1000241 1\nmem_store 1000243 1\nmem_store 1000244 24\nmem_store 1000245 1\nmem_store 1000246 1\nmem_store 1000247 1\nmem_store 1000248 24\nmem_store 1000249 3\nmem_store 1000251 1\nmem_store 1000252 24\nmem_store 1000253 3\nmem_store 1000254 1\nmem_store 1000255 1\nmem_store 1000256 24\nmem_store 1000257 1\nmem_store 1000259 1\nmem_store 1000260 24\nmem_store 1000261 1\nmem_store 1000262 1\nmem_store 1000263 1\nmem_store 1000264 24\nmem_store 1000265 3\nmem_store 1000266 1\nmem_store 1000267 1\nmem_store 1000268 24\nmem_store 1000269 1\nmem_store 1000271 1\nmem_store 1000272 24\nmem_store 1000273 3\nmem_store 1000275 1\nmem_store 1000276 26\nmem_store 1000277 3\nmem_store 1000279 1\nmem_store 1000280 24\nmem_store 1000281 3\nmem_store 1000283 1\nmem_store 1000284 26\nmem_store 1000285 3\nmem_store 1000286 1\nmem_store 1000287 1\nmem_store 1000288 24\nmem_store 1000289 3\nmem_store 1000290 1\nmem_store 1000291 1\nmem_store 1000292 26\nmem_store 1000293 3\nmem_store 1000294 1\nmem_store 1000295 1\nmem_store 1000296 24\nmem_store 1000297 2\nmem_store 1000299 1\nmem_store 1000300 26\nmem_store 1000301 3\nmem_store 1000302 1\nmem_store 1000303 1\nmem_store 1000304 26\nmem_store 1000305 3\nmem_store 1000307 1\nmem_store 1000308 26\nmem_store 1000309 3\nmem_store 1000310 1\nmem_store 1000311 1\nmem_store 1000312 24\nmem_store 1000313 3\nmem_store 1000315 1\nmem_store 1000316 24\nmem_store 1000317 1\nmem_store 1000319 1\nmem_store 1000320 26\nmem_store 1000321 1\nmem_store 1000322 1\nmem_store 1000323 1\nmem_store 1000324 24\nmem_store 1000325 3\nmem_store 1000327 1\nmem_store 1000328 26\nmem_store 1000329 1\nmem_store 1000330 1\nmem_store 1000331 1\nmem_store 1000332 26\nmem_store 1000333 3\nmem_store 1000334 1\nmem_store 1000335 1\nmem_store 1000336 26\nmem_store 1000337 3\nmem_store 1000339 1\nmem_store 1000340 26\nmem_store 1000341 3\nmem_store 1000343 1\nmem_store 1000344 26\nmem_store 1000345 1\nmem_store 1000347 1\nmem_store 1000348 24\nmem_store 1000349 3\nmem_store 1000351 1\nmem_store 1000352 24\nmem_store 1000353 1\nmem_store 1000355 1\nmem_store 1000356 26\nmem_store 1000357 1\nmem_store 1000358 1\nmem_store 1000359 1\nmem_store 1000360 255\nmem_store 1000361 255\nmem_store 1000362 2\nlaplace_fit 1000000 91 16 8\nlaplace_evolve 280 7\nlaplace_evolve 282 7\nlaplace_evolve 536 7\nlaplace_evolve 538 7\nlaplace_evolve 784 7\nlaplace_evolve 792 7\nlaplace_evolve 794 7\nmem_stats\nstats\n",
+  "native_program_sha256": "c2c4dc47152bf12ab34d8dea9592f18baa04523820695e0b877551511e3ef81c",
+  "native_output_sha256": "e5ff27995d2ad81395e5c48b95162dbbfe8b0bf0a67bf937307bd9342fe120b1",
+  "forecasts": [
+    {
+      "type": "temporal_evolution",
+      "initial_mask": 280,
+      "status": "evolucion_nativa_calculada",
+      "arithmetic": "native-classical",
+      "state_memory_address": 3000000,
+      "trace": [
+        {
+          "step": 0,
+          "probability": 0.35688405797101447,
+          "negative_probability": 0.6431159420289856,
+          "distribution": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 1,
+          "probability": 0.43602726418658394,
+          "negative_probability": 0.5639727358134161,
+          "distribution": [
+            0.21262886597938144,
+            0.1762242268041237,
+            0.010309278350515464,
+            0.010309278350515464,
+            0.010309278350515464,
+            0.40431701030927836,
+            0.1759020618556701
+          ]
+        },
+        {
+          "step": 2,
+          "probability": 0.441048043646935,
+          "negative_probability": 0.5589519563530649,
+          "distribution": [
+            0.1817974105907124,
+            0.17592317434441465,
+            0.01366791486553229,
+            0.016841589601517517,
+            0.014787945979120101,
+            0.3870800811551033,
+            0.20990188346359961
+          ]
+        },
+        {
+          "step": 3,
+          "probability": 0.4415332392778834,
+          "negative_probability": 0.5584667607221165,
+          "distribution": [
+            0.1799116363234907,
+            0.17334137576428996,
+            0.014736169507506988,
+            0.016652951142957565,
+            0.014927251441592893,
+            0.3849277632744613,
+            0.21550285254570045
+          ]
+        },
+        {
+          "step": 4,
+          "probability": 0.4415907563546335,
+          "negative_probability": 0.5584092436453665,
+          "distribution": [
+            0.1796862928324573,
+            0.1730212617185769,
+            0.014895504625609315,
+            0.016618706406915273,
+            0.014849149064264914,
+            0.38461913167254624,
+            0.21630995367962993
+          ]
+        },
+        {
+          "step": 5,
+          "probability": 0.4415985408512089,
+          "negative_probability": 0.5584014591487911,
+          "distribution": [
+            0.17965752565629328,
+            0.1729761560661962,
+            0.014917586538302628,
+            0.016612923175410778,
+            0.014838746964607536,
+            0.38457402375944133,
+            0.2164230378397481
+          ]
+        },
+        {
+          "step": 6,
+          "probability": 0.44159961389457913,
+          "negative_probability": 0.5584003861054209,
+          "distribution": [
+            0.1796536072661573,
+            0.17296979573508348,
+            0.014920681208069001,
+            0.016612077047640905,
+            0.014837281783976045,
+            0.3845677997972069,
+            0.21643875716186622
+          ]
+        },
+        {
+          "step": 7,
+          "probability": 0.44159976246095534,
+          "negative_probability": 0.5584002375390447,
+          "distribution": [
+            0.17965306419932964,
+            0.17296891582570992,
+            0.014921110814173974,
+            0.016611959768726956,
+            0.014837074532500192,
+            0.38456693545530196,
+            0.21644093940425724
+          ]
+        }
+      ],
+      "model_checksum": "4836627662360851344"
+    },
+    {
+      "type": "temporal_evolution",
+      "initial_mask": 282,
+      "status": "evolucion_nativa_calculada",
+      "arithmetic": "native-classical",
+      "state_memory_address": 3000000,
+      "trace": [
+        {
+          "step": 0,
+          "probability": 0.4158790170132325,
+          "negative_probability": 0.5841209829867675,
+          "distribution": [
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 1,
+          "probability": 0.44107835667287676,
+          "negative_probability": 0.5589216433271232,
+          "distribution": [
+            0.19347079037800688,
+            0.15463917525773194,
+            0.01099656357388316,
+            0.01099656357388316,
+            0.04432989690721649,
+            0.39793814432989694,
+            0.18762886597938142
+          ]
+        },
+        {
+          "step": 2,
+          "probability": 0.4413334777146407,
+          "negative_probability": 0.5586665222853593,
+          "distribution": [
+            0.18012453531535702,
+            0.1748437500264013,
+            0.014300152246298926,
+            0.01703181052677467,
+            0.014383740989681482,
+            0.38671631909694415,
+            0.21259969179854238
+          ]
+        },
+        {
+          "step": 3,
+          "probability": 0.44156509301124086,
+          "negative_probability": 0.5584349069887591,
+          "distribution": [
+            0.17977649207349772,
+            0.17320696005906375,
+            0.01480978464759924,
+            0.01664651995489191,
+            0.014891972032302463,
+            0.38474532532408656,
+            0.21592294590855826
+          ]
+        },
+        {
+          "step": 4,
+          "probability": 0.4415949441273507,
+          "negative_probability": 0.5584050558726493,
+          "distribution": [
+            0.1796712194084168,
+            0.1729962271339935,
+            0.014907171775809986,
+            0.01661544246773088,
+            0.014844981816286212,
+            0.3845956455436817,
+            0.21636931185408081
+          ]
+        },
+        {
+          "step": 5,
+          "probability": 0.4415991063683392,
+          "negative_probability": 0.5584008936316608,
+          "distribution": [
+            0.1796554328688706,
+            0.17297282909224757,
+            0.014919219648354761,
+            0.016612491498147076,
+            0.014837941313521731,
+            0.3845707761822539,
+            0.21643130939660432
+          ]
+        },
+        {
+          "step": 6,
+          "probability": 0.4415996922085159,
+          "negative_probability": 0.5584003077914841,
+          "distribution": [
+            0.1796533208058967,
+            0.17296933353043234,
+            0.014920907026800226,
+            0.01661201563279735,
+            0.014837173147984939,
+            0.3845673433478154,
+            0.216439906508273
+          ]
+        },
+        {
+          "step": 7,
+          "probability": 0.4415997733207483,
+          "negative_probability": 0.5584002266792517,
+          "distribution": [
+            0.17965302456444793,
+            0.17296885141538781,
+            0.014921142219095688,
+            0.0166119511602442,
+            0.014837059467183803,
+            0.3845668722520148,
+            0.21644109892162564
+          ]
+        }
+      ],
+      "model_checksum": "4836627662360851344"
+    },
+    {
+      "type": "temporal_evolution",
+      "initial_mask": 536,
+      "status": "evolucion_nativa_calculada",
+      "arithmetic": "native-classical",
+      "state_memory_address": 3000000,
+      "trace": [
+        {
+          "step": 0,
+          "probability": 0.3961352657004831,
+          "negative_probability": 0.6038647342995169,
+          "distribution": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 1,
+          "probability": 0.4464949944825064,
+          "negative_probability": 0.5535050055174936,
+          "distribution": [
+            0.16494845360824742,
+            0.15524560339599758,
+            0.019405700424499697,
+            0.019405700424499697,
+            0.019405700424499697,
+            0.3493026076409946,
+            0.27228623408126135
+          ]
+        },
+        {
+          "step": 2,
+          "probability": 0.4421657788718385,
+          "negative_probability": 0.5578342211281615,
+          "distribution": [
+            0.17772423285800196,
+            0.16912147494200824,
+            0.016583726133038594,
+            0.016073709463495654,
+            0.01439949217197019,
+            0.3817172059395786,
+            0.22438015849190673
+          ]
+        },
+        {
+          "step": 3,
+          "probability": 0.44167502652490936,
+          "negative_probability": 0.5583249734750906,
+          "distribution": [
+            0.1793652426428814,
+            0.17254150006343114,
+            0.015139231388669993,
+            0.016559553877635105,
+            0.014712285278847563,
+            0.38413216554262153,
+            0.21755002120591327
+          ]
+        },
+        {
+          "step": 4,
+          "probability": 0.4416103003188958,
+          "negative_probability": 0.5583896996811042,
+          "distribution": [
+            0.17961477328482428,
+            0.17290669303732498,
+            0.014951348839795568,
+            0.0166036217828668,
+            0.01482300187238075,
+            0.38450516661453615,
+            0.21659539456827143
+          ]
+        },
+        {
+          "step": 5,
+          "probability": 0.4416012421735578,
+          "negative_probability": 0.5583987578264422,
+          "distribution": [
+            0.17964766596206366,
+            0.1729601193646283,
+            0.014925395382255437,
+            0.016610782791771066,
+            0.01483502223390668,
+            0.38455834091272645,
+            0.21646267335264835
+          ]
+        },
+        {
+          "step": 6,
+          "probability": 0.44159998829875396,
+          "negative_probability": 0.558400011701246,
+          "distribution": [
+            0.1796522390164244,
+            0.1729675780766181,
+            0.014921764112589438,
+            0.016611781215284623,
+            0.014836758901699163,
+            0.38456562020230367,
+            0.2164442584750806
+          ]
+        },
+        {
+          "step": 7,
+          "probability": 0.4415998144148299,
+          "negative_probability": 0.5584001855851701,
+          "distribution": [
+            0.17965287451346634,
+            0.17296860786810717,
+            0.01492126108439806,
+            0.01661191861765515,
+            0.014837002196634504,
+            0.38456663287951265,
+            0.21644170284022612
+          ]
+        }
+      ],
+      "model_checksum": "4836627662360851344"
+    },
+    {
+      "type": "temporal_evolution",
+      "initial_mask": 538,
+      "status": "evolucion_nativa_calculada",
+      "arithmetic": "native-classical",
+      "state_memory_address": 3000000,
+      "trace": [
+        {
+          "step": 0,
+          "probability": 0.5072463768115942,
+          "negative_probability": 0.49275362318840576,
+          "distribution": [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 1,
+          "probability": 0.4464949944825064,
+          "negative_probability": 0.5535050055174936,
+          "distribution": [
+            0.16494845360824742,
+            0.15524560339599758,
+            0.019405700424499697,
+            0.019405700424499697,
+            0.019405700424499697,
+            0.3493026076409946,
+            0.27228623408126135
+          ]
+        },
+        {
+          "step": 2,
+          "probability": 0.4421657788718385,
+          "negative_probability": 0.5578342211281615,
+          "distribution": [
+            0.17772423285800196,
+            0.16912147494200824,
+            0.016583726133038594,
+            0.016073709463495654,
+            0.01439949217197019,
+            0.3817172059395786,
+            0.22438015849190673
+          ]
+        },
+        {
+          "step": 3,
+          "probability": 0.44167502652490936,
+          "negative_probability": 0.5583249734750906,
+          "distribution": [
+            0.1793652426428814,
+            0.17254150006343114,
+            0.015139231388669993,
+            0.016559553877635105,
+            0.014712285278847563,
+            0.38413216554262153,
+            0.21755002120591327
+          ]
+        },
+        {
+          "step": 4,
+          "probability": 0.4416103003188958,
+          "negative_probability": 0.5583896996811042,
+          "distribution": [
+            0.17961477328482428,
+            0.17290669303732498,
+            0.014951348839795568,
+            0.0166036217828668,
+            0.01482300187238075,
+            0.38450516661453615,
+            0.21659539456827143
+          ]
+        },
+        {
+          "step": 5,
+          "probability": 0.4416012421735578,
+          "negative_probability": 0.5583987578264422,
+          "distribution": [
+            0.17964766596206366,
+            0.1729601193646283,
+            0.014925395382255437,
+            0.016610782791771066,
+            0.01483502223390668,
+            0.38455834091272645,
+            0.21646267335264835
+          ]
+        },
+        {
+          "step": 6,
+          "probability": 0.44159998829875396,
+          "negative_probability": 0.558400011701246,
+          "distribution": [
+            0.1796522390164244,
+            0.1729675780766181,
+            0.014921764112589438,
+            0.016611781215284623,
+            0.014836758901699163,
+            0.38456562020230367,
+            0.2164442584750806
+          ]
+        },
+        {
+          "step": 7,
+          "probability": 0.4415998144148299,
+          "negative_probability": 0.5584001855851701,
+          "distribution": [
+            0.17965287451346634,
+            0.17296860786810717,
+            0.01492126108439806,
+            0.01661191861765515,
+            0.014837002196634504,
+            0.38456663287951265,
+            0.21644170284022612
+          ]
+        }
+      ],
+      "model_checksum": "4836627662360851344"
+    },
+    {
+      "type": "temporal_evolution",
+      "initial_mask": 784,
+      "status": "evolucion_nativa_calculada",
+      "arithmetic": "native-classical",
+      "state_memory_address": 3000000,
+      "trace": [
+        {
+          "step": 0,
+          "probability": 0.5072463768115942,
+          "negative_probability": 0.49275362318840576,
+          "distribution": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 1,
+          "probability": 0.44371594625012467,
+          "negative_probability": 0.5562840537498753,
+          "distribution": [
+            0.16494845360824742,
+            0.15524560339599758,
+            0.019405700424499697,
+            0.019405700424499697,
+            0.019405700424499697,
+            0.40812613705275924,
+            0.21346270466949666
+          ]
+        },
+        {
+          "step": 2,
+          "probability": 0.4416817845254381,
+          "negative_probability": 0.5583182154745618,
+          "distribution": [
+            0.17865138981555168,
+            0.17401724932374557,
+            0.01484992655384252,
+            0.01708313754102204,
+            0.014255517712010998,
+            0.38414452535045307,
+            0.21699825370337406
+          ]
+        },
+        {
+          "step": 3,
+          "probability": 0.4416099347316208,
+          "negative_probability": 0.5583900652683792,
+          "distribution": [
+            0.17962738166265893,
+            0.17290795919191848,
+            0.014936147835861415,
+            0.016603575763309578,
+            0.014871905145660842,
+            0.3845111062850695,
+            0.21654192411552117
+          ]
+        },
+        {
+          "step": 4,
+          "probability": 0.44160082937655537,
+          "negative_probability": 0.5583991706234446,
+          "distribution": [
+            0.17964878092789704,
+            0.172962296838512,
+            0.014924308936118038,
+            0.0166112579571334,
+            0.014835423140294027,
+            0.3845621999778388,
+            0.21645573222220668
+          ]
+        },
+        {
+          "step": 5,
+          "probability": 0.4415999261839706,
+          "negative_probability": 0.5584000738160294,
+          "distribution": [
+            0.17965244001424627,
+            0.17296801336763082,
+            0.01492157094581106,
+            0.01661185131456967,
+            0.014836825915503622,
+            0.3845659691071021,
+            0.21644332933513638
+          ]
+        },
+        {
+          "step": 6,
+          "probability": 0.4415998058073402,
+          "negative_probability": 0.5584001941926597,
+          "distribution": [
+            0.17965290670040615,
+            0.17296865818676327,
+            0.014921235716173396,
+            0.016611925202591426,
+            0.014837016450000646,
+            0.3845666832285153,
+            0.21644157451554974
+          ]
+        },
+        {
+          "step": 7,
+          "probability": 0.44159978907155467,
+          "negative_probability": 0.5584002109284454,
+          "distribution": [
+            0.17965296700878436,
+            0.1729687580990115,
+            0.014921187789685271,
+            0.016611938706040344,
+            0.014837037445039999,
+            0.38456678054751403,
+            0.21644133040392438
+          ]
+        }
+      ],
+      "model_checksum": "4836627662360851344"
+    },
+    {
+      "type": "temporal_evolution",
+      "initial_mask": 792,
+      "status": "evolucion_nativa_calculada",
+      "arithmetic": "native-classical",
+      "state_memory_address": 3000000,
+      "trace": [
+        {
+          "step": 0,
+          "probability": 0.455005055611729,
+          "negative_probability": 0.544994944388271,
+          "distribution": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "step": 1,
+          "probability": 0.4401433906533618,
+          "negative_probability": 0.5598566093466382,
+          "distribution": [
+            0.17262987669294524,
+            0.20861127956337172,
+            0.006468566808166565,
+            0.026076409945421465,
+            0.006468566808166565,
+            0.3909440064685668,
+            0.18880129371336163
+          ]
+        },
+        {
+          "step": 2,
+          "probability": 0.4414111297189056,
+          "negative_probability": 0.5585888702810944,
+          "distribution": [
+            0.1806070440562521,
+            0.17396554763829652,
+            0.014145744254257745,
+            0.016708575340614675,
+            0.01599671590510811,
+            0.38567679015857087,
+            0.21289958264689995
+          ]
+        },
+        {
+          "step": 3,
+          "probability": 0.4415674819702503,
+          "negative_probability": 0.5584325180297497,
+          "distribution": [
+            0.17976404165180032,
+            0.17315318434322052,
+            0.01483118842595373,
+            0.01663943565482242,
+            0.014875997239656404,
+            0.38478086489755065,
+            0.21595528778699594
+          ]
+        },
+        {
+          "step": 4,
+          "probability": 0.44159524508307957,
+          "negative_probability": 0.5584047549169204,
+          "distribution": [
+            0.179669103622291,
+            0.17299692933679411,
+            0.014907812309740021,
+            0.016615905751219927,
+            0.014842955721532167,
+            0.3845928975961164,
+            0.21637439566230632
+          ]
+        },
+        {
+          "step": 5,
+          "probability": 0.44159915733547855,
+          "negative_probability": 0.5584008426645215,
+          "distribution": [
+            0.1796552898292155,
+            0.17297248581888802,
+            0.01491935261335502,
+            0.016612433181600213,
+            0.014837960285059697,
+            0.38457046224156655,
+            0.21643201603031492
+          ]
+        },
+        {
+          "step": 6,
+          "probability": 0.44159969883236483,
+          "negative_probability": 0.5584003011676352,
+          "distribution": [
+            0.17965329607346375,
+            0.17296929288232993,
+            0.01492092696200076,
+            0.016612010314089737,
+            0.014837162542531758,
+            0.3845673070927125,
+            0.21644000413287154
+          ]
+        },
+        {
+          "step": 7,
+          "probability": 0.441599774242741,
+          "negative_probability": 0.558400225757259,
+          "distribution": [
+            0.17965302115849496,
+            0.17296884607109406,
+            0.014921144869387722,
+            0.016611950461149202,
+            0.014837058124036427,
+            0.38456686681767055,
+            0.21644111249816697
+          ]
+        }
+      ],
+      "model_checksum": "4836627662360851344"
+    },
+    {
+      "type": "temporal_evolution",
+      "initial_mask": 794,
+      "status": "evolucion_nativa_calculada",
+      "arithmetic": "native-classical",
+      "state_memory_address": 3000000,
+      "trace": [
+        {
+          "step": 0,
+          "probability": 0.5022488755622189,
+          "negative_probability": 0.49775112443778113,
+          "distribution": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "step": 1,
+          "probability": 0.44837129454216856,
+          "negative_probability": 0.5516287054578315,
+          "distribution": [
+            0.15686820841460017,
+            0.1253831150738367,
+            0.03594315965449986,
+            0.008916132627472834,
+            0.008916132627472834,
+            0.3496795764837002,
+            0.3142936751184174
+          ]
+        },
+        {
+          "step": 2,
+          "probability": 0.4425176902048103,
+          "negative_probability": 0.5574823097951898,
+          "distribution": [
+            0.17615068072003395,
+            0.16773574245401165,
+            0.017598164652003607,
+            0.015960203284148614,
+            0.01328317816928238,
+            0.3792347975369549,
+            0.23003723318356495
+          ]
+        },
+        {
+          "step": 3,
+          "probability": 0.4417284879900377,
+          "negative_probability": 0.5582715120099623,
+          "distribution": [
+            0.17918591171956325,
+            0.1722079197230417,
+            0.015290866788471696,
+            0.0165096206922902,
+            0.01466483568513069,
+            0.383811297721406,
+            0.2183295476700965
+          ]
+        },
+        {
+          "step": 4,
+          "probability": 0.44161761690606177,
+          "negative_probability": 0.5583823830939383,
+          "distribution": [
+            0.17958794473518666,
+            0.17286273128575103,
+            0.01497282772929438,
+            0.016597740863643663,
+            0.014812293134384154,
+            0.38446321829172947,
+            0.21670324396001062
+          ]
+        },
+        {
+          "step": 5,
+          "probability": 0.44160225968951267,
+          "negative_probability": 0.5583977403104874,
+          "distribution": [
+            0.17964393920152583,
+            0.17295412394641999,
+            0.014928335352427751,
+            0.016609985397384532,
+            0.01483358196393448,
+            0.3845523907959678,
+            0.21647764334233957
+          ]
+        },
+        {
+          "step": 6,
+          "probability": 0.44160012966804385,
+          "negative_probability": 0.5583998703319561,
+          "distribution": [
+            0.17965172365305646,
+            0.17296673895695613,
+            0.014922172972118182,
+            0.016611668811541334,
+            0.014836563319638318,
+            0.38456479673668814,
+            0.21644633555000145
+          ]
+        },
+        {
+          "step": 7,
+          "probability": 0.44159983402579706,
+          "negative_probability": 0.5584001659742029,
+          "distribution": [
+            0.1796528028984124,
+            0.17296849159393396,
+            0.014921317831459367,
+            0.016611903081171813,
+            0.014836974835880387,
+            0.38456651870397496,
+            0.21644199105516707
+          ]
+        }
+      ],
+      "model_checksum": "4836627662360851344"
+    }
+  ],
+  "history": [
+    {
+      "origin_at": "2026-09-24T00:00:00.000Z",
+      "decision_at": "2026-09-25T00:00:00.000Z",
+      "due_at": "2026-09-26T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 794,
+      "probability": 0.43315340909090916,
+      "negative_probability": 0.5668465909090908,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.375,
+        0.125,
+        0,
+        0.375,
+        0.125
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 0,
+      "start_price": "84385.46",
+      "end_price": "84093.13",
+      "raw_correct": true,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CEASEFIRE",
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-09-25T00:00:00.000Z",
+      "decision_at": "2026-09-26T00:00:00.000Z",
+      "due_at": "2026-09-27T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 794,
+      "probability": 0.43315340909090916,
+      "negative_probability": 0.5668465909090908,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.375,
+        0.125,
+        0,
+        0.375,
+        0.125
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 1,
+      "start_price": "84093.13",
+      "end_price": "84416.65",
+      "raw_correct": false,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CEASEFIRE",
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-09-26T00:00:00.000Z",
+      "decision_at": "2026-09-27T00:00:00.000Z",
+      "due_at": "2026-09-28T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 794,
+      "probability": 0.43315340909090916,
+      "negative_probability": 0.5668465909090908,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.375,
+        0.125,
+        0,
+        0.375,
+        0.125
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 0,
+      "start_price": "84416.65",
+      "end_price": "84462.14",
+      "raw_correct": true,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CEASEFIRE",
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-09-27T00:00:00.000Z",
+      "decision_at": "2026-09-28T00:00:00.000Z",
+      "due_at": "2026-09-29T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 792,
+      "probability": 0.46500891265597155,
+      "negative_probability": 0.5349910873440284,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.058823529411764705,
+        0.23529411764705882,
+        0.058823529411764705,
+        0.5294117647058824,
+        0.11764705882352941
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 0,
+      "start_price": "84462.14",
+      "end_price": "83456.74",
+      "raw_correct": true,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-09-28T00:00:00.000Z",
+      "decision_at": "2026-09-29T00:00:00.000Z",
+      "due_at": "2026-09-30T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 280,
+      "probability": 0.4565909090909091,
+      "negative_probability": 0.543409090909091,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.25,
+        0.125,
+        0,
+        0.375,
+        0.25
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 1,
+      "start_price": "83456.74",
+      "end_price": "83638.42",
+      "raw_correct": false,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS"
+      ]
+    },
+    {
+      "origin_at": "2026-09-29T00:00:00.000Z",
+      "decision_at": "2026-09-30T00:00:00.000Z",
+      "due_at": "2026-10-01T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 280,
+      "probability": 0.4565909090909091,
+      "negative_probability": 0.543409090909091,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.25,
+        0.125,
+        0,
+        0.375,
+        0.25
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 0,
+      "start_price": "83638.42",
+      "end_price": "83556.14",
+      "raw_correct": true,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS"
+      ]
+    },
+    {
+      "origin_at": "2026-09-30T00:00:00.000Z",
+      "decision_at": "2026-10-01T00:00:00.000Z",
+      "due_at": "2026-10-02T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 792,
+      "probability": 0.46500891265597155,
+      "negative_probability": 0.5349910873440284,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.058823529411764705,
+        0.23529411764705882,
+        0.058823529411764705,
+        0.5294117647058824,
+        0.11764705882352941
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 1,
+      "start_price": "83556.14",
+      "end_price": "84848.73",
+      "raw_correct": false,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-01T00:00:00.000Z",
+      "decision_at": "2026-10-02T00:00:00.000Z",
+      "due_at": "2026-10-03T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 792,
+      "probability": 0.46500891265597155,
+      "negative_probability": 0.5349910873440284,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.058823529411764705,
+        0.23529411764705882,
+        0.058823529411764705,
+        0.5294117647058824,
+        0.11764705882352941
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 0,
+      "start_price": "84848.73",
+      "end_price": "84504.88",
+      "raw_correct": true,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-02T00:00:00.000Z",
+      "decision_at": "2026-10-03T00:00:00.000Z",
+      "due_at": "2026-10-04T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 280,
+      "probability": 0.4565909090909091,
+      "negative_probability": 0.543409090909091,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.25,
+        0.125,
+        0,
+        0.375,
+        0.25
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 1,
+      "start_price": "84504.88",
+      "end_price": "84742.22",
+      "raw_correct": false,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-03T00:00:00.000Z",
+      "decision_at": "2026-10-04T00:00:00.000Z",
+      "due_at": "2026-10-05T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 280,
+      "probability": 0.4565909090909091,
+      "negative_probability": 0.543409090909091,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.25,
+        0.125,
+        0,
+        0.375,
+        0.25
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 1,
+      "start_price": "84742.22",
+      "end_price": "86507.11",
+      "raw_correct": false,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-04T00:00:00.000Z",
+      "decision_at": "2026-10-05T00:00:00.000Z",
+      "due_at": "2026-10-06T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 792,
+      "probability": 0.46500891265597155,
+      "negative_probability": 0.5349910873440284,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.058823529411764705,
+        0.23529411764705882,
+        0.058823529411764705,
+        0.5294117647058824,
+        0.11764705882352941
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 0,
+      "start_price": "86507.11",
+      "end_price": "85748.96",
+      "raw_correct": true,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-05T00:00:00.000Z",
+      "decision_at": "2026-10-06T00:00:00.000Z",
+      "due_at": "2026-10-07T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 280,
+      "probability": 0.4565909090909091,
+      "negative_probability": 0.543409090909091,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.25,
+        0.125,
+        0,
+        0.375,
+        0.25
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 0,
+      "start_price": "85748.96",
+      "end_price": "85539.77",
+      "raw_correct": true,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-06T00:00:00.000Z",
+      "decision_at": "2026-10-07T00:00:00.000Z",
+      "due_at": "2026-10-08T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 792,
+      "probability": 0.46500891265597155,
+      "negative_probability": 0.5349910873440284,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.058823529411764705,
+        0.23529411764705882,
+        0.058823529411764705,
+        0.5294117647058824,
+        0.11764705882352941
+      ],
+      "model_xi_sha256": "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e",
+      "actual": 0,
+      "start_price": "85539.77",
+      "end_price": "83275.06",
+      "raw_correct": true,
+      "forecast_sha256": "1ce6e14fb88060f7afb5015968cb3459d1d84dc37100973fbc9b1cf5d9d83f63",
+      "state_masks": [
+        280,
+        282,
+        538,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-09-24T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-08T00:00:00.000Z",
+      "decision_at": "2026-10-09T00:00:00.000Z",
+      "due_at": "2026-10-10T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 792,
+      "probability": 0.49969387755102035,
+      "negative_probability": 0.5003061224489797,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.1032069970845481,
+        0.22682215743440232,
+        0.04723032069970845,
+        0.018658892128279883,
+        0.5008746355685131,
+        0.1032069970845481
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 1,
+      "start_price": "81692.79",
+      "end_price": "82544.71",
+      "raw_correct": false,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-09T00:00:00.000Z",
+      "decision_at": "2026-10-10T00:00:00.000Z",
+      "due_at": "2026-10-11T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 794,
+      "probability": 0.5011544011544011,
+      "negative_probability": 0.49884559884559887,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.20964749536178104,
+        0.13358070500927643,
+        0.02968460111317254,
+        0.02968460111317254,
+        0.3877551020408163,
+        0.20964749536178104
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 1,
+      "start_price": "82544.71",
+      "end_price": "82910.8",
+      "raw_correct": true,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CEASEFIRE",
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-10T00:00:00.000Z",
+      "decision_at": "2026-10-11T00:00:00.000Z",
+      "due_at": "2026-10-12T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 792,
+      "probability": 0.49969387755102035,
+      "negative_probability": 0.5003061224489797,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.1032069970845481,
+        0.22682215743440232,
+        0.04723032069970845,
+        0.018658892128279883,
+        0.5008746355685131,
+        0.1032069970845481
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 1,
+      "start_price": "82910.8",
+      "end_price": "83678.29",
+      "raw_correct": false,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-11T00:00:00.000Z",
+      "decision_at": "2026-10-12T00:00:00.000Z",
+      "due_at": "2026-10-13T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 794,
+      "probability": 0.5011544011544011,
+      "negative_probability": 0.49884559884559887,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.20964749536178104,
+        0.13358070500927643,
+        0.02968460111317254,
+        0.02968460111317254,
+        0.3877551020408163,
+        0.20964749536178104
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 0,
+      "start_price": "83678.29",
+      "end_price": "81742.5",
+      "raw_correct": false,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CEASEFIRE",
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-12T00:00:00.000Z",
+      "decision_at": "2026-10-13T00:00:00.000Z",
+      "due_at": "2026-10-14T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 536,
+      "probability": null,
+      "negative_probability": null,
+      "status": "abstencion_estado_no_observado",
+      "narrative_distribution": null,
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 1,
+      "start_price": "81742.5",
+      "end_price": "83101.99",
+      "raw_correct": null,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-13T00:00:00.000Z",
+      "decision_at": "2026-10-14T00:00:00.000Z",
+      "due_at": "2026-10-15T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 794,
+      "probability": 0.5011544011544011,
+      "negative_probability": 0.49884559884559887,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.20964749536178104,
+        0.13358070500927643,
+        0.02968460111317254,
+        0.02968460111317254,
+        0.3877551020408163,
+        0.20964749536178104
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 0,
+      "start_price": "83101.99",
+      "end_price": "81566.29",
+      "raw_correct": false,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CEASEFIRE",
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-14T00:00:00.000Z",
+      "decision_at": "2026-10-15T00:00:00.000Z",
+      "due_at": "2026-10-16T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 794,
+      "probability": 0.5011544011544011,
+      "negative_probability": 0.49884559884559887,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.20964749536178104,
+        0.13358070500927643,
+        0.02968460111317254,
+        0.02968460111317254,
+        0.3877551020408163,
+        0.20964749536178104
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 1,
+      "start_price": "81566.29",
+      "end_price": "82131.46",
+      "raw_correct": true,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CEASEFIRE",
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-15T00:00:00.000Z",
+      "decision_at": "2026-10-16T00:00:00.000Z",
+      "due_at": "2026-10-17T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 794,
+      "probability": 0.5011544011544011,
+      "negative_probability": 0.49884559884559887,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.20964749536178104,
+        0.13358070500927643,
+        0.02968460111317254,
+        0.02968460111317254,
+        0.3877551020408163,
+        0.20964749536178104
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 0,
+      "start_price": "82131.46",
+      "end_price": "81500.04",
+      "raw_correct": false,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CEASEFIRE",
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-16T00:00:00.000Z",
+      "decision_at": "2026-10-17T00:00:00.000Z",
+      "due_at": "2026-10-18T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 792,
+      "probability": 0.49969387755102035,
+      "negative_probability": 0.5003061224489797,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.1032069970845481,
+        0.22682215743440232,
+        0.04723032069970845,
+        0.018658892128279883,
+        0.5008746355685131,
+        0.1032069970845481
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 0,
+      "start_price": "81500.04",
+      "end_price": "81378.21",
+      "raw_correct": true,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-17T00:00:00.000Z",
+      "decision_at": "2026-10-18T00:00:00.000Z",
+      "due_at": "2026-10-19T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 280,
+      "probability": 0.49566942719116636,
+      "negative_probability": 0.5043305728088336,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.20053238686779057,
+        0.1712511091393079,
+        0.028393966282165038,
+        0.028393966282165038,
+        0.37089618456078083,
+        0.20053238686779057
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 1,
+      "start_price": "81378.21",
+      "end_price": "82006.85",
+      "raw_correct": false,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-18T00:00:00.000Z",
+      "decision_at": "2026-10-19T00:00:00.000Z",
+      "due_at": "2026-10-20T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 282,
+      "probability": 0.5004794973544974,
+      "negative_probability": 0.49952050264550263,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.19217687074829928,
+        0.16411564625850342,
+        0.027210884353741496,
+        0.06887755102040816,
+        0.397108843537415,
+        0.15051020408163265
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 0,
+      "start_price": "82006.85",
+      "end_price": "81837.69",
+      "raw_correct": false,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CEASEFIRE",
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-19T00:00:00.000Z",
+      "decision_at": "2026-10-20T00:00:00.000Z",
+      "due_at": "2026-10-21T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 792,
+      "probability": 0.49969387755102035,
+      "negative_probability": 0.5003061224489797,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.1032069970845481,
+        0.22682215743440232,
+        0.04723032069970845,
+        0.018658892128279883,
+        0.5008746355685131,
+        0.1032069970845481
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 1,
+      "start_price": "81837.69",
+      "end_price": "82938.26",
+      "raw_correct": false,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS",
+        "SANCTIONS"
+      ]
+    },
+    {
+      "origin_at": "2026-10-20T00:00:00.000Z",
+      "decision_at": "2026-10-21T00:00:00.000Z",
+      "due_at": "2026-10-22T00:00:00.000Z",
+      "horizon_days": 1,
+      "initial_mask": 282,
+      "probability": 0.5004794973544974,
+      "negative_probability": 0.49952050264550263,
+      "status": "estimacion_nativa",
+      "narrative_distribution": [
+        0.19217687074829928,
+        0.16411564625850342,
+        0.027210884353741496,
+        0.06887755102040816,
+        0.397108843537415,
+        0.15051020408163265
+      ],
+      "model_xi_sha256": "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41",
+      "actual": 1,
+      "start_price": "82938.26",
+      "end_price": "84024.67",
+      "raw_correct": true,
+      "forecast_sha256": "1bed9f29f6497722060f9c351889508067f2fc5c0ee0c3c54010b09e7aa7e4f7",
+      "state_masks": [
+        280,
+        282,
+        538,
+        784,
+        792,
+        794
+      ],
+      "model_training_samples": 43,
+      "model_labels": 42,
+      "model_cutoff": "2026-10-08T00:00:00.000Z",
+      "narrative_themes": [
+        "CEASEFIRE",
+        "CONFLICT_ESCALATION",
+        "DIPLOMATIC_COOPERATION",
+        "RELIEF_ACCESS"
+      ]
+    }
+  ],
+  "backtest": [
+    {
+      "horizon_days": 0,
+      "count": 28,
+      "brier": 0.2651910810850205,
+      "baseline_brier": 0.24453955135773314,
+      "coverage": 0.9642857142857143,
+      "eligible_for_confirmation": false,
+      "retrospective_improvement": false
+    },
+    {
+      "horizon_days": 1,
+      "count": 26,
+      "brier": 0.24641006675243027,
+      "baseline_brier": 0.2457883026064844,
+      "coverage": 0.9615384615384616,
+      "eligible_for_confirmation": false,
+      "retrospective_improvement": false
+    },
+    {
+      "horizon_days": 2,
+      "count": 24,
+      "brier": 0.24715949251412894,
+      "baseline_brier": 0.24724517906336085,
+      "coverage": 0.9583333333333334,
+      "eligible_for_confirmation": false,
+      "retrospective_improvement": true
+    },
+    {
+      "horizon_days": 3,
+      "count": 22,
+      "brier": 0.24479642549322475,
+      "baseline_brier": 0.24483471074380161,
+      "coverage": 0.9545454545454546,
+      "eligible_for_confirmation": false,
+      "retrospective_improvement": true
+    },
+    {
+      "horizon_days": 4,
+      "count": 20,
+      "brier": 0.2464861538715204,
+      "baseline_brier": 0.2464876033057851,
+      "coverage": 0.95,
+      "eligible_for_confirmation": false,
+      "retrospective_improvement": true
+    },
+    {
+      "horizon_days": 5,
+      "count": 18,
+      "brier": 0.24855556730756798,
+      "baseline_brier": 0.24850780532598712,
+      "coverage": 0.9444444444444444,
+      "eligible_for_confirmation": false,
+      "retrospective_improvement": false
+    },
+    {
+      "horizon_days": 6,
+      "count": 16,
+      "brier": 0.245267813318172,
+      "baseline_brier": 0.24535123966942146,
+      "coverage": 0.9375,
+      "eligible_for_confirmation": false,
+      "retrospective_improvement": true
+    },
+    {
+      "horizon_days": 7,
+      "count": 14,
+      "brier": 0.24784289851346392,
+      "baseline_brier": 0.2477863046044864,
+      "coverage": 0.9285714285714286,
+      "eligible_for_confirmation": false,
+      "retrospective_improvement": false
+    }
+  ],
+  "historical_programs": {
+    "bef81b34df39caa10ca44cc47b563c8b0348303e273463878d0320a46768b32e": "# LaPlaceDIG temporal: evidencia en Ether original, ajuste nativo\nmem_reset 0\nmem_store 1000000 26\nmem_store 1000001 3\nmem_store 1000002 1\nmem_store 1000003 1\nmem_store 1000004 24\nmem_store 1000005 3\nmem_store 1000007 1\nmem_store 1000008 26\nmem_store 1000009 1\nmem_store 1000011 1\nmem_store 1000012 26\nmem_store 1000013 1\nmem_store 1000014 1\nmem_store 1000015 1\nmem_store 1000016 24\nmem_store 1000017 3\nmem_store 1000019 1\nmem_store 1000020 24\nmem_store 1000021 3\nmem_store 1000022 1\nmem_store 1000023 1\nmem_store 1000024 26\nmem_store 1000025 3\nmem_store 1000026 1\nmem_store 1000027 1\nmem_store 1000028 24\nmem_store 1000029 1\nmem_store 1000031 1\nmem_store 1000032 24\nmem_store 1000033 3\nmem_store 1000034 1\nmem_store 1000035 1\nmem_store 1000036 24\nmem_store 1000037 3\nmem_store 1000039 1\nmem_store 1000040 26\nmem_store 1000041 3\nmem_store 1000043 1\nmem_store 1000044 26\nmem_store 1000045 1\nmem_store 1000047 1\nmem_store 1000048 24\nmem_store 1000049 1\nmem_store 1000051 1\nmem_store 1000052 24\nmem_store 1000053 3\nmem_store 1000055 1\nmem_store 1000056 26\nmem_store 1000057 1\nmem_store 1000059 1\nmem_store 1000060 26\nmem_store 1000061 1\nmem_store 1000063 1\nmem_store 1000064 24\nmem_store 1000065 1\nmem_store 1000067 1\nmem_store 1000068 26\nmem_store 1000069 1\nmem_store 1000071 1\nmem_store 1000072 24\nmem_store 1000073 3\nmem_store 1000074 1\nmem_store 1000075 1\nmem_store 1000076 26\nmem_store 1000077 1\nmem_store 1000078 1\nmem_store 1000079 1\nmem_store 1000080 24\nmem_store 1000081 3\nmem_store 1000082 1\nmem_store 1000083 1\nmem_store 1000084 24\nmem_store 1000085 3\nmem_store 1000086 1\nmem_store 1000087 1\nmem_store 1000088 24\nmem_store 1000089 3\nmem_store 1000090 1\nmem_store 1000091 1\nmem_store 1000092 24\nmem_store 1000093 3\nmem_store 1000095 1\nmem_store 1000096 24\nmem_store 1000097 3\nmem_store 1000098 1\nmem_store 1000099 1\nmem_store 1000100 24\nmem_store 1000101 3\nmem_store 1000102 1\nmem_store 1000103 1\nmem_store 1000104 26\nmem_store 1000105 1\nmem_store 1000107 1\nmem_store 1000108 26\nmem_store 1000109 3\nmem_store 1000110 1\nmem_store 1000111 1\nmem_store 1000112 24\nmem_store 1000113 3\nmem_store 1000114 1\nmem_store 1000115 1\nmem_store 1000116 24\nmem_store 1000117 3\nmem_store 1000119 1\nmem_store 1000120 24\nmem_store 1000121 1\nmem_store 1000122 1\nmem_store 1000123 1\nmem_store 1000124 24\nmem_store 1000125 1\nmem_store 1000127 1\nmem_store 1000128 24\nmem_store 1000129 1\nmem_store 1000130 1\nmem_store 1000131 1\nmem_store 1000132 26\nmem_store 1000133 3\nmem_store 1000135 1\nmem_store 1000136 24\nmem_store 1000137 1\nmem_store 1000139 1\nmem_store 1000140 26\nmem_store 1000141 3\nmem_store 1000142 1\nmem_store 1000143 1\nmem_store 1000144 24\nmem_store 1000145 3\nmem_store 1000147 1\nmem_store 1000148 26\nmem_store 1000149 2\nmem_store 1000150 1\nmem_store 1000151 1\nmem_store 1000152 26\nmem_store 1000153 3\nmem_store 1000154 1\nmem_store 1000155 1\nmem_store 1000156 26\nmem_store 1000157 3\nmem_store 1000159 1\nmem_store 1000160 24\nmem_store 1000161 1\nmem_store 1000163 1\nmem_store 1000164 24\nmem_store 1000165 3\nmem_store 1000167 1\nmem_store 1000168 24\nmem_store 1000169 3\nmem_store 1000170 2\nlaplace_fit 1000000 43 0 8\n",
+    "9799a5c741956396818b91aa180c4422fe7b505b3432d5970cb3feaf6345ec41": "# LaPlaceDIG temporal: evidencia en Ether original, ajuste nativo\nmem_reset 0\nmem_store 1000000 26\nmem_store 1000001 1\nmem_store 1000003 1\nmem_store 1000004 26\nmem_store 1000005 1\nmem_store 1000007 1\nmem_store 1000008 24\nmem_store 1000009 1\nmem_store 1000011 1\nmem_store 1000012 26\nmem_store 1000013 1\nmem_store 1000015 1\nmem_store 1000016 24\nmem_store 1000017 3\nmem_store 1000018 1\nmem_store 1000019 1\nmem_store 1000020 26\nmem_store 1000021 1\nmem_store 1000022 1\nmem_store 1000023 1\nmem_store 1000024 24\nmem_store 1000025 3\nmem_store 1000026 1\nmem_store 1000027 1\nmem_store 1000028 24\nmem_store 1000029 3\nmem_store 1000030 1\nmem_store 1000031 1\nmem_store 1000032 24\nmem_store 1000033 3\nmem_store 1000034 1\nmem_store 1000035 1\nmem_store 1000036 24\nmem_store 1000037 3\nmem_store 1000039 1\nmem_store 1000040 24\nmem_store 1000041 3\nmem_store 1000042 1\nmem_store 1000043 1\nmem_store 1000044 24\nmem_store 1000045 3\nmem_store 1000046 1\nmem_store 1000047 1\nmem_store 1000048 26\nmem_store 1000049 1\nmem_store 1000051 1\nmem_store 1000052 26\nmem_store 1000053 3\nmem_store 1000054 1\nmem_store 1000055 1\nmem_store 1000056 24\nmem_store 1000057 3\nmem_store 1000058 1\nmem_store 1000059 1\nmem_store 1000060 24\nmem_store 1000061 3\nmem_store 1000063 1\nmem_store 1000064 24\nmem_store 1000065 1\nmem_store 1000066 1\nmem_store 1000067 1\nmem_store 1000068 24\nmem_store 1000069 1\nmem_store 1000071 1\nmem_store 1000072 24\nmem_store 1000073 1\nmem_store 1000074 1\nmem_store 1000075 1\nmem_store 1000076 26\nmem_store 1000077 3\nmem_store 1000079 1\nmem_store 1000080 24\nmem_store 1000081 1\nmem_store 1000083 1\nmem_store 1000084 26\nmem_store 1000085 3\nmem_store 1000086 1\nmem_store 1000087 1\nmem_store 1000088 24\nmem_store 1000089 3\nmem_store 1000091 1\nmem_store 1000092 26\nmem_store 1000093 2\nmem_store 1000094 1\nmem_store 1000095 1\nmem_store 1000096 26\nmem_store 1000097 3\nmem_store 1000098 1\nmem_store 1000099 1\nmem_store 1000100 26\nmem_store 1000101 3\nmem_store 1000103 1\nmem_store 1000104 24\nmem_store 1000105 1\nmem_store 1000107 1\nmem_store 1000108 24\nmem_store 1000109 3\nmem_store 1000111 1\nmem_store 1000112 24\nmem_store 1000113 3\nmem_store 1000115 1\nmem_store 1000116 24\nmem_store 1000117 3\nmem_store 1000118 1\nmem_store 1000119 1\nmem_store 1000120 24\nmem_store 1000121 3\nmem_store 1000123 1\nmem_store 1000124 26\nmem_store 1000125 1\nmem_store 1000127 1\nmem_store 1000128 24\nmem_store 1000129 1\nmem_store 1000130 1\nmem_store 1000131 1\nmem_store 1000132 24\nmem_store 1000133 3\nmem_store 1000135 1\nmem_store 1000136 24\nmem_store 1000137 3\nmem_store 1000138 1\nmem_store 1000139 1\nmem_store 1000140 26\nmem_store 1000141 1\nmem_store 1000142 1\nmem_store 1000143 1\nmem_store 1000144 24\nmem_store 1000145 3\nmem_store 1000146 1\nmem_store 1000147 1\nmem_store 1000148 24\nmem_store 1000149 3\nmem_store 1000150 1\nmem_store 1000151 1\nmem_store 1000152 26\nmem_store 1000153 1\nmem_store 1000155 1\nmem_store 1000156 16\nmem_store 1000157 3\nmem_store 1000158 1\nmem_store 1000159 1\nmem_store 1000160 24\nmem_store 1000161 3\nmem_store 1000163 1\nmem_store 1000164 26\nmem_store 1000165 3\nmem_store 1000167 1\nmem_store 1000168 26\nmem_store 1000169 3\nmem_store 1000170 2\nlaplace_fit 1000000 43 16 8\n"
+  },
+  "initial_narrative_sources": [
+    {
+      "id": "gdelt-archive-1329812783",
+      "url": "https://www.artshub.com.au/job/curator-contemporary-visual-art-maternity-leave-2877938/",
+      "known_at": "2026-10-27T00:00:00.000Z"
+    },
+    {
+      "id": "gdelt-archive-1329812785",
+      "url": "https://www.sthelensstar.co.uk/news/national/26668594.brazil-resumes-vote-count-last-minute-extension-polling-station-hours/",
+      "known_at": "2026-10-27T00:00:00.000Z"
+    },
+    {
+      "id": "gdelt-archive-1329812794",
+      "url": "https://www.tribuneindia.com/news/himachal/masked-duo-fires-five-rounds-at-nalagarh-scrap-dealers-gate/",
+      "known_at": "2026-10-27T00:00:00.000Z"
+    },
+    {
+      "id": "gdelt-archive-1329813127",
+      "url": "https://abcnews.com/Politics/wireStory/iran-messages-passed-us-amid-war-concerns-mideast-137558362",
+      "known_at": "2026-10-27T00:00:00.000Z"
+    },
+    {
+      "id": "gdelt-archive-1329813310",
+      "url": "https://chinookobserver.com/2026/10/25/elks-program-honors-the-best-of-the-best-veteran-deputy-emt-and-coast-guardsmen-applauded/",
+      "known_at": "2026-10-27T00:00:00.000Z"
+    },
+    {
+      "id": "gdelt-archive-1329813365",
+      "url": "https://www.breitbart.com/news/ukraine-disputes-elon-musks-claim-that-its-military-violated-starlinks-terms-of-service/",
+      "known_at": "2026-10-27T00:00:00.000Z"
+    }
+  ],
+  "live_activation": false,
+  "financial_edge_demonstrated": false,
+  "temporal_model": "learned finite-state Markov transitions",
+  "target": "BTC-USD return above 10 bps during the 24h AFTER the selected date",
+  "long_horizon_status": "abstencion_horizonte_sin_evidencia",
+  "original_runtime_modified": false,
+  "profile_sha256": "3cadcde0e24d3b44b8dacebcd4d7dc1fde115642ee5afcd59156714090df94de"
+}

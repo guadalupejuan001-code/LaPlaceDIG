@@ -1,6 +1,10 @@
 # Bitcoin: observación actual y calibración histórica
 
-## Consola temporal hasta 2030
+## Núcleo temporal vigente
+
+La proyección bootstrap descrita a continuación **fue retirada de la interfaz**. El núcleo vigente aprende y propaga transiciones narrativas en operaciones nativas sobre la memoria original. Conserva 2030 en el calendario y se abstiene fuera del horizonte examinado. [Dinámica nativa, resultados y reproducción](DINAMICA.md).
+
+## Experimento temporal anterior, conservado para auditoría
 
 El control principal permite mover la fecha desde el 12 de septiembre de 2026 hasta el **31 de diciembre de 2030**. El calendario, el deslizador, las flechas de un día y los saltos de año consultan el mismo cálculo. El recorrido futuro completo se prepara en un Web Worker y se guarda en memoria; mover la fecha no vuelve a sortear sus trayectorias. Cambiar narrativa, cantidad de trayectorias o semilla crea un cálculo nuevo y reproducible.
 

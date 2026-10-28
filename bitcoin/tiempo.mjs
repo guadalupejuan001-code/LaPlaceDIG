@@ -1,5 +1,8 @@
 /* Browser/Node kernel. All future values are conditional simulations, not
  * observations. This file deliberately imports neither prices nor the clock. */
+// Retained solely to reproduce the withdrawn bootstrap experiment. The live
+// interface must use the native temporal model instead of this projection.
+export const DEPRECATED_FOR_LIVE_USE=true;
 export const TIME_VERSION='laplace-time-v1';
 export const LAST_DATE='2030-12-31';
 const DAY=86400000,need=(ok,message)=>{if(!ok)throw Error(message)};

@@ -53,14 +53,22 @@ jobs:
           node --check bitcoin/calibracion.mjs
           node --check bitcoin/tiempo.mjs
           node --check bitcoin/perfil-tiempo.mjs
+          node --check dinamica/modelo.mjs
+          node --check dinamica/vista.mjs
       - name: Construir únicamente el QuantumRuntime existente
         run: |
           set -euo pipefail
           cmake -S deps/mundo-X/quantum-runtime -B build-ether -DCMAKE_BUILD_TYPE=Release
           cmake --build build-ether --target mundo_x_quantum --parallel 2
+      - name: Compilar operaciones temporales de Laplace sobre el runtime original
+        run: |
+          set -euo pipefail
+          cmake -S native -B build-laplace -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-laplace --target laplace_temporal --parallel 2
       - name: Pruebas cronológicas y equivalencia real InverseMemory/XI
         env:
           MUNDO_X_QUANTUM: ./build-ether/mundo_x_quantum
+          LAPLACE_TEMPORAL: ./build-laplace/laplace_temporal
         run: |
           set -euo pipefail
           node --test tests/*.test.mjs
