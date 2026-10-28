@@ -46,6 +46,32 @@ function trajectory(prefix,input){
  }
  return series;
 }
+// Independent floating-point physics reference; validation only, not simulation authority.
+function crossingReference(input){
+ const bodies=input.cuerpos.map(b=>({x:b.x/ESCALA,y:b.y/ESCALA,
+   vx:b.vx/ESCALA,vy:b.vy/ESCALA,m:b.masa/ESCALA}));
+ const h=1/1024,epsilon=0.05;
+ for(let step=0;step<=240;step++){
+   const p=bodies[0],q=bodies[1];
+   if(Math.hypot(p.x-q.x,p.y-q.y)<=0.25)return step;
+   const acc=bodies.map((a,i)=>{
+     let ax=0,ay=0;
+     for(let j=0;j<3;j++){
+       if(i===j)continue;
+       const b=bodies[j],dx=b.x-a.x,dy=b.y-a.y;
+       const dist=dx*dx+dy*dy+epsilon*epsilon;
+       const factor=b.m/(dist*Math.sqrt(dist));
+       ax+=dx*factor;ay+=dy*factor;
+     }
+     return {ax,ay};
+   });
+   for(let i=0;i<3;i++){
+     bodies[i].vx+=h*acc[i].ax;bodies[i].vy+=h*acc[i].ay;
+     bodies[i].x+=h*bodies[i].vx;bodies[i].y+=h*bodies[i].vy;
+   }
+ }
+ return null;
+}
 const evidence={schema:'LAPLACE_P002_ENCOUNTER_B',threshold_distance:0.25,
  baseline:[],perturbed:[],pass:false};
 try{
@@ -58,9 +84,14 @@ try{
  assert.ok(evidence.baseline[0].distance_12>0.25,'event must not be present at t=0');
  assert.notEqual(a.first_approach,null,'the three-body model never reached the event threshold');
  assert.ok(a.first_approach>0&&a.first_approach<240,'event occurred outside observation window');
+ const floatTick=crossingReference(base);
+ assert.ok(floatTick!==null,'independent reference did not reach the event');
+ assert.ok(Math.abs(a.first_approach-floatTick)<=2,
+   'XI and independent gravitational reference disagree on approach time');
  assert.ok(evidence.baseline.some(p=>p.distance_12<0.25),'sampled trajectory did not approach');
  evidence.summary={
    first_approach_tick:a.first_approach,
+   independent_float_reference_tick:floatTick,
    first_approach_time:a.first_approach/1024,
    first_approach_perturbed_tick:b.first_approach,
    initial_distance:evidence.baseline[0].distance_12,
