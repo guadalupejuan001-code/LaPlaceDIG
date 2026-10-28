@@ -3,10 +3,13 @@
 // LaPlaceDIG: local data ingestion and proof. This is not a trading bot.
 import {readFileSync,writeFileSync} from 'node:fs';
 import {parseJSONL,canonicalLedger,canonicalFact,stringifyJSONL,ledgerHash,
-        asOf,persistenceBaseline,timestamp} from '../historia/contrato.mjs';
+        asOf,persistenceBaseline,timestamp,KIND} from '../historia/contrato.mjs';
 import {proveWithOriginalEther} from '../historia/ether-xi.mjs';
 import {parseTransitions,learn,predict} from '../inteligencia/laplace.mjs';
 import {experiment} from '../inteligencia/experimento.mjs';
+import {trainNarrative,predictNarrative,evaluateNarrative} from '../narrativa/modelo.mjs';
+import {narrativeExperiment} from '../narrativa/experimento.mjs';
+import {importReliefWeb,importGDELT} from '../narrativa/fuentes.mjs';
 
 function usage(){
   process.stdout.write('LaPlaceDIG — laboratorio del demonio digital\n'
@@ -18,6 +21,11 @@ function usage(){
    +'  node tools/laplace.mjs aprender-leyes transiciones.jsonl CORTE_UTC BIN_XI MODELO.json\n'
    +'  node tools/laplace.mjs predecir-estado MODELO.json ESTADO_BINARIO PASOS BIN_XI\n'
    +'  node tools/laplace.mjs experimento-aprendiz BIN_XI DIRECTORIO_RESULTADOS\n'
+   +'  node tools/laplace.mjs entrenar-narrativa hechos.jsonl CONFIG.json BIN_XI MODELO.json\n'
+   +'  node tools/laplace.mjs probabilidad-narrativa MODELO.json hechos.jsonl CORTE_UTC BIN_XI\n'
+   +'  node tools/laplace.mjs evaluar-narrativa MODELO.json hechos.jsonl FIN_TEST_UTC BIN_XI\n'
+   +'  node tools/laplace.mjs experimento-narrativa BIN_XI DIRECTORIO_RESULTADOS\n'
+   +'  node tools/laplace.mjs importar-narrativa reliefweb|gdelt CAPTURA.json > hechos.jsonl\n'
    +'Datos historicos siempre identificados por fuente y fecha de disponibilidad. Sin cotizaciones inventadas.\n');
 }
 function must(v,message){if(!v)throw Error(message)}
@@ -40,7 +48,7 @@ function convertPriceCSV(filename){
 function summary(rows){
   return {
     status:'ARCHIVO_LOCAL_VALIDADO',count:rows.length,
-    kinds:Object.fromEntries(['precio','economia','geopolitica'].map(k=>[k,rows.filter(x=>x.kind===k).length])),
+    kinds:Object.fromEntries(KIND.map(k=>[k,rows.filter(x=>x.kind===k).length])),
     historical_sha256:ledgerHash(rows),
     earliest_known_at:rows[0]?.known_at??null,
     latest_known_at:rows.at(-1)?.known_at??null,
@@ -50,6 +58,31 @@ function summary(rows){
 function main(){
   const [, ,command,...params]=process.argv;
   if(!command||['ayuda','help','--help'].includes(command)){usage();return;}
+  if(command==='importar-narrativa'){
+    must(params.length===2&&['reliefweb','gdelt'].includes(params[0]),
+      'uso: importar-narrativa reliefweb|gdelt CAPTURA.json');
+    const raw=JSON.parse(readFileSync(params[1],'utf8'));
+    process.stdout.write(stringifyJSONL(params[0]==='reliefweb'?importReliefWeb(raw):importGDELT(raw)));return;
+  }
+  if(command==='experimento-narrativa'){
+    must(params.length===2,'uso: experimento-narrativa BIN_XI DIRECTORIO_RESULTADOS');
+    console.log(JSON.stringify(narrativeExperiment(params[0],params[1]),null,2));return;
+  }
+  if(command==='entrenar-narrativa'){
+    must(params.length===4,'uso: entrenar-narrativa hechos.jsonl CONFIG.json BIN_XI MODELO.json');
+    const result=trainNarrative(params[2],readJsonl(params[0]),JSON.parse(readFileSync(params[1],'utf8')));
+    const {checkpoint,...summary}=result;
+    if(checkpoint)writeFileSync(params[3],JSON.stringify(checkpoint,null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({...summary,checkpoint_file:checkpoint?params[3]:null},null,2));return;
+  }
+  if(['probabilidad-narrativa','evaluar-narrativa'].includes(command)){
+    must(params.length===4,'uso: '+command+' MODELO.json hechos.jsonl CORTE_UTC BIN_XI');
+    const checkpoint=JSON.parse(readFileSync(params[0],'utf8')),records=readJsonl(params[1]);
+    const result=command==='probabilidad-narrativa'
+      ?predictNarrative(params[3],checkpoint,records,params[2])
+      :evaluateNarrative(params[3],checkpoint,records,params[2]);
+    console.log(JSON.stringify(result,null,2));return;
+  }
   if(command==='experimento-aprendiz'){
     must(params.length===2,'uso: experimento-aprendiz BIN_XI DIRECTORIO_RESULTADOS');
     console.log(JSON.stringify(experiment(params[0],params[1]),null,2));return;

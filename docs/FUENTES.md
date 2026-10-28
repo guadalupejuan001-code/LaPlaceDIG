@@ -55,3 +55,15 @@ El importador ya admite archivos locales JSONL y CSV estrictos de precios. Las d
 La accesibilidad pública no implica derecho universal a copiar o redistribuir una base. Revisar términos de cada fuente antes de almacenar masivamente o publicar muestras. Los datos reales del usuario no se incluyen automáticamente en este repositorio público.
 
 No prometer todos los precios de todos los activos desde el origen histórico: su cobertura, calidad, cambios de símbolo, splits, supervivencia y datos faltantes varían según la fuente.
+
+## E002 — capturas de narrativa y objetivo de mercado
+
+Se agrega `humanitaria` al contrato, con los mismos campos y controles de procedencia que `geopolitica`. El predictor E002 utiliza únicamente estas dos familias como entrada; precio es etiqueta y economía permanece excluida de la inferencia.
+
+[ReliefWeb](https://apidoc.reliefweb.int/) permite consultar reportes humanitarios y exige un `appname` previamente aprobado. Los [campos de reportes](https://apidoc.reliefweb.int/read/resources/reports/) separan `date.original`, `date.created` y `date.changed`. La importación local conserva esos límites y no retrofecha la versión de contenido capturada.
+
+Hay importadores de capturas JSON ReliefWeb y GDELT DOC. Ambos exigen `captured_at` real y mantienen esa disponibilidad mínima. Una consulta actual no se convierte automáticamente en archivo histórico punto en el tiempo. Los títulos GDELT tienen cobertura textual limitada; su país de fuente periodística no es el país del evento.
+
+Las [velas de Coinbase Exchange](https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles) ofrecen precios históricos públicos, con posibles intervalos ausentes. Su tiempo es el inicio del intervalo y no prueba por sí solo disponibilidad histórica de la versión descargada. No hay un importador que invente esa fecha.
+
+Detalles de entrenamiento y fuentes estadísticas: [NARRATIVA.md](NARRATIVA.md). El control publicado de E002 es sintético; no incorpora estos servicios como un corpus financiero real ya validado.

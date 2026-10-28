@@ -12,7 +12,7 @@ No es una nueva app de REVERSE, no es el solucionador de la ecuación espacial d
 | --- | --- |
 | demonio/modelo.mjs | **Copia exacta** del mundo reversible XI de Mundo X |
 | demonio/experimento.mjs | **Copia exacta** del auditor que ejecuta el runtime real |
-| historia/contrato.mjs | Fechas de observación/publicación, tres familias de hechos, revisiones |
+| historia/contrato.mjs | Fechas de observación/publicación, cuatro familias de hechos, revisiones |
 | historia/ether-xi.mjs | Proyección y lectura sin pérdida en Inverse Ether Memory original |
 | tools/laplace.mjs | Comandos locales para consultar, filtrar y comprobar archivos históricos |
 | tests/historia.test.mjs | Regresiones de fuga de futuro y reconstrucción de registros |
@@ -81,9 +81,28 @@ El aprendiz recibe **48 transiciones observadas de 16 variables**, sin recibir l
 
 El anfitrión organiza el experimento y planifica pivotes usando solo entradas. XI transforma las salidas observadas mediante CNOT, recupera los coeficientes por Inverse Ether Memory y ejecuta los pronósticos. La persistencia usa **reproducción de un programa XI guardado**, no una sesión nativa que continúe viva. [Detalle y uso](docs/INTELIGENCIA.md).
 
-El aprendizaje numérico con ruido y la predicción de mercados siguen pendientes. No transformar las cifras de este laboratorio en supuesta precisión bursátil.
+Las reglas numéricas generales y la validación en mercados reales siguen pendientes. No transformar las cifras de este laboratorio en supuesta precisión bursátil.
 
 Evidencia de E001: [resultado reproducible](evidencia/E001.json). La CI regenera los programas y pronósticos completos.
+
+## 4. E002 — probabilidad desde narrativa geopolítica y humanitaria
+
+**Objetivo inicial:** estimar si el retorno BTC/USD a 24 horas supera un coste total **supuesto** de 10 puntos básicos. Los precios producen las etiquetas de entrenamiento y evaluación; el predictor recibe exclusivamente relatos geopolíticos y humanitarios conocidos al corte.
+
+    Z_t = Estado(narrativa geopolítica + humanitaria conocida en la ventana)
+    Y_t = 1 si 10000 * (P_(t+24h)/P_t - 1) > coste_bps
+    p0 = (positivos_globales + 1) / (casos_globales + 2)
+    p_t = (positivos_del_patron + kappa*p0) / (casos_del_patron + kappa)
+
+El espacio incluye temas individuales, contexto regional, combinaciones y secuencias de publicación. La extracción es simbólica con vocabulario declarado en español/inglés. Cada patrón observado recibe una auditoría de soporte, probabilidad y validación; solo condiciones validadas pueden producir una predicción. No se multiplican señales correlacionadas. Sin patrón validado, el modelo se abstiene.
+
+El entrenamiento reserva tres tramos cronológicos: entrenamiento → selección por validación → prueba final con modelo congelado. Se miden Brier, log-loss, calibración por intervalos y cobertura, incluyendo abstenciones mediante la referencia fija para el resultado global. Se excluyen objetivos todavía no publicados y horizontes que crucen de partición.
+
+    node tools/laplace.mjs experimento-narrativa ./build-ether/mundo_x_quantum build-evidence/narrativa
+
+El control **sintético** usa 128 casos de entrenamiento, 64 de validación y 64 de prueba. Recupera interacciones entre ambos dominios. La aritmética probabilística y la selección ocurren en el anfitrión; el único estado guardado de reglas y estadísticas se recupera desde Inverse Ether Memory mediante el XI original. No hay un servicio continuo ni un modelo financiero real ya validado.
+
+Se añaden hechos `humanitaria`, importadores de capturas ReliefWeb/GDELT y comandos de entrenamiento, consulta y evaluación. Una captura actual nunca se retrofecha como si su contenido hubiera estado disponible antes. [Fórmula, espacio y uso](docs/NARRATIVA.md) · [Evidencia E002](evidencia/E002.json).
 
 Documentación: [Arquitectura](docs/ARQUITECTURA.md) · [Fuentes públicas](docs/FUENTES.md) · [Demonio XI](demonio/README.md).
 

@@ -1,9 +1,9 @@
 {
   "name": "laplacedig",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
-  "description": "Demonio de Laplace digital: aprendizaje de leyes binarias en Ether/XI e historia temporal",
+  "description": "Laplace: leyes binarias y probabilidad de mercado desde narrativa geopolitica/humanitaria en Ether/XI",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "help": "node tools/laplace.mjs --help"

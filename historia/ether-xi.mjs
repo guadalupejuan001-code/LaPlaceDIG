@@ -9,7 +9,7 @@
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
-import {asOf,stringifyJSONL,timestamp} from './contrato.mjs';
+import {asOf,stringifyJSONL,timestamp,KIND} from './contrato.mjs';
 
 const BASE=930000000000000000000000000000n;
 const MAX_BYTES=8192;
@@ -65,7 +65,7 @@ export function proveWithOriginalEther(binary,records,cutoff){
     status:'XI_VERIFICADO',
     fuente:'Mundo X QuantumRuntime original / Inverse Ether Memory',
     cutoff:input.cutoff,visible_records:input.records.length,
-    observed_kinds:Object.fromEntries(['precio','economia','geopolitica'].map(k=>
+    observed_kinds:Object.fromEntries(KIND.map(k=>
       [k,input.records.filter(row=>row.kind===k).length])),
     sha256:input.sha256,exact_roundtrip:true,
     logical_address:input.base_address,

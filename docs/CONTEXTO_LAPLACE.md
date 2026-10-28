@@ -30,3 +30,11 @@ Esto inicia la parte de descubrimiento de reglas. No completa una inteligencia g
 ## Próximo objetivo
 
 Ampliar las familias de reglas y el manejo de ruido/cambios de régimen. El paso hacia datos reales debe conservar el contrato temporal existente y demostrar predicción fuera de muestra. No rebajar la misión a ejecutar un simulador con leyes entregadas de antemano.
+
+## Dirección solicitada en E002
+
+El usuario pidió fijar una métrica de interés, implementar entrenamiento y fórmula, crear el espacio con sus leyes y hacer que una probabilidad dependa exclusivamente de la narrativa geopolítica y humanitaria. Esa exclusividad se aplica a las entradas de inferencia. Los precios son necesarios para enseñar y medir un objetivo de mercado, pero no se usan como características del predictor.
+
+Se fija por defecto BTC/USD, horizonte 24 horas y retorno superior a 10 puntos básicos de coste total supuesto. Se aprenden condiciones sobre temas, regiones, combinaciones y secuencias. Las probabilidades se estiman con conteos suavizados hacia una referencia de entrenamiento; se seleccionan solo mediante validación anterior al test. Cada patrón generado queda auditado, incluidos descartes y falta de soporte. La prueba final se reserva con un modelo congelado.
+
+La estimación de E002 es clásica y propia en el anfitrión existente. Las reglas y estadísticas guardadas tienen una única copia autoritativa en el checkpoint reproducible Ether/XI. Se conservan ambos experimentos y sus diferencias técnicas. La evidencia de E002 sigue siendo sintética. El próximo avance debe reunir capturas históricas verificables y precios con disponibilidad documentada, y comprobar la señal narrativa fuera de muestra sin agregar precios a las entradas.

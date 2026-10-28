@@ -37,7 +37,7 @@ Fuente idéntica: demonio/modelo.mjs y demonio/experimento.mjs. Original: Mundo 
 
 ### B. Historial temporal — primer adaptador
 
-- Precio, economía y acontecimientos geopolíticos son hechos externos, no resultados fabricados por Ether.
+- Precio, economía, acontecimientos geopolíticos y relatos humanitarios son hechos externos, no resultados fabricados por Ether.
 - Cada registro contiene observed_at (cuándo ocurrió) y known_at (primera disponibilidad verificada).
 - Valores originales decimales y URLs de procedencia se preservan.
 - La consulta asOf(corte) solo muestra registros conocidos antes o en el corte.
@@ -59,7 +59,11 @@ Si el diseño no tiene rango `ancho+1`, conserva la incertidumbre y propone una 
 
 El checkpoint es un programa XI reproducible con hash y metadatos, no coeficientes autoritativos en JSON. Cada recuperación lo vuelve a ejecutar. La sesión nativa sigue siendo efímera; no se ha agregado persistencia binaria al núcleo.
 
-Las reglas numéricas con ruido, la estimación probabilística y la unión predictiva de las tres familias de hechos históricos siguen pendientes. Una fuente geopolítica estructurada puede incorporarse sin una segunda IA; comprender narrativas textuales completas requerirá capacidades adicionales que deben comprobarse.
+El aprendiz afín de E001 no incluye estimación probabilística ni reglas numéricas generales de mercados. Comprender narrativas textuales completas requerirá capacidades adicionales que deben comprobarse.
+
+E002 añade una ruta probabilística específica con etiquetas numéricas: `P(retorno neto a 24h > 0 | narrativa geopolítica y humanitaria)`. La probabilidad de inferencia excluye precios, volumen, indicadores y economía. Los precios solo construyen las etiquetas. El anfitrión estima frecuencias suavizadas, analiza temas/combinaciones/secuencias y selecciona reglas por validación cronológica. Ether/XI conserva y recupera el estado completo aprendido. Esta separación de tareas es distinta a la reducción CNOT de E001; no se atribuye a XI la aritmética probabilística del anfitrión.
+
+La prueba final usa un checkpoint congelado y no participa en la elección de patrones. El vocabulario simbólico se fija por versión y hash de su código, y las capturas de fuentes mantienen disponibilidad verificable. E002 ofrece el mecanismo de entrenamiento y evidencia sintética, sin acreditar señal predictiva en mercados reales. Ver [NARRATIVA.md](NARRATIVA.md).
 
 La representación Z debe conservar aquello que el problema exige para predecir, no simplemente usar pocos bytes.
 
@@ -84,6 +88,9 @@ La representación Z debe conservar aquello que el problema exige para predecir,
 | Aprendizaje de una ley afín binaria desconocida | E001; reducción de salidas por CNOT nativo |
 | Pronóstico desde reglas aprendidas y checkpoint XI | E001; 32/32 estados futuros en un mundo sintético reservado |
 | Abstención y refutación al incorporar evidencia | E001; rango insuficiente, contradicción y causa externa |
+| Probabilidad condicionada solo a narrativa geopolítica/humanitaria | E002; entrenamiento, validación y prueba separados |
+| Métrica de retorno a 24h y puntuación probabilística | E002; etiquetas decimales exactas, Brier, log-loss y calibración |
+| Fuentes de relatos y preservación de su disponibilidad | Importadores locales de capturas ReliefWeb/GDELT |
 | Descarga de todo el mercado mundial | No importada |
 | Conectores automáticos Shiller / FRED / GDELT | No instalados |
 | IA que aprende leyes y predice mercados | No construida |

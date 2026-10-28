@@ -38,6 +38,10 @@ jobs:
           node --check demonio/experimento.mjs
           node --check inteligencia/laplace.mjs
           node --check inteligencia/experimento.mjs
+          node --check narrativa/espacio.mjs
+          node --check narrativa/modelo.mjs
+          node --check narrativa/fuentes.mjs
+          node --check narrativa/experimento.mjs
       - name: Construir únicamente el QuantumRuntime existente
         run: |
           set -euo pipefail
@@ -62,7 +66,12 @@ jobs:
           set -euo pipefail
           node tools/laplace.mjs experimento-aprendiz ./build-ether/mundo_x_quantum ci-evidence/aprendiz > ci-evidence/aprendiz-out.json
           node --input-type=module -e 'import {readFileSync} from "node:fs"; import assert from "node:assert/strict"; const r=JSON.parse(readFileSync("ci-evidence/aprendiz/resultado.json")); assert.equal(r.unseen_future.matched_states,32); assert.equal(r.unknown_event.first_divergence,9); assert.equal(r.abstains_after_contradiction,true); assert.equal(r.future_leakage_check,true);'
-      - name: Archivar evidencia (sin cotizaciones ficticias)
+      - name: Probabilidad narrativa con prueba temporal y control sin noticias
+        run: |
+          set -euo pipefail
+          node tools/laplace.mjs experimento-narrativa ./build-ether/mundo_x_quantum ci-evidence/narrativa > ci-evidence/narrativa-out.json
+          node --input-type=module -e 'import {readFileSync} from "node:fs"; import assert from "node:assert/strict"; const r=JSON.parse(readFileSync("ci-evidence/narrativa/resultado.json")); assert.equal(r.synthetic,true); assert.equal(r.test.count,64); assert.ok(r.test.brier<r.test.baseline_brier); assert.equal(r.no_narrative_control.coverage,0); assert.equal(r.financial_edge_demonstrated,false);'
+      - name: Archivar evidencia y datos de control identificados como sinteticos
         uses: actions/upload-artifact@v4
         if: always()
         with:

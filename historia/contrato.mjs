@@ -9,7 +9,8 @@ import {createHash} from 'node:crypto';
 const REQUIRED={
   precio:['id','kind','observed_at','known_at','source_url','asset','price_basis','currency','value'],
   economia:['id','kind','observed_at','known_at','source_url','series_id','unit','value'],
-  geopolitica:['id','kind','observed_at','known_at','source_url','event_code','summary','region']
+  geopolitica:['id','kind','observed_at','known_at','source_url','event_code','summary','region'],
+  humanitaria:['id','kind','observed_at','known_at','source_url','event_code','summary','region']
 };
 export const KIND=Object.freeze(Object.keys(REQUIRED));
 export const MAX_RECORDS=10000;
