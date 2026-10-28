@@ -22,6 +22,7 @@ import {temporalExperiment,liveTemporalProfile,queryTemporal} from '../dinamica/
 import {compilarSistema} from '../fisica/compilar.mjs';
 import {compilarGravedad} from '../fisica/tres-cuerpos.mjs';
 import {compilarCosmologia} from '../cosmos/lcdm.mjs';
+import {compilarSingularidad} from '../cosmos/singularidad.mjs';
 
 function usage(){
   process.stdout.write('LaPlaceDIG — laboratorio del demonio digital\n'
@@ -55,6 +56,7 @@ function usage(){
    +'  node tools/laplace.mjs crear-fisica ESCENARIO.json SALIDA.xi\n'
    +'  node tools/laplace.mjs crear-gravedad ESCENARIO.json SALIDA.xi\n'
    +'  node tools/laplace.mjs crear-cosmos PARAMETROS.json SALIDA.xi\n'
+   +'  node tools/laplace.mjs crear-singularidad PARAMETROS.json SALIDA.xi\n'
    +'Datos historicos siempre identificados por fuente y fecha de disponibilidad. Sin cotizaciones inventadas.\n');
 }
 function must(v,message){if(!v)throw Error(message)}
@@ -87,6 +89,16 @@ function summary(rows){
 async function main(){
   const [, ,command,...params]=process.argv;
   if(!command||['ayuda','help','--help'].includes(command)){usage();return;}
+  if(command==='crear-singularidad'){
+    must(params.length===2,'uso: crear-singularidad PARAMETROS.json SALIDA.xi');
+    const model=compilarSingularidad(JSON.parse(readFileSync(params[0],'utf8')));
+    writeFileSync(params[1],model.xi,{flag:'wx'});
+    console.log(JSON.stringify({path:params[1],schema:model.schema,
+      epochs:model.epoch_count,logical_state_bytes:model.logical_state_bytes,
+      xi_sha256:model.xi_sha256,
+      t_zero:model.formal_boundary.t_zero},null,2));
+    return;
+  }
   if(command==='crear-cosmos'){
     must(params.length===2,'uso: crear-cosmos PARAMETROS.json SALIDA.xi');
     const compiled=compilarCosmologia(JSON.parse(readFileSync(params[0],'utf8')));
