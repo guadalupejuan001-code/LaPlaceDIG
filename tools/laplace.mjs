@@ -21,6 +21,7 @@ import {calibrateHistory,pastComparisons,MODES} from '../bitcoin/calibracion.mjs
 import {temporalExperiment,liveTemporalProfile,queryTemporal} from '../dinamica/modelo.mjs';
 import {compilarSistema} from '../fisica/compilar.mjs';
 import {compilarGravedad} from '../fisica/tres-cuerpos.mjs';
+import {compilarCosmologia} from '../cosmos/lcdm.mjs';
 
 function usage(){
   process.stdout.write('LaPlaceDIG — laboratorio del demonio digital\n'
@@ -53,6 +54,7 @@ function usage(){
    +'  node tools/laplace.mjs consultar-dinamica CHECKPOINT.json MASCARA PASOS BIN_NATIVO\n'
    +'  node tools/laplace.mjs crear-fisica ESCENARIO.json SALIDA.xi\n'
    +'  node tools/laplace.mjs crear-gravedad ESCENARIO.json SALIDA.xi\n'
+   +'  node tools/laplace.mjs crear-cosmos PARAMETROS.json SALIDA.xi\n'
    +'Datos historicos siempre identificados por fuente y fecha de disponibilidad. Sin cotizaciones inventadas.\n');
 }
 function must(v,message){if(!v)throw Error(message)}
@@ -85,6 +87,16 @@ function summary(rows){
 async function main(){
   const [, ,command,...params]=process.argv;
   if(!command||['ayuda','help','--help'].includes(command)){usage();return;}
+  if(command==='crear-cosmos'){
+    must(params.length===2,'uso: crear-cosmos PARAMETROS.json SALIDA.xi');
+    const compiled=compilarCosmologia(JSON.parse(readFileSync(params[0],'utf8')));
+    writeFileSync(params[1],compiled.xi,{flag:'wx'});
+    console.log(JSON.stringify({path:params[1],schema:compiled.schema,
+      epochs:compiled.epoch_count,memory_bytes:compiled.logical_output_bytes,
+      xi_sha256:compiled.xi_sha256,
+      evidence_scope:compiled.physical_scope},null,2));
+    return;
+  }
   if(command==='crear-gravedad'){
     must(params.length===2,'uso: crear-gravedad ESCENARIO.json SALIDA.xi');
     const model=compilarGravedad(JSON.parse(readFileSync(params[0],'utf8')));
