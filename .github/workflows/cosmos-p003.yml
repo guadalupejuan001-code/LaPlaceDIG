@@ -59,7 +59,7 @@ jobs:
           REVERSE_PC_BIN: ./build-reverse/reverse_pc
         run: |
           set -euo pipefail
-          node --test tests/cosmos.test.mjs
+          node --test tests/cosmos.test.mjs tests/cosmos-fino.test.mjs
       - name: Ejecutar Big Bang cosmológico P003 y archivar toda la historia
         run: |
           set -euo pipefail
