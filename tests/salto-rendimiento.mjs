@@ -56,7 +56,7 @@ function readResults(raw){
  const registers=rows.filter(x=>x.type==='register');
  return {state:registers.slice(0,width).map(x=>String(x.value)).join(''),
    memory:rows.find(x=>x.type==='memory_stats'),
-   core:rows.find(x=>x.type==='stats'),
+   core:rows.find(x=>x.type==='quantum_stats'),
    matrix_products:registers.length===width+2?registers.at(-1).value:null};
 }
 function median(numbers){const a=[...numbers].sort((x,y)=>x-y),i=Math.floor(a.length/2);return a.length%2?a[i]:(a[i-1]+a[i])/2}
@@ -72,7 +72,7 @@ function runMode(src,name,origin,{samples=3}={}){
    if(response.status!==0)throw Error(name+': '+(response.stderr||response.error?.message||'exit '+response.status).slice(-900));
    const result=readResults(response.stdout);
    assert.equal(result.state,'1011','unexpected unverified result');
-   assert.equal(result.core?.active_qubits,0);
+   assert.equal(result.core.clifford_components+result.core.adaptive_components+result.core.reduced_components,0);
    if(rep>=0){
      wall.push(Math.round((performance.now()-start)*1000)/1000);
      const peak=Number(readFileSync(stat,'utf8').trim());
