@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {observation,causalHypothesis,universeSnapshot,verifyUniverseSnapshot}
   from '../universo/estados.mjs';
+import {measureKp,KP_URL} from '../universo/geomagnetismo.mjs';
 import {measureBook,measureTrades,measureTicker,observeUniverseBTC,URLS}
   from '../universo/mercado.mjs';
 const stamp='2026-10-29T18:00:40.000Z';
@@ -104,4 +105,23 @@ test('estado externo futuro queda retenido por corte sin filtración',async()=>{
   const run=await observeUniverseBTC({fetchImpl:source,now:()=>stamp,additionalObservations:[future]});
   assert.equal(run.universal_state.withheld_future,1);
   assert.equal(run.universal_state.domains.includes('economia'),false);
+});
+
+test('Kp NOAA permite un nuevo dominio fisico sin inventar conexion con BTC',async()=>{
+  const rows=[{time_tag:'2026-10-29T12:00:00',Kp:1.33,a_running:5,station_count:8},
+    {time_tag:'2026-10-29T15:00:00',Kp:0.33,a_running:2,station_count:8},
+    {time_tag:'2026-10-29T21:00:00',Kp:7,a_running:40,station_count:8}];
+  const physical=measureKp(rows,{capturedAt:stamp});
+  assert.equal(physical.value,0.33);
+  assert.equal(physical.observed_at,'2026-10-29T15:00:00.000Z');
+  assert.equal(physical.known_at,stamp);
+  const original=await observeUniverseBTC({fetchImpl:source,now:()=>stamp});
+  const withSpace=await observeUniverseBTC({fetchImpl:url=>url===KP_URL?
+    Promise.resolve(response(rows)):source(url),now:()=>stamp});
+  assert.equal(withSpace.measured_space_weather.status,'observed');
+  assert.equal(withSpace.source_count,original.source_count+1);
+  assert.equal(withSpace.universal_state.domains.includes('geomagnetismo'),true);
+  assert.equal(withSpace.universal_state.relations.some(x=>x.from.includes('noaa-kp')),false);
+  assert.equal(withSpace.projected_price_usd,original.projected_price_usd);
+  assert.throws(()=>measureKp([{time_tag:'2026-10-28T00:00:00',Kp:3}],{capturedAt:stamp}),/frescura/);
 });
