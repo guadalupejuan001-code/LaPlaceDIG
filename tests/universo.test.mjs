@@ -40,6 +40,15 @@ test('profundidad y spread reales son magnitudes, no promesas predictivas',()=>{
   assert.ok(b.top10_notional_imbalance<0);
   assert.throws(()=>measureBook({...levels(),asks:[['80699','1','1'],...levels().asks]},{at:stamp}),/cruzado/);
 });
+test('L2 con mas de 20 mil niveles mantiene el prefijo sin copiar el libro entero',()=>{
+  const many=21001;
+  const data={bids:Array.from({length:many},(_,i)=>[String(80700-i*0.01),'0.01',1]),
+    asks:Array.from({length:many},(_,i)=>[String(80701+i*0.01),'0.02',1])};
+  const result=measureBook(data,{at:stamp});
+  assert.deepEqual(result.source_level_counts,{bids:many,asks:many});
+  assert.equal(result.levels_used,10);
+  assert.equal(result.best_bid_usd,80700);
+});
 test('trade lado maker, ventana observada y cobertura parcial',()=>{
   const rows=[{trade_id:1,side:'buy',size:'0.2',price:'80000',time:'2026-10-29T17:58:00Z'},
     {trade_id:2,side:'sell',size:'0.4',price:'80000',time:'2026-10-29T17:59:00Z'},
