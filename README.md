@@ -1,5 +1,12 @@
 # LaPlaceDIG
 
+## U001 — Observatorio universal de estados y causas hipoteticas
+
+Nueva capa transversal para registrar mediciones de **cualquier dominio** con marcas de ocurrencia y disponibilidad, memoria compacta (hasta 4096 estados por consulta), conteos historicos y relaciones de precedencia/hipotesis. Adaptador BTC: conserva I015 de quince minutos y mide libro de ordenes, trades y precios relacionados en Coinbase, mas indice geomagnetico Kp de NOAA como dominio fisico separado (sin atribuir causalidad al mercado). La prediccion no se recalibra automaticamente con esos datos; sin validacion temporal son observaciones, no causas demostradas.
+
+Comandos: `node tools/laplace.mjs universo-btc-15m` y `node tools/laplace.mjs universo-corte estados.json CORTE_UTC`. [Arquitectura, limites y pruebas](docs/UNIVERSO_U001.md). No equivale a observar el universo entero.
+
+
 ## I015 — Instrumento BTC en 15 minutos
 
 Cotización BTC/USD y velas cerradas de Coinbase, estado de momentum, rango, volatilidad y actividad; comparación de trayectorias observadas, proyección determinista 15 minutos y backtest walk-forward. Solo promueve la estimación condicional si mejora la persistencia en la prueba reciente. Si no mejora, muestra el precio observado como referencia. **Sin Monte Carlo, sin precio futuro inventado, sin órdenes ni pretensión de predicción exacta.** El módulo estadístico JS es una capa de medición y no sustituye XI/Ether.
