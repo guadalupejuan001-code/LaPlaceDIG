@@ -78,6 +78,13 @@ function at(ledger,cutoff,opts){
   const observed=ledger.filter(row=>row.known_at<=cutoff);
   const {last}=priceTimeline(observed,opts.asset,cutoff);
   const events=knownEvents(observed,cutoff,opts.lookback_hours);
+  // Numero total de registros conocidos del tipo, no de causas fisicas
+  // independientes: varias fuentes pueden describir el mismo suceso.
+  const historicalTotals=new Map();
+  for(const event of observed.filter(isEvent)){
+    const key=keyOf(event);
+    historicalTotals.set(key,(historicalTotals.get(key)??0)+1);
+  }
   const counts=new Map();
   for(const event of events){
     const key=keyOf(event),old=counts.get(key)??{code:key,repetitions:0,first_known_at:event.known_at,last_known_at:event.known_at};
@@ -89,7 +96,7 @@ function at(ledger,cutoff,opts){
     const controls=samples.filter(sample=>!sample.exposure.includes(item.code));
     const yes=sumGroup(exposed),no=sumGroup(controls);
     const sufficient=yes.count>=opts.min_samples&&no.count>=opts.min_samples;
-    return {...item,event_windows:yes,control_windows:no,
+    return {...item,reportes_historicos_totales:historicalTotals.get(item.code)??0,event_windows:yes,control_windows:no,
       difference_mean_return_pct:sufficient?round(yes.mean_return_pct-no.mean_return_pct):null,
       difference_probability_up:sufficient?round(yes.p_up_smoothed-no.p_up_smoothed):null,
       usable:sufficient};
