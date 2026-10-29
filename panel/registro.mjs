@@ -1,3 +1,4 @@
+import {verifyUniverseSnapshot} from '../universo/estados.mjs';
 /* LAPLACE — contrato de datos del panel. No calcula precios ni causas. */
 export const PANEL_SCHEMA='laplace-panel-v1';
 export const MAX_CAPTURAS=144;
@@ -14,6 +15,7 @@ export function validarCaptura(c){
   debe(c.universal_state?.schema==='laplace-universo-estados-u001-v1',
     'Falta la memoria universal');
   debe(Array.isArray(c.measured_market)&&c.measured_market.length===4,'Fuentes de mercado incompletas');
+  verifyUniverseSnapshot(c.universal_state);
   return c;
 }
 export function resumenCaptura(raw){
