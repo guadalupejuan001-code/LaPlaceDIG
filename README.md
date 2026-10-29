@@ -1,5 +1,12 @@
 # LaPlaceDIG
 
+## C001 — memoria de eventos y trayectorias del mercado BTC/USD
+
+Se incorporó un observador de acontecimientos que cuenta repeticiones históricas, compara retornos posteriores con ventanas de control, respeta la primera fecha de disponibilidad de cada dato y ejecuta una reproducción histórica sin acceder al futuro. Cuando falta evidencia suficiente, se abstiene; no demuestra causalidad ni capacidad de operar con beneficio. Es una capa estadística complementaria: **no sustituye XI/Ether**, ni activa el predictor en vivo.
+
+[Contrato, comandos y límites](docs/BITCOIN_CAUSAL_C001.md).
+
+
 ## P005 — desafío exabyte de evolución exacta sobre XI/Ether
 
 **Cálculo verificado:** un anillo de 2^60 celdas binarias (1,15 exabytes a un byte por celda, 144 petabytes si se almacena un bit por celda) evolucionó **1 125 891 316 776 447 generaciones lógicas**, con reglas de evolución local XOR (Regla 90), sin asignar un campo físico denso ni iterar cada generación.
