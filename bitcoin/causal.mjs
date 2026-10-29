@@ -138,7 +138,7 @@ export function causalWalkForward(history,{mode='strict',limit=1000,...config}={
     if(start.known_at>start.observed_at)continue;
     const due=iso(Date.parse(start.observed_at)+opts.horizon_hours*HOUR);
     const target=map.get(due);
-    if(!target||target.known_at>history.end&&history.end)continue;
+    if(!target)continue;
     const forecast=at(ledger,start.observed_at,opts);
     // Se evalua la etiqueta solo DESPUES de congelar el corte y el pronostico.
     const y=Number(Number(target.value)>Number(start.value));
