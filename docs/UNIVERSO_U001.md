@@ -8,7 +8,8 @@ No implica observar ni simular la totalidad del universo. El sistema opera bajo 
 
 ## Componentes
 - universo/estados.mjs: contrato de observaciones numericas de cualquier dominio. Hasta 4096 estados y 4096 relaciones por snapshot. Registra dominio, variable, unidad, valor, fuente HTTPS, observed_at y known_at. Cualquier hecho conocido despues del corte se excluye. SHA-256 del snapshot y conteo de repeticiones. Relaciones solo de precedencia o hipotesis; no presume causas demostradas.
-- universo/mercado.mjs: integra sin modificar I015 BTC 15 minutos y cuatro lecturas publicas: libro L2 BTC-USD, operaciones BTC-USD, spot ETH-USD y BTC-EUR. Calcula spread, desequilibrio del nocional de los 10 mejores niveles, nocionales por lado maker y dos precios externos. Marca fuentes fallidas sin inventar cifras.
+- universo/mercado.mjs: integra sin modificar I015 BTC 15 minutos y cuatro lecturas publicas del mercado: libro L2 BTC-USD, operaciones BTC-USD, spot ETH-USD y BTC-EUR. Calcula spread, desequilibrio del nocional de los 10 mejores niveles, nocionales por lado maker y dos precios externos. Marca fuentes fallidas sin inventar cifras.
+- universo/geomagnetismo.mjs: lectura independiente y fechada del indice geomagnetico Kp publicado por NOAA SWPC, con rechazo de muestras anticuadas. No genera relacion causal con Bitcoin.
 - cosmos/ y fisica/: simulaciones existentes, NO observaciones fisicas actuales del universo.
 - Economia mundial, geopolitica completa, otras bolsas y otros sistemas reales permanecen como dominios aun no capturados.
 
