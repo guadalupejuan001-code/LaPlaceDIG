@@ -1,5 +1,12 @@
 # LaPlaceDIG
 
+## I015 — Instrumento BTC en 15 minutos
+
+Cotización BTC/USD y velas cerradas de Coinbase, estado de momentum, rango, volatilidad y actividad; comparación de trayectorias observadas, proyección determinista 15 minutos y backtest walk-forward. Solo promueve la estimación condicional si mejora la persistencia en la prueba reciente. Si no mejora, muestra el precio observado como referencia. **Sin Monte Carlo, sin precio futuro inventado, sin órdenes ni pretensión de predicción exacta.** El módulo estadístico JS es una capa de medición y no sustituye XI/Ether.
+
+Comando: `node tools/laplace.mjs bitcoin-15m` · [Documentación y ecuaciones](docs/BITCOIN_INTRADIA_I015.md).
+
+
 ## C001 — memoria de eventos y trayectorias del mercado BTC/USD
 
 Se incorporó un observador de acontecimientos que cuenta repeticiones históricas, compara retornos posteriores con ventanas de control, respeta la primera fecha de disponibilidad de cada dato y ejecuta una reproducción histórica sin acceder al futuro. Cuando falta evidencia suficiente, se abstiene; no demuestra causalidad ni capacidad de operar con beneficio. Es una capa estadística complementaria: **no sustituye XI/Ether**, ni activa el predictor en vivo.
