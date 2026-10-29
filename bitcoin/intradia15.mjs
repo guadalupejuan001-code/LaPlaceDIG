@@ -23,7 +23,7 @@ const utc=sec=>new Date(sec*1000).toISOString();
 export function canonicalCandles(raw,{asOf,granularity=STEP}={}){
   const quoteTime=Date.parse(asOf);
   need(Number.isFinite(quoteTime),'timestamp de cotizacion requerido');
-  need(Array.isArray(raw)&&raw.length>0&&raw.length<=300,'se requieren entre 1 y 300 velas');
+  need(Array.isArray(raw)&&raw.length>0&&raw.length<=500,'respuesta de velas invalidas, cantidad='+String(Array.isArray(raw)?raw.length:'no_array'));
   need(granularity===STEP,'LAPLACE I015 solo admite barras de cinco minutos');
   const seen=new Set(),bars=[];
   for(const row of raw){
@@ -39,6 +39,9 @@ export function canonicalCandles(raw,{asOf,granularity=STEP}={}){
     bars.push({time,low,high,open,close,volume});
   }
   bars.sort((a,b)=>a.time-b.time);
+  // Coinbase puede incluir mas barras que el maximo documentado en el limite.
+  // La observacion utiliza solo las 300 mas recientes COMPLETAS.
+  if(bars.length>300)bars.splice(0,bars.length-300);
   need(bars.length>=60,'menos de 60 barras completas: no extrapolar');
   need((quoteTime/1000-(bars.at(-1).time+granularity))<=2*granularity,
     'ultimo cierre muy antiguo para 15 minutos');
