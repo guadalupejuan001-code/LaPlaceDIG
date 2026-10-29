@@ -155,6 +155,9 @@ export function project15m(candles,quote,{capturedAt=new Date().toISOString(),so
     model_candidate_price_usd:forecast?round(observed*Math.exp(forecast.estimate),2):null,
     feature_window_minutes:30,price_candles:coverage,missing_bars:missing,
     latest_completed_candle_at:utc(historyAt.time+STEP),
+    // Datos historicos realmente descargados durante ESTA captura.
+    // Su disponibilidad original en cada epoca no esta certificada.
+    serie_cierres_5m:bars.slice(-72).map(b=>({fecha:utc(b.time+STEP),precio:round(b.close,2)})),
     analog_count:forecast?.n??0,causal_event_model:'C001 no se extrapola a 15 minutos sin noticias y ticks cronologicos',
     backtest:test,random_sampling:false,causality_proven:false,
     live_trading_enabled:false,orders_executed:0,
