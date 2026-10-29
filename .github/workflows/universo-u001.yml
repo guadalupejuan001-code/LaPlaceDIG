@@ -29,7 +29,7 @@ jobs:
           mkdir -p ci-universo
           if node tools/laplace.mjs universo-btc-15m ci-universo/captura.json > ci-universo/salida.txt 2> ci-universo/error.txt; then
             echo 'estado=observed' > ci-universo/status.txt
-            node --input-type=module -e 'import {readFileSync} from "node:fs"; const r=JSON.parse(readFileSync("ci-universo/captura.json")); console.log(JSON.stringify({state:r.schema,price:r.instrument_15m.observed_price_usd,projected:r.projected_price_usd,sources:r.source_count,domains:r.universal_state.domains,orders:r.execution_orders,full_universe_observed:r.full_universe_observed}));'
+            node --input-type=module -e 'import {readFileSync} from "node:fs"; const r=JSON.parse(readFileSync("ci-universo/captura.json")); console.log(JSON.stringify({state:r.schema,price:r.instrument_15m.observed_price_usd,projected:r.projected_price_usd,sources:r.source_count,domains:r.universal_state.domains,source_diagnostics:r.measured_market.map(x=>({name:x.name,status:x.status,reason:x.reason??null})),orders:r.execution_orders,full_universe_observed:r.full_universe_observed}));'
           else
             echo 'estado=unavailable' > ci-universo/status.txt
             echo 'No se obtuvo captura; sin cifras inventadas.'
