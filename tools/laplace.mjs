@@ -19,6 +19,7 @@ import {collectBitcoin,exportCaptureFacts} from '../bitcoin/agente.mjs';
 import {downloadHistory} from '../bitcoin/historico.mjs';
 import {calibrateHistory,pastComparisons,MODES} from '../bitcoin/calibracion.mjs';
 import {causalSnapshot,causalWalkForward} from '../bitcoin/causal.mjs';
+import {observeAndProject15m} from '../bitcoin/intradia15.mjs';
 import {temporalExperiment,liveTemporalProfile,queryTemporal} from '../dinamica/modelo.mjs';
 import {compilarSistema} from '../fisica/compilar.mjs';
 import {compilarGravedad} from '../fisica/tres-cuerpos.mjs';
@@ -51,6 +52,7 @@ function usage(){
    +'  node tools/laplace.mjs experimento-realidades BIN_XI DIRECTORIO_NUEVO\n'
    +'  node tools/laplace.mjs actualizar-bitcoin CAPTURA_NUEVA.json [HECHOS_NUEVOS.jsonl]\n'
    +'  node tools/laplace.mjs descargar-bitcoin INICIO_UTC FIN_UTC HISTORIA_NUEVA.json\n'
+   +'  node tools/laplace.mjs bitcoin-15m [RESULTADO_NUEVO.json]\n'
    +'  node tools/laplace.mjs analizar-causas-bitcoin HISTORIA.json CORTE_UTC [strict|exploratory_close_availability]\n'
    +'  node tools/laplace.mjs probar-causas-bitcoin HISTORIA.json [strict|exploratory_close_availability]\n'
    +'  node tools/laplace.mjs calibrar-bitcoin HISTORIA.json BIN_XI INFORME_NUEVO.json strict|exploratory_close_availability [CASOS_NUEVOS.json]\n'
@@ -157,6 +159,13 @@ async function main(){
   if(command==='consultar-dinamica'){
     must(params.length===4&&/^\d+$/.test(params[1])&&/^\d+$/.test(params[2]),'uso: consultar-dinamica CHECKPOINT.json MASCARA PASOS BIN_NATIVO');
     console.log(JSON.stringify(queryTemporal(params[3],JSON.parse(readFileSync(params[0],'utf8')),[{mask:Number(params[1]),steps:Number(params[2])}]),null,2));return;
+  }
+  if(command==='bitcoin-15m'){
+    must(params.length<=1,'uso: bitcoin-15m [RESULTADO_NUEVO.json]');
+    const measurement=await observeAndProject15m();
+    const output=JSON.stringify(measurement,null,2)+'\n';
+    if(params[0])writeFileSync(params[0],output,{flag:'wx'});
+    console.log(output.trim());return;
   }
   if(command==='analizar-causas-bitcoin'){
     must(params.length===2||params.length===3,'uso: analizar-causas-bitcoin HISTORIA.json CORTE_UTC [strict|exploratory_close_availability]');
