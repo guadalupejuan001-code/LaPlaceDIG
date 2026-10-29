@@ -57,7 +57,7 @@ test('rechaza vela duplicada, rango falso, historia corta y precio vencido',()=>
   assert.throws(()=>project15m(raw,quote,{capturedAt:'2026-10-29T18:10:35.000Z'}),/vencida/);
 });
 test('bloquea extrapolacion cuando no existe reciente conexion cronologica',()=>{
-  const gapped=raw.filter((_,i)=>i%3===0);
+  const gapped=raw.filter((_,i)=>i%3===0||i===raw.length-1);
   const result=project15m(gapped,quote,{capturedAt:'2026-10-29T18:00:41.000Z'});
   assert.equal(result.status,'barras_incompletas');
   assert.equal(result.model_selected,'persistencia');
