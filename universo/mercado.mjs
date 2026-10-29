@@ -30,18 +30,23 @@ const ob=(id,domain,variable,value,unit,when,url)=>({
 export function measureBook(raw,{at,levels=10}={}){
   const when=utcTime(at);
   need(raw&&Array.isArray(raw.bids)&&Array.isArray(raw.asks)&&
-    raw.bids.length>0&&raw.asks.length>0&&raw.bids.length<=20000&&raw.asks.length<=20000,
+    raw.bids.length>0&&raw.asks.length>0&&raw.bids.length<=60000&&raw.asks.length<=60000,
     'libro de ordenes no valido');
   const sides={};
   for(const side of ['bids','asks']){
-    const pairs=raw[side].map(row=>{
+    need(raw[side].length>=levels,'niveles L2 insuficientes');
+    // El contrato Coinbase L2 entrega bids/asks ordenados. Validamos el
+    // prefijo que efectivamente usamos: O(10), sin copiar ~20000 niveles.
+    const pairs=raw[side].slice(0,levels).map(row=>{
       need(Array.isArray(row)&&(row.length===2||row.length===3),'nivel L2 invalido');
       const price=decimal(row[0]),size=decimal(row[1],{zero:true});
       return {price,size};
     });
-    pairs.sort((a,b)=>side==='bids'?b.price-a.price:a.price-b.price);
-    need(pairs.length>=levels,'niveles L2 insuficientes');
-    sides[side]=pairs.slice(0,levels);
+    for(let i=1;i<pairs.length;i++){
+      need(side==='bids'?pairs[i-1].price>=pairs[i].price:
+        pairs[i-1].price<=pairs[i].price,'niveles de ordenes desordenados');
+    }
+    sides[side]=pairs;
   }
   const bestBid=sides.bids[0].price,bestAsk=sides.asks[0].price;
   need(bestBid<bestAsk,'libro cruzado o bloque de subasta');
@@ -54,7 +59,7 @@ export function measureBook(raw,{at,levels=10}={}){
     spread_bps:rounded((bestAsk-bestBid)/mid*1e4),
     bid_depth_usd_top10:rounded(bidUsd),ask_depth_usd_top10:rounded(askUsd),
     top10_notional_imbalance:rounded((bidUsd-askUsd)/depth),
-    levels_used:levels,source:URLS.book,
+    levels_used:levels,source_level_counts:{bids:raw.bids.length,asks:raw.asks.length},source:URLS.book,
     semantics:'fotografia L2; ordenes pueden cancelarse; profundidad no equivale a ejecuciones'};
 }
 export function measureTrades(raw,{at,windowSeconds=900}={}){
