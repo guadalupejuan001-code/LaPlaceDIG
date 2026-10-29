@@ -9,7 +9,7 @@ Construir una memoria verificable de **qué ocurrió**, **cuándo ocurrió**, **
 - Entrada: historial existente en formato JSON con `records` y `ledger_sha256`.
 - El único activo admitido es BTC-USD; la historia se verifica por el hash original.
 - Un evento observado solo puede influir en un pronóstico si `known_at <= cutoff` y `observed_at <= cutoff`.
-- Ventana de influencia anterior configurable, predeterminada de 72 horas. El código `kind|event_code` conserva su cuenta de repeticiones.
+- Ventana de influencia anterior configurable, predeterminada de 72 horas. El código `kind|event_code` conserva tanto la cuenta en la ventana reciente como el total histórico de registros conocidos. **Un registro no equivale necesariamente a un suceso independiente**: distintas fuentes pueden relatar el mismo acontecimiento.
 - Para medir un resultado de 24 horas, se exigen dos cierres `raw_close` exactamente separados por 24 horas. Si faltan, no se interpolan ni se inventan.
 - Una muestra histórica solo es entrenable cuando el cierre inicial ya se conocía al decidir y el cierre final ya se conocía en el corte de entrenamiento.
 - Por cada evento activo se comparan ventanas con exposición y controles sin ese evento: soporte, frecuencia positiva, retorno medio, diferencia de retornos y rango de Wilson de la frecuencia. Esto **no aísla un efecto causal**: variables omitidas, noticias simultáneas y reacciones anticipadas siguen siendo posibles.
