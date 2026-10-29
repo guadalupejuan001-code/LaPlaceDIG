@@ -6,6 +6,7 @@
 import {createHash} from 'node:crypto';
 import {observeAndProject15m} from '../bitcoin/intradia15.mjs';
 import {universeSnapshot,utcTime} from './estados.mjs';
+import {fetchKp} from './geomagnetismo.mjs';
 const ROOT='https://api.exchange.coinbase.com/products/';
 export const U001_VERSION='laplace-universo-btc-u001-v1';
 export const URLS=Object.freeze({
@@ -111,12 +112,15 @@ export async function observeUniverseBTC({
     {name:'trades',url:URLS.trades,calc:(raw,at)=>measureTrades(raw,{at})},
     {name:'eth',url:URLS.eth,calc:(raw,at)=>measureTicker(raw,{at,product:'ETH-USD',source:URLS.eth})},
     {name:'euro',url:URLS.euro,calc:(raw,at)=>measureTicker(raw,{at,product:'BTC-EUR',source:URLS.euro})}];
+  const physicalPromise=fetchKp({fetchImpl,now,timeoutMs}).then(data=>({status:'observed',data}))
+    .catch(error=>({status:'unavailable',reason:String(error.message).slice(0,160)}));
   const tasks=await Promise.all(frames.map(async entry=>{
     try{
       const result=await readJSON(entry.url,fetchImpl,timeoutMs),at=now();
       return {name:entry.name,status:'observed',data:entry.calc(result,at),captured_at:at};
     }catch(error){return {name:entry.name,status:'unavailable',reason:String(error.message).slice(0,160)}}
   }));
+  const physical=await physicalPromise;
   const captured=utcTime(now()),observations=[...additionalObservations];
   // Observacion principal conocida al recibir la respuesta original.
   const primaryKnown=utcTime(instrument.known_at),rootId='btc-price-'+primaryKnown;
@@ -155,17 +159,23 @@ export async function observeUniverseBTC({
         t.price,t.asset.endsWith('USD')?'USD':'EUR',t.captured_at,t.source);
     }
   }
+  if(physical.status==='observed'){
+    const {domain,variable,value,unit,observed_at,known_at,source_url}=physical.data;
+    observations.push({id:'noaa-kp-'+observed_at,domain,variable,value,unit,observed_at,known_at,source_url});
+    // No creamos una arista Kp -> BTC sin evidencia de conexion.
+  }
   // Valor total del universo NO fue observado; se conoce solo su cobertura.
   const graph=universeSnapshot(observations,{cutoff:captured,hypotheses:links});
   return {schema:U001_VERSION,at:captured,
     instrument_15m:instrument,
     measured_market:tasks,
+    measured_space_weather:physical,
     universal_state:graph,
     model_modules:[{domain:'fisica',module:'fisica/',status:'simulacion_no_observacion'},
       {domain:'cosmos',module:'cosmos/',status:'simulacion_no_observacion'},
       {domain:'economia_global',status:'sin_captura_punto_en_tiempo'},
       {domain:'informacion_global',status:'sin_captura_punto_en_tiempo'}],
-    source_count:tasks.filter(x=>x.status==='observed').length+1,
+    source_count:tasks.filter(x=>x.status==='observed').length+1+Number(physical.status==='observed'),
     unknown_drivers:'Flujo global, bancos centrales, otras bolsas, decisiones futuras y condiciones fisicas no medidos',
     causal_certification:false,full_universe_observed:false,
     augmented_prediction_enabled:false,
@@ -173,5 +183,5 @@ export async function observeUniverseBTC({
     projection_is_from:'I015 sin fusion estadistica no validada con nuevas variables',
     execution_orders:0,deterministic_math:true,
     input_hash_sha256:sha(JSON.stringify({primary:instrument.input_sha256,
-      market:tasks,extra:additionalObservations}))};
+      market:tasks,physical,extra:additionalObservations}))};
 }
