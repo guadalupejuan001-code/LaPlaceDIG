@@ -25,6 +25,7 @@ test('cuenta acciones pasadas y contrasta movimientos posteriores sin fingir cau
   assert.equal(result.status,'asociacion_observacional');
   assert.equal(result.past_events.length,1);
   assert.equal(result.past_events[0].repetitions,1);
+  assert.ok(result.past_events[0].reportes_historicos_totales>=15);
   assert.ok(result.past_events[0].event_windows.count>=8);
   assert.ok(result.past_events[0].control_windows.count>=8);
   assert.ok(result.probability_up>result.baseline.p_up_smoothed);
