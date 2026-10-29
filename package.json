@@ -6,7 +6,11 @@
   "description": "Laplace: leyes binarias y probabilidad de mercado desde narrativa geopolitica/humanitaria en Ether/XI",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "help": "node tools/laplace.mjs --help"
+    "help": "node tools/laplace.mjs --help",
+    "panel": "node panel/servidor.mjs",
+    "test:panel": "node --test tests/panel.test.mjs tests/intradia15.test.mjs tests/universo.test.mjs"
   },
-  "engines": {"node": ">=20"}
+  "engines": {
+    "node": ">=20"
+  }
 }

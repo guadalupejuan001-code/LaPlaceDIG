@@ -1,5 +1,15 @@
 # LaPlaceDIG
 
+## Panel LAPLACE en español — lectura real, sin maqueta
+
+El panel local ejecutable permite ver cotización, trayectoria de velas realmente recuperadas, proyección I015 a 15 minutos, mediciones de U001 (libro L2, operaciones, mercados relacionados, NOAA), historial de capturas registradas y resultados de validación. El diseño no muestra cifras de demostración; si falla una fuente, conserva la última captura e indica que es histórica. No ejecuta operaciones y no implica integración nativa automática con la APK de REVERSE-PC.
+
+    npm run panel
+
+Abre http://127.0.0.1:4179 en el mismo equipo y pulsa «Actualizar lectura». Pruebas: npm run test:panel. [Arquitectura y límites del panel](docs/PANEL_LAPLACE_ES.md).
+
+
+
 ## U001 — Observatorio universal de estados y causas hipoteticas
 
 Nueva capa transversal para registrar mediciones de **cualquier dominio** con marcas de ocurrencia y disponibilidad, memoria compacta (hasta 4096 estados por consulta), conteos historicos y relaciones de precedencia/hipotesis. Adaptador BTC: conserva I015 de quince minutos y mide libro de ordenes, trades y precios relacionados en Coinbase, mas indice geomagnetico Kp de NOAA como dominio fisico separado (sin atribuir causalidad al mercado). La prediccion no se recalibra automaticamente con esos datos; sin validacion temporal son observaciones, no causas demostradas.
