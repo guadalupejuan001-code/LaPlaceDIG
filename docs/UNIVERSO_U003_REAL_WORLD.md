@@ -8,8 +8,9 @@ U003 amplía la captura U002/369 sin sustituirla. El principio es: añadir
 ### Mercados regionales y futuros
 - Benchmarks de Japón, Hong Kong, China, Europa, Reino Unido, Alemania, Francia,
   España, India, Brasil, México, Australia, Corea, Taiwán, Singapur y Canadá.
-- Futuros públicos de oro, plata, WTI, gas natural, cobre, maíz, trigo, soja,
-  café y azúcar.
+- Series continuas de futuros de oro, plata, WTI, gas natural, cobre, maíz,
+  trigo, soja, café y azúcar, distribuidas por un tercero. Sus metadatos indican
+  `continuous_front_month`, vencimiento desconocido y ajuste de roll desconocido.
 - Cada serie aporta cierre, retorno 5 min, retorno 30 min y volumen relativo.
 
 Estos benchmarks siguen usando el adaptador público de mercado de B001. No se
@@ -18,12 +19,29 @@ presentan como feed directo/licenciado de cada bolsa.
 ### Bolsas directas
 - JPX/J-Quants V2: adaptador directo implementado; solo se activa cuando existe
   `JQUANTS_API_KEY`.
-- B3 y Deutsche Börse se marcan `requires_license`. U003 no las sustituye
-  silenciosamente por terceros.
+- TWSE: agregado diario oficial con TAIEX, volumen, importe y operaciones;
+  calendario de Taiwán convertido y sesiones sin cerrar excluidas.
+- B3: muestra pública oficial de acciones con mayores movimientos. Es una
+  selección con sesgo de cobertura, no todo el mercado ni un feed contratado.
+- MOEX: índice IMOEX diario oficial; es una bolsa europea concreta (Rusia),
+  no cobertura completa de las bolsas de Europa.
+- El feed completo de B3 y Deutsche Börse sigue `requires_license`.
 
 ### Bancos centrales
 - BIS WS_CBPOL: tasas de política de múltiples bancos centrales. U003 conserva
   el período de referencia y el momento en que LAPLACE conoció la observación.
+- Lecturas directas adicionales: Bank of Canada V39079 (objetivo overnight),
+  Banco Central do Brasil SGS 432 (meta Selic) y BCE FM.D.U2.EUR.4F.KR.DFR.LEV
+  (facilidad de depósito). Se conserva su identidad; no se confunden con tasas
+  efectivas de mercado ni se completa una cifra ausente con cero.
+
+### Contratos de commodities con vencimiento
+- MOEX ISS aporta contratos identificados individualmente con `contract_id`,
+  `asset_code`, `last_trade_date` y precio `last`; los vencidos y cotizaciones
+  futuras se excluyen. Los metadatos se conservan en `contract_metadata`.
+- Los precios usan `native_quote` hasta verificar su unidad y moneda. No se
+  comparan con USD ni se presentan como liquidación oficial (`settlement`).
+- Esta conexión no equivale a disponer de CME/ICE o de todos sus contratos.
 
 ### Empleo
 - BLS Public Data API: nóminas no agrícolas, desempleo y participación laboral.
@@ -33,9 +51,14 @@ presentan como feed directo/licenciado de cada bolsa.
 
 ### Releases macro con vintages exactos
 - Con `FRED_API_KEY`, U003 consulta FRED/ALFRED con `output_type=4` para conservar
-  **la publicación inicial** de GDP, CPI, desempleo, payrolls, ventas minoristas
-  y producción industrial. `known_at` usa la fecha vintage/realtime_start de la
-  publicación inicial, no la fecha en que LAPLACE la descargó.
+  el valor y el **día del vintage inicial** de GDP, CPI, desempleo, payrolls,
+  ventas minoristas y producción industrial. Esa información se conserva en
+  `macro_vintages`, separada de la recepción real `known_at`.
+- ALFRED no acredita una hora de publicación intradía. `publication_at=null`,
+  `publication_precision=day` y `historical_intraday_eligible=false` expresan
+  esa limitación. No se convierte el día del vintage en medianoche histórica.
+- La clave de FRED solo viaja en la solicitud; no se conserva en URLs de
+  observaciones, metadatos ni exportaciones.
 - Sin clave, la fuente queda `requires_credentials`; no se inventa el vintage.
 
 ### Electricidad
@@ -61,9 +84,9 @@ presentan como feed directo/licenciado de cada bolsa.
 
 ## Vintages y tiempo conocido
 
-Para las series ALFRED configuradas, U003 puede conservar la fecha vintage de
-publicación inicial. Para el resto de fuentes, U003 no retroinventa la fecha
-exacta en que una cifra histórica fue publicada. Cada captura registra:
+Para las series ALFRED configuradas, U003 conserva el día del vintage inicial.
+Sigue pendiente la historia completa de revisiones y su hora de publicación
+verificada. Cada captura registra:
 - `observed_at`: período/instante del fenómeno;
 - `known_at`: instante en que LAPLACE recibió la observación.
 
@@ -81,6 +104,37 @@ round-trip exacto antes de aprobar.
 U003 no activa estas señales en M001/XN01. Primero se debe construir historia
 punto-en-tiempo y demostrar mejora fuera de muestra.
 
+## Captura primaria con respuestas originales
+
+```bash
+node tools/fuentes-oficiales.mjs registros/fuentes-oficiales
+```
+
+Este comando realiza una consulta manual a las siete fuentes primarias nuevas,
+conserva sus respuestas originales por SHA-256 y guarda un snapshot fechado
+inmutable, su resumen y los metadatos de contratos. Registra cada fallo sin
+inventar señales. Esas respuestas permiten reproducir los parsers y auditar
+revisiones futuras. No configura una tarea periódica.
+
+Referencias primarias:
+- [Bank of Canada Valet](https://www.bankofcanada.ca/valet/docs)
+- [BCB SGS 432](https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?formato=json)
+- [ECB SDMX](https://data.ecb.europa.eu/help/api/overview)
+- [TWSE OpenAPI](https://openapi.twse.com.tw/)
+- [B3 cotizaciones públicas](https://cotacao.b3.com.br/)
+- [MOEX ISS](https://iss.moex.com/iss/reference/)
+- [FRED: períodos de tiempo real](https://fred.stlouisfed.org/docs/api/fred/realtime_period.html)
+
+## Pendientes que esta revisión no cierra
+
+- Más bolsas directas de Asia/Europa/LatAm y sus feeds completos.
+- Tasas directas de más bancos centrales; BIS mensual sigue siendo agregado.
+- Unidades de cotización, calendarios, roll y liquidación de más futuros, CME/ICE.
+- Credenciales para JPX, ALFRED y OpenSky en una prueba real.
+- Todos los vintages/revisiones macro con hora exacta de publicación.
+- Ampliar electricidad, transporte y noticias por región y validar cobertura.
+- Integración de esta expansión en el panel empaquetado de REVERSE y APK.
+
 ## Registro prospectivo
 
 `universo/registro-u003.mjs` y el workflow
@@ -90,6 +144,6 @@ Esto permite después entrenar y probar señales U003 sin reconstruir el pasado
 con datos revisados.
 
 Secrets opcionales soportados:
-- `FRED_API_KEY`: vintages ALFRED exactos.
+- `FRED_API_KEY`: valores de publicación inicial y días de vintage ALFRED.
 - `OPENSKY_CLIENT_ID` / `OPENSKY_CLIENT_SECRET`: tráfico aéreo.
 - `JQUANTS_API_KEY`: JPX directo.

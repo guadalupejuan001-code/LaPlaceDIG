@@ -11,7 +11,9 @@
     "test:panel": "node --test tests/panel.test.mjs tests/intradia15.test.mjs tests/universo.test.mjs tests/panel-regresion.test.mjs",
     "seguimiento": "node seguimiento/ciclo.mjs",
     "seguimiento:continuo": "node seguimiento/ciclo.mjs --continuo",
-    "test:seguimiento": "node --test tests/seguimiento.test.mjs"
+    "test:seguimiento": "node --test tests/seguimiento.test.mjs",
+    "fuentes:oficiales": "node tools/fuentes-oficiales.mjs",
+    "test:fuentes": "node --test tests/fuentes-oficiales.test.mjs tests/global-u003.test.mjs tests/global.test.mjs"
   },
   "engines": {
     "node": ">=20"

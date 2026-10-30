@@ -24,12 +24,13 @@ jobs:
         with: {persist-credentials: false}
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
-      - name: Capturar exactamente 369 señales globales
+      - name: Capturar señales globales disponibles sin completar vacíos con cero
         run: |
           mkdir -p ci-global
           node universo/registro-global.mjs --directorio ci-global | tee ci-global/salida.json
-          node --input-type=module -e 'import{readFileSync}from"node:fs";import assert from"node:assert/strict";const r=JSON.parse(readFileSync("ci-global/global-summary.json"));assert.equal(r.known_signals,369);assert.equal(r.failed_sources,0);assert.equal(r.prediction_inputs_enabled,false);'
+          node --input-type=module -e 'import{readFileSync}from"node:fs";import assert from"node:assert/strict";const r=JSON.parse(readFileSync("ci-global/global-summary.json"));assert.ok(r.known_signals>0&&r.known_signals<=r.nominal_signals);assert.equal(r.nominal_signals,369);assert.equal(r.failed_sources,0);assert.equal(r.prediction_inputs_enabled,false);'
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: laplace-u002-registro-captura
           path: ci-global/**
@@ -58,7 +59,7 @@ jobs:
           ref: laplace-registro
           path: _registro
           persist-credentials: true
-      - name: Publicar solo una captura U002 completa
+      - name: Publicar captura U002 con cobertura declarada
         run: |
           set -euo pipefail
           mkdir -p _registro/universo

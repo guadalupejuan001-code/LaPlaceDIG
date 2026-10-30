@@ -39,7 +39,7 @@ test('FRED public CSV parser supports weekly claims without an API key',()=>{
   const row=parseFredCsv(csv,{series:'ICSA',capturedAt:captured,url:'https://fred.stlouisfed.org/graph/fredgraph.csv?id=ICSA'});
   assert.equal(row.value,194000);assert.equal(row.variable,'us_initial_unemployment_claims');
 });
-test('ALFRED initial-release parser preserves the vintage date as known_at',()=>{
+test('ALFRED date-only vintage does not invent an intraday publication timestamp',()=>{
   const raw={observations:[
     {date:'2026-07-01',realtime_start:'2026-08-07',realtime_end:'2026-08-26',value:'4.3'},
     {date:'2026-08-01',realtime_start:'2026-09-04',realtime_end:'2026-09-30',value:'4.4'}
@@ -47,7 +47,7 @@ test('ALFRED initial-release parser preserves the vintage date as known_at',()=>
   const row=parseFredInitialRelease(raw,{series:'UNRATE',capturedAt:captured,url:'https://api.stlouisfed.org/fred/series/observations'});
   assert.equal(row.variable,'us_unemployment_rate_vintage');
   assert.equal(row.value,4.4);
-  assert.equal(row.known_at,'2026-09-04T00:00:00.000Z');
+  assert.equal(row.known_at,captured);
   assert.equal(row.observed_at,'2026-08-01T00:00:00.000Z');
 });
 test('NESO parser extracts actual half-hour electricity state',()=>{

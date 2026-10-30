@@ -9,6 +9,12 @@ transporte marítimo PortWatch, noticias geolocalizadas GDELT y adaptadores
 autorizados para OpenSky/JPX. Las fuentes con credenciales o licencia faltante
 se marcan explícitamente y no se sustituyen por datos ficticios.
 
+La revisión de fuentes primarias agrega TWSE diario, una muestra pública de B3,
+IMOEX/MOEX, contratos MOEX de commodities con vencimiento y tasas directas de
+Canadá/Brasil/BCE. ALFRED conserva el día del vintage separado del instante de
+recepción: no se inventan horas de publicación. La captura manual
+`npm run fuentes:oficiales -- DIRECTORIO` archiva respuestas originales por hash.
+
 ```
 node tools/laplace.mjs universo-global-u003 captura-u003.json
 node tools/laplace.mjs verificar-universo-global captura-u003.json RUTA_MUNDO_X_QUANTUM

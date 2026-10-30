@@ -33,8 +33,9 @@ jobs:
         run: |
           mkdir -p ci-u003-registro
           node universo/registro-u003.mjs --directorio ci-u003-registro | tee ci-u003-registro/salida.json
-          node --input-type=module -e 'import{readFileSync}from"node:fs";import assert from"node:assert/strict";const r=JSON.parse(readFileSync("ci-u003-registro/u003-summary.json"));assert.equal(r.base_signals,369);assert.ok(r.known_signals>=500);assert.ok(r.domains>=14);assert.equal(r.prediction_inputs_enabled,false);'
+          node --input-type=module -e 'import{readFileSync}from"node:fs";import assert from"node:assert/strict";const r=JSON.parse(readFileSync("ci-u003-registro/u003-summary.json"));assert.ok(r.base_signals>0);assert.ok(r.known_signals>=500);assert.ok(r.domains>=14);assert.deepEqual(r.missing_critical_groups,[]);assert.equal(r.prediction_inputs_enabled,false);'
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: laplace-u003-registro
           path: ci-u003-registro/**

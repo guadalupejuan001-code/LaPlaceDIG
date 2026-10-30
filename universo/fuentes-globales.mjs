@@ -4,6 +4,7 @@
  */
 import {chartUrl,parseChart} from '../bolsa/mercado.mjs';
 import {fetchKp} from './geomagnetismo.mjs';
+import {numeric} from './fuentes-oficiales.mjs';
 import {MARKET_SYMBOLS,CRYPTO_PRODUCTS,MACRO_ECONOMIES,MACRO_INDICATORS,WEATHER_GRID,WEATHER_VARIABLES} from './catalogo-global.mjs';
 
 const need=(ok,msg)=>{if(!ok)throw Error(msg)};
@@ -41,11 +42,11 @@ function marketRows(parsed,capturedAt,url){
   ];
 }
 export async function fetchGlobalMarkets({fetchImpl=fetch,now=()=>new Date().toISOString(),timeoutMs=12000,symbols=MARKET_SYMBOLS}={}){
-  const captured=iso(now()),settled=await poolMap(symbols,4,async symbol=>{
+  const settled=await poolMap(symbols,4,async symbol=>{
     const url=chartUrl(symbol,{range:'5d',interval:'5m'}),raw=await json(url,{fetchImpl,timeoutMs});
     return {symbol,url,parsed:parseChart(raw,symbol)};
   });
-  const observations=[],sources=[];
+  const captured=iso(now()),observations=[],sources=[];
   settled.forEach((r,i)=>{
     const symbol=symbols[i];
     if(r.status==='fulfilled'){
@@ -58,13 +59,13 @@ export async function fetchGlobalMarkets({fetchImpl=fetch,now=()=>new Date().toI
 
 const CB='https://api.exchange.coinbase.com/products/';
 export async function fetchGlobalCrypto({fetchImpl=fetch,now=()=>new Date().toISOString(),timeoutMs=10000,products=CRYPTO_PRODUCTS}={}){
-  const captured=iso(now()),settled=await poolMap(products,2,async product=>{
+  const settled=await poolMap(products,2,async product=>{
     const url=CB+encodeURIComponent(product)+'/ticker',raw=await json(url,{fetchImpl,timeoutMs,maxBytes:200000});
-    const price=Number(raw?.price),t=Date.parse(raw?.time);need(Number.isFinite(price)&&price>0&&Number.isFinite(t),'ticker cripto inválido '+product);
-    need(t<=Date.parse(captured),'ticker cripto futuro');
+    const price=numeric(raw?.price),t=Date.parse(raw?.time);need(Number.isFinite(price)&&price>0&&Number.isFinite(t),'ticker cripto inválido '+product);
+    need(t<=Date.parse(now()),'ticker cripto futuro');
     return {product,url,price,observed_at:iso(t)};
   });
-  const observations=[],sources=[];
+  const captured=iso(now()),observations=[],sources=[];
   settled.forEach((r,i)=>{
     const product=products[i],key=safe(product);
     if(r.status==='fulfilled'){
@@ -84,8 +85,8 @@ export function parseWorldBank(raw,{indicator,capturedAt,url,economies=MACRO_ECO
   const def=MACRO_INDICATORS[indicator];need(def,'indicador World Bank no registrado');
   const by=new Map();
   for(const row of raw[1]){
-    const code=String(row?.countryiso3code??'').toUpperCase(),year=Number(row?.date),value=Number(row?.value);
-    if(!economies.includes(code)||!Number.isInteger(year)||year<1900||year>2100||!Number.isFinite(value))continue;
+    const code=String(row?.countryiso3code??'').toUpperCase(),year=Number(row?.date),value=numeric(row?.value);
+    if(!economies.includes(code)||!Number.isInteger(year)||year<1900||year>Number(iso(capturedAt).slice(0,4))||!Number.isFinite(value))continue;
     const old=by.get(code);if(!old||year>old.year)by.set(code,{year,value});
   }
   const known=iso(capturedAt),observations=[];
@@ -99,7 +100,7 @@ export function parseWorldBank(raw,{indicator,capturedAt,url,economies=MACRO_ECO
 export async function fetchGlobalMacro({fetchImpl=fetch,now=()=>new Date().toISOString(),timeoutMs=12000,indicators=MACRO_INDICATORS}={}){
   const captured=iso(now()),codes=Object.keys(indicators),settled=await poolMap(codes,2,async indicator=>{
     const url=wbUrl(indicator),raw=await json(url,{fetchImpl,timeoutMs,maxBytes:1_500_000});
-    return {indicator,url,observations:parseWorldBank(raw,{indicator,capturedAt:captured,url})};
+    return {indicator,url,observations:parseWorldBank(raw,{indicator,capturedAt:now(),url})};
   });
   const observations=[],sources=[];
   settled.forEach((r,i)=>{
@@ -121,7 +122,7 @@ export function weatherUrl(grid=WEATHER_GRID){
 function weatherTime(raw,capturedAt){
   const t=raw?.current?.time;need(typeof t==='string','clima sin timestamp');
   const parsed=Date.parse(/[zZ]|[+-]\d\d:\d\d$/.test(t)?t:t+'Z');
-  need(Number.isFinite(parsed)&&parsed<=Date.parse(capturedAt)+3600000,'timestamp climático inválido');
+  need(Number.isFinite(parsed)&&parsed<=Date.parse(capturedAt),'timestamp climático inválido o futuro');
   return iso(parsed);
 }
 export function parseWeather(raw,{capturedAt,url,grid=WEATHER_GRID}={}){
@@ -130,7 +131,7 @@ export function parseWeather(raw,{capturedAt,url,grid=WEATHER_GRID}={}){
   rows.forEach((row,i)=>{
     const at=weatherTime(row,known),node=grid[i];
     for(const v of WEATHER_VARIABLES){
-      const value=Number(row?.current?.[v.api]);if(!Number.isFinite(value))continue;
+      const value=numeric(row?.current?.[v.api]);if(!Number.isFinite(value))continue;
       observations.push(observation('weather-'+node.id+'-'+v.name+'-'+at,'clima_global',node.id+'_'+v.name,value,v.unit,at,known,url));
     }
   });
@@ -140,7 +141,7 @@ export async function fetchGlobalWeather({fetchImpl=fetch,now=()=>new Date().toI
   const captured=iso(now()),url=weatherUrl(grid);
   try{
     const raw=await json(url,{fetchImpl,timeoutMs,maxBytes:2_000_000});
-    const observations=parseWeather(raw,{capturedAt:captured,url,grid});
+    const observations=parseWeather(raw,{capturedAt:now(),url,grid});
     return {group:'weather',captured_at:captured,observations,sources:[{name:'Open-Meteo-grid',status:'observed',signals:observations.length,url}]};
   }catch(e){return {group:'weather',captured_at:captured,observations:[],sources:[{name:'Open-Meteo-grid',status:'unavailable',reason:String(e.message).slice(0,180),url}]};}
 }
@@ -154,9 +155,9 @@ export function parseEarthquakes(raw,{capturedAt,url=USGS_DAY}={}){
   need(raw?.type==='FeatureCollection'&&Array.isArray(raw.features)&&raw.features.length<=50000,'feed sísmico inválido');
   const known=iso(capturedAt),events=[];
   for(const f of raw.features){
-    const mag=Number(f?.properties?.mag),time=Number(f?.properties?.time),coords=f?.geometry?.coordinates;
+    const mag=numeric(f?.properties?.mag),time=numeric(f?.properties?.time),coords=f?.geometry?.coordinates;
     if(!Number.isFinite(mag)||!Number.isFinite(time)||!Array.isArray(coords)||!Number.isFinite(coords[0])||!Number.isFinite(coords[1]))continue;
-    if(time>Date.parse(known)+60000)continue;events.push({mag,time,lon:coords[0],lat:coords[1]});
+    if(time>Date.parse(known))continue;events.push({mag,time,lon:coords[0],lat:coords[1]});
   }
   const obsAt=known,observations=[
     observation('seismic-count-'+known,'sismologia_global','earthquakes_24h_count',events.length,'count',obsAt,known,url),
@@ -173,11 +174,11 @@ export async function fetchGlobalPhysical({fetchImpl=fetch,now=()=>new Date().to
   const captured=iso(now());
   const [quake,kp]=await Promise.allSettled([
     json(USGS_DAY,{fetchImpl,timeoutMs,maxBytes:4_000_000}),
-    fetchKp({fetchImpl,now:()=>captured,timeoutMs})
+    fetchKp({fetchImpl,now,timeoutMs})
   ]);
   const observations=[],sources=[];
   if(quake.status==='fulfilled'){
-    try{const o=parseEarthquakes(quake.value,{capturedAt:captured});observations.push(...o);sources.push({name:'USGS-earthquakes',status:'observed',signals:o.length,url:USGS_DAY});}
+    try{const o=parseEarthquakes(quake.value,{capturedAt:now()});observations.push(...o);sources.push({name:'USGS-earthquakes',status:'observed',signals:o.length,url:USGS_DAY});}
     catch(e){sources.push({name:'USGS-earthquakes',status:'unavailable',reason:String(e.message).slice(0,180),url:USGS_DAY});}
   }else sources.push({name:'USGS-earthquakes',status:'unavailable',reason:String(quake.reason?.message??quake.reason).slice(0,180),url:USGS_DAY});
   if(kp.status==='fulfilled'){
