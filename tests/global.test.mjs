@@ -8,12 +8,12 @@ import {cleanSymbol} from '../bolsa/mercado.mjs';
 
 const captured='2026-10-30T06:30:00.000Z';
 test('U002 catalog expands coverage without exceeding the 4096-state contract',()=>{
-  assert.ok(MARKET_SYMBOLS.length>=35);
+  assert.equal(MARKET_SYMBOLS.length,40);
   assert.equal(WEATHER_GRID.length,40);
-  assert.ok(EXPECTED_SIGNAL_BUDGET.markets>=140);
-  assert.ok(EXPECTED_SIGNAL_BUDGET.weather>=160);
+  assert.equal(EXPECTED_SIGNAL_BUDGET.markets,160);
+  assert.equal(EXPECTED_SIGNAL_BUDGET.weather,160);
   const nominal=Object.values(EXPECTED_SIGNAL_BUDGET).reduce((a,b)=>a+b,0);
-  assert.ok(nominal>=300&&nominal<4096);
+  assert.equal(nominal,369);
   assert.equal(cleanSymbol('^VIX'),'^VIX');
 });
 test('World Bank parser records latest available annual values with capture-time knowledge',()=>{

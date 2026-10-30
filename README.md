@@ -5,7 +5,7 @@
 LAPLACE incorpora una malla mundial extensible de señales observables: mercados
 regionales, divisas, bonos/crédito, materias primas, grandes acciones, cripto,
 macro de varias economías, 40 celdas meteorológicas mundiales, actividad sísmica
-por sectores y geomagnetismo. El presupuesto nominal inicial supera 300 estados
+por sectores y geomagnetismo. El presupuesto nominal inicial es de **369 estados**
 por captura y permanece bajo el contrato de 4096 estados.
 
 Cada señal conserva fuente HTTPS, `observed_at` y `known_at`. La captura puede
