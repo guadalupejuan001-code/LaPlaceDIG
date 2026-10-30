@@ -8,7 +8,10 @@
     "test": "node --test tests/*.test.mjs",
     "help": "node tools/laplace.mjs --help",
     "panel": "node panel/servidor.mjs",
-    "test:panel": "node --test tests/panel.test.mjs tests/intradia15.test.mjs tests/universo.test.mjs tests/panel-regresion.test.mjs"
+    "test:panel": "node --test tests/panel.test.mjs tests/intradia15.test.mjs tests/universo.test.mjs tests/panel-regresion.test.mjs",
+    "seguimiento": "node seguimiento/ciclo.mjs",
+    "seguimiento:continuo": "node seguimiento/ciclo.mjs --continuo",
+    "test:seguimiento": "node --test tests/seguimiento.test.mjs"
   },
   "engines": {
     "node": ">=20"
