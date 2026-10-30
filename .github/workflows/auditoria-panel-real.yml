@@ -1,0 +1,52 @@
+name: Auditoria real del panel LAPLACE
+on:
+  push:
+    branches: [test/panel-auditoria-20261029]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  auditoria:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fab365642df471417c5d12ddc021911a90a9d1e3
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Congelar el codigo original y el entorno
+        run: |
+          mkdir -p evidencia-auditoria
+          git rev-parse HEAD > evidencia-auditoria/commit.txt
+          git archive --format=zip --output=evidencia-auditoria/codigo-original.zip HEAD
+          node --version > evidencia-auditoria/entorno.txt
+          date -u +'%Y-%m-%dT%H:%M:%SZ' >> evidencia-auditoria/entorno.txt
+      - name: Repetir las pruebas originales
+        run: |
+          set -o pipefail
+          npm run test:panel | tee evidencia-auditoria/pruebas-originales.txt
+      - name: Probar servidor y lectura externa real
+        run: |
+          export LAPLACE_PANEL_ARCHIVO="$RUNNER_TEMP/auditoria-registro.json"
+          node panel/servidor.mjs > evidencia-auditoria/servidor.txt 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in 1 2 3 4 5; do
+            if curl --silent --fail http://127.0.0.1:4179/api/estado > evidencia-auditoria/estado-inicial.json; then break; fi
+            sleep 1
+          done
+          curl --silent --max-time 65 -D evidencia-auditoria/actualizacion-cabeceras.txt -X POST http://127.0.0.1:4179/api/actualizar > evidencia-auditoria/actualizacion.json
+          curl --silent -D evidencia-auditoria/exportacion-cabeceras.txt http://127.0.0.1:4179/api/exportar > evidencia-auditoria/captura-real.json
+          curl --silent http://127.0.0.1:4179/api/estado > evidencia-auditoria/estado-final.json
+          curl --silent http://127.0.0.1:4179/ > evidencia-auditoria/pagina-real.html
+          node --input-type=module -e 'import{readFileSync}from"node:fs";const a=JSON.parse(readFileSync("evidencia-auditoria/actualizacion.json"));console.log(JSON.stringify({captura:!!a.ultima,error:a.error??null,fuentes:a.ultima?.source_count,fecha:a.ultima?.at,historial:a.historial?.length}));'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: laplace-auditoria-real
+          path: evidencia-auditoria/**
+          retention-days: 14
+          if-no-files-found: error
