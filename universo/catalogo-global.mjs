@@ -6,7 +6,7 @@ export const MARKET_SYMBOLS=Object.freeze([
   // Índices / regiones
   'SPY','QQQ','DIA','IWM','^VIX','EEM','VWO','EWJ','EWU','EWG','EWZ','FXI','INDA','EWA','EWC',
   // Divisas principales frente a USD / cruces líquidos
-  'EURUSD=X','GBPUSD=X','JPY=X','AUDUSD=X','CAD=X','CHF=X',
+  'EURUSD=X','GBPUSD=X','JPY=X','AUDUSD=X','CAD=X','CHF=X','DX-Y.NYB',
   // Renta fija / crédito
   'TLT','IEF','SHY','HYG','LQD',
   // Materias primas / energía
@@ -38,6 +38,6 @@ export const EXPECTED_SIGNAL_BUDGET=Object.freeze({
   crypto:CRYPTO_PRODUCTS.length,
   macro:MACRO_ECONOMIES.length*Object.keys(MACRO_INDICATORS).length,
   weather:WEATHER_GRID.length*WEATHER_VARIABLES.length,
-  seismic:10,
+  seismic:11,
   geomagnetic:1
 });
