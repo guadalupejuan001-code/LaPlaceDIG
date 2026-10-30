@@ -24,7 +24,7 @@ muestra. Así se evita convertir correlaciones accidentales en "causas".
 
 ## Cobertura inicial
 
-El catálogo inicial contiene más de 300 posiciones de señal nominales:
+El catálogo inicial contiene **369 posiciones de señal nominales**:
 
 - Mercados globales: índices/ETF de EE.UU. y regiones internacionales,
   volatilidad, divisas, bonos, crédito, metales, energía y grandes empresas.
