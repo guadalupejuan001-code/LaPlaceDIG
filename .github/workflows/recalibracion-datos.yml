@@ -1,0 +1,64 @@
+name: LAPLACE R015 - Datos para contraste
+on:
+  push:
+    branches: [fix/recalibracion-r015-20261029]
+    paths: [.github/workflows/recalibracion-datos.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  datos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Recuperar ventanas historicas fijas sin seleccionar resultados
+        run: |
+          mkdir -p evidencia-r015
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import {createHash} from 'node:crypto';
+          const sha=s=>createHash('sha256').update(s).digest('hex');
+          const iso=n=>new Date(n).toISOString();
+          const begin=Date.parse('2026-10-22T02:00:00Z'),end=Date.parse('2026-10-30T02:00:00Z');
+          const reports=[],all=new Map();
+          async function get(start,end,granularity){
+            const url=new URL('https://api.exchange.coinbase.com/products/BTC-USD/candles');
+            url.searchParams.set('start',iso(start));url.searchParams.set('end',iso(end));url.searchParams.set('granularity',String(granularity));
+            const r=await fetch(url,{signal:AbortSignal.timeout(15000),headers:{'User-Agent':'LaPlaceDIG-R015-auditoria'},cache:'no-store'});
+            if(!r.ok)throw Error('HTTP '+r.status);
+            const text=await r.text();if(text.length>200000)throw Error('Respuesta excesiva');
+            const data=JSON.parse(text);if(!Array.isArray(data)||data.length>500)throw Error('Formato inesperado');
+            reports.push({url:String(url),captured_at:iso(Date.now()),sha256:sha(text),count:data.length});
+            return data;
+          }
+          for(let t=begin;t<end;t+=86400000){
+            for(const row of await get(t,Math.min(t+86400000,end),300)){
+              if(!Array.isArray(row)||row.length!==6||!row.every(Number.isFinite))throw Error('Vela invalida');
+              if(row[0]*1000<begin||(row[0]+300)*1000>end)continue;
+              const old=all.get(row[0]);if(old&&JSON.stringify(old)!==JSON.stringify(row))throw Error('Vela duplicada con valores distintos');
+              all.set(row[0],row);
+            }
+            await new Promise(ok=>setTimeout(ok,200));
+          }
+          const targets=[];
+          for(const target of ['2026-10-29T18:29:38.100Z','2026-10-30T01:22:33.343Z']){
+            const t=Math.floor(Date.parse(target)/60000)*60000;
+            targets.push({target_at:target,granularity_seconds:60,data:await get(t-120000,t+180000,60)});
+          }
+          const history={schema:'laplace-r015-historical-input-v1',start:iso(begin),end:iso(end),captured_at:iso(Date.now()),point_in_time_certified:false,candles:[...all.values()].sort((a,b)=>a[0]-b[0]),targets,reports};
+          fs.writeFileSync('evidencia-r015/datos.json',JSON.stringify(history,null,2));
+          console.log(JSON.stringify({bars:history.candles.length,start:history.start,end:history.end,targets:targets.map(x=>({target:x.target_at,rows:x.data.length})),sha256:sha(JSON.stringify(history))}));
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: laplace-r015-datos
+          path: evidencia-r015/**
+          retention-days: 14
+          if-no-files-found: error
