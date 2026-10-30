@@ -41,6 +41,7 @@ test('empty geographic feeds do not fabricate hemisphere fractions',()=>{
   const r=parseGdacs(feed(''),{capturedAt:at});assert.equal(r.alerts.length,0);assert.equal(r.observations.length,10);
   const rows=parseGdeltGeo({type:'FeatureCollection',features:[]},{topic:'trade',capturedAt:at,url:'https://example.org/'});
   assert.equal(rows.length,1);assert.equal(rows[0].value,0);
+  assert.throws(()=>parseGdacs(feed(item({lat:''})),{capturedAt:at}),/no se infiere un total cero/);
 });
 test('GDELT failure leaves disaster coverage available and failed topics explicit',async()=>{
   const r=await fetchGeoNews({now:()=>at,topics:[{id:'trade',query:'trade',gkg:'TRADE'}],

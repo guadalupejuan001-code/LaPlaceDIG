@@ -61,6 +61,7 @@ export function parseGdacs(xml,{capturedAt,url=GDACS_URL,maxAgeHours=48}={}){
       (event.modified_at===previous.modified_at&&event.version_sha256>previous.version_sha256))events.set(key,event);
   }
   const alerts=[...events.values()].sort((a,b)=>a.id.localeCompare(b.id)),n=alerts.length;
+  need(n>0||!(rejected.invalid+rejected.future),'GDACS no tiene alertas válidas; no se infiere un total cero');
   const make=(name,value,unit='count')=>observation({id:'gdacs-'+name+'-'+known,
     domain:'noticias_geolocalizadas',variable:'gdacs_'+name,value,unit,
     observed_at:known,known_at:known,source_url:url});
