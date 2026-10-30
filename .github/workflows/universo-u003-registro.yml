@@ -1,0 +1,76 @@
+name: LAPLACE U003 - registro mundial multidominio
+on:
+  schedule:
+    - cron: '43 * * * *'
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'universo/**'
+      - '.github/workflows/universo-u003-registro.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'universo/**'
+      - '.github/workflows/universo-u003-registro.yml'
+permissions:
+  contents: read
+jobs:
+  capturar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Capturar U003 punto-en-tiempo
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          OPENSKY_CLIENT_ID: ${{ secrets.OPENSKY_CLIENT_ID }}
+          OPENSKY_CLIENT_SECRET: ${{ secrets.OPENSKY_CLIENT_SECRET }}
+          JQUANTS_API_KEY: ${{ secrets.JQUANTS_API_KEY }}
+        run: |
+          mkdir -p ci-u003-registro
+          node universo/registro-u003.mjs --directorio ci-u003-registro | tee ci-u003-registro/salida.json
+          node --input-type=module -e 'import{readFileSync}from"node:fs";import assert from"node:assert/strict";const r=JSON.parse(readFileSync("ci-u003-registro/u003-summary.json"));assert.equal(r.base_signals,369);assert.ok(r.known_signals>=500);assert.ok(r.domains>=14);assert.equal(r.prediction_inputs_enabled,false);'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: laplace-u003-registro
+          path: ci-u003-registro/**
+          retention-days: 14
+  publicar:
+    if: github.event_name != 'pull_request'
+    needs: capturar
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: write
+    concurrency:
+      group: laplace-u003-registro
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/download-artifact@v4
+        with:
+          name: laplace-u003-registro
+          path: _captura
+      - uses: actions/checkout@v4
+        with:
+          ref: laplace-registro
+          path: _registro
+          persist-credentials: true
+      - name: Publicar captura U003 y conservar el vintage en Git
+        run: |
+          set -euo pipefail
+          mkdir -p _registro/universo
+          cp _captura/u003-latest.json _registro/universo/u003-latest.json
+          cp _captura/u003-summary.json _registro/universo/u003-summary.json
+          git -C _registro config user.name 'LAPLACE U003 registro'
+          git -C _registro config user.email 'laplace-registro@users.noreply.github.com'
+          git -C _registro add -- universo/u003-latest.json universo/u003-summary.json
+          if ! git -C _registro diff --cached --quiet; then
+            git -C _registro commit -m "U003 world vintage $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git -C _registro push origin HEAD:laplace-registro
+          fi
