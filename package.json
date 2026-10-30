@@ -16,7 +16,9 @@
     "test:fuentes": "node --test tests/fuentes-oficiales.test.mjs tests/global-u003.test.mjs tests/global.test.mjs tests/noticias-vintages.test.mjs",
     "vintages:macro": "node tools/vintages-macro.mjs",
     "capital": "node tools/capital.mjs",
-    "test:capital": "node --test tests/capital.test.mjs"
+    "test:capital": "node --test tests/capital.test.mjs",
+    "entrenar": "node tools/entrenar.mjs",
+    "test:entrenamiento": "node --test tests/entrenamiento.test.mjs tests/mercado-xi-x001.test.mjs"
   },
   "engines": {
     "node": ">=20"

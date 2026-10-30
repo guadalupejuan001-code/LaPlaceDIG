@@ -1,5 +1,10 @@
 # X001 — primera prueba real del núcleo XI/Ether contra M001
 
+Revisión X002: se comprobó que `alpha` no modifica la emisión direccional del
+paso cero. La selección actual de X001 usa pérdida de transición; X002 ajusta
+`prior_strength` y una partición de calibración separada. Los resultados
+históricos de este documento se conservan. Véase [X002](ENTRENAMIENTO_X002.md).
+
 Fecha de ejecución: 2026-10-30 UTC. Rama experimental: `experiment/xi-market-headtohead-20261030`. Producción sin cambios.
 
 ## Objetivo

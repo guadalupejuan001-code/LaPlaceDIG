@@ -1,5 +1,16 @@
 # LaPlaceDIG
 
+## X002 — entrenamiento y recalibración verificables
+
+Cinco horizontes BTC (15/30/60/240/1440 minutos), cuatro particiones temporales,
+conteos y probabilidades en el ejecutor nativo XI/Ether, calibración escalar
+clásica y comparación con M001/persistencia. Conserva modelos, predicciones,
+resultados y respuestas HTTP por hash. [Método y límites](docs/ENTRENAMIENTO_X002.md).
+
+```bash
+npm run entrenar -- RUTA_LAPLACE_TEMPORAL DIRECTORIO_NUEVO
+```
+
 ## U004 — capital y liquidez
 
 Primera fase del proyecto de fuentes financieras: COT de siete mercados,
