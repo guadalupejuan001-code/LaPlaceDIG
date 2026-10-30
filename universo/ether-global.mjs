@@ -51,7 +51,7 @@ export function proveGlobalEther(binary,snapshot){
   let rows;try{rows=run.stdout.trim().split(/\\r?\\n/).filter(Boolean).map(JSON.parse)}
   catch{throw Error('salida XI/Ether U002 no es JSONL')};
   const mat=rows.find(x=>x.type==='memory_materialization'),mem=rows.find(x=>x.type==='memory_stats'),core=rows.find(x=>x.type==='stats');
-  need(mat?.address===compiled.base_address&&mat.bytes===compiled.bytes.length,'materialización U002 incorrecta');
+  need(mat?.address===compiled.base_address&&mat.bytes===compiled.bytes.length,'materialización U002 incorrecta: '+JSON.stringify({actual:mat??null,esperado:{address:compiled.base_address,bytes:compiled.bytes.length}}));
   need(Buffer.from(mat.hex,'hex').equals(compiled.bytes),'Ether alteró el snapshot global');
   need(mem?.model==='inverse-ether-memory','U002 no usó Inverse Ether Memory');
   need(mem.overrides===compiled.nonzero_bytes,'conteo de excepciones Ether inesperado');
