@@ -1,5 +1,24 @@
 # LaPlaceDIG
 
+## U002 — expansión global de estados hacia XI/Ether
+
+LAPLACE incorpora una malla mundial extensible de señales observables: mercados
+regionales, divisas, bonos/crédito, materias primas, grandes acciones, cripto,
+macro de varias economías, 40 celdas meteorológicas mundiales, actividad sísmica
+por sectores y geomagnetismo. El presupuesto nominal inicial supera 300 estados
+por captura y permanece bajo el contrato de 4096 estados.
+
+Cada señal conserva fuente HTTPS, `observed_at` y `known_at`. La captura puede
+materializarse exactamente en **Inverse Ether Memory mediante XI**; esto no crea
+qubits implícitos ni promueve automáticamente las variables a predictor.
+
+```
+node tools/laplace.mjs universo-global captura-u002.json
+node tools/laplace.mjs verificar-universo-global captura-u002.json RUTA_MUNDO_X_QUANTUM
+```
+
+[Arquitectura, cobertura y límites](docs/UNIVERSO_U002_GLOBAL.md).
+
 ## Panel LAPLACE en español — lectura real, sin maqueta
 
 El panel local ejecutable permite ver cotización, trayectoria de velas realmente recuperadas, proyección I015 a 15 minutos, mediciones de U001 (libro L2, operaciones, mercados relacionados, NOAA), historial de capturas registradas y resultados de validación. El diseño no muestra cifras de demostración; si falla una fuente, conserva la última captura e indica que es histórica. No ejecuta operaciones y no implica integración nativa automática con la APK de REVERSE-PC.

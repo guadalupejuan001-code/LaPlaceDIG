@@ -6,7 +6,7 @@ const need=(ok,msg)=>{if(!ok)throw Error(msg)};
 export const DEFAULT_SYMBOLS=Object.freeze(['SPY','AAPL','NVDA']);
 export function cleanSymbol(raw){
   const s=String(raw??'').trim().toUpperCase();
-  need(/^[A-Z][A-Z0-9.^=-]{0,14}$/.test(s),'Símbolo bursátil inválido');
+  need(/^(?:\^?[A-Z])[A-Z0-9.^=-]{0,14}$/.test(s),'Símbolo bursátil inválido');
   return s;
 }
 export function chartUrl(symbol,{range='1mo',interval='5m'}={}){
