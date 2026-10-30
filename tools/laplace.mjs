@@ -21,6 +21,8 @@ import {calibrateHistory,pastComparisons,MODES} from '../bitcoin/calibracion.mjs
 import {causalSnapshot,causalWalkForward} from '../bitcoin/causal.mjs';
 import {observeAndProject15m} from '../bitcoin/intradia15.mjs';
 import {observeUniverseBTC} from '../universo/mercado.mjs';
+import {observeGlobalUniverse} from '../universo/global.mjs';
+import {proveGlobalEther} from '../universo/ether-global.mjs';
 import {universeSnapshot} from '../universo/estados.mjs';
 import {temporalExperiment,liveTemporalProfile,queryTemporal} from '../dinamica/modelo.mjs';
 import {compilarSistema} from '../fisica/compilar.mjs';
@@ -55,6 +57,8 @@ function usage(){
    +'  node tools/laplace.mjs actualizar-bitcoin CAPTURA_NUEVA.json [HECHOS_NUEVOS.jsonl]\n'
    +'  node tools/laplace.mjs descargar-bitcoin INICIO_UTC FIN_UTC HISTORIA_NUEVA.json\n'
    +'  node tools/laplace.mjs bitcoin-15m [RESULTADO_NUEVO.json]\n'   +'  node tools/laplace.mjs universo-btc-15m [RESULTADO_NUEVO.json]\n'
+   +'  node tools/laplace.mjs universo-global [RESULTADO_NUEVO.json]\n'
+   +'  node tools/laplace.mjs verificar-universo-global CAPTURA_U002.json BIN_XI\n'
    +'  node tools/laplace.mjs universo-corte OBSERVACIONES.json CORTE_UTC [RESULTADO_NUEVO.json]\n'
    +'  node tools/laplace.mjs analizar-causas-bitcoin HISTORIA.json CORTE_UTC [strict|exploratory_close_availability]\n'
    +'  node tools/laplace.mjs probar-causas-bitcoin HISTORIA.json [strict|exploratory_close_availability]\n'
@@ -162,6 +166,19 @@ async function main(){
   if(command==='consultar-dinamica'){
     must(params.length===4&&/^\d+$/.test(params[1])&&/^\d+$/.test(params[2]),'uso: consultar-dinamica CHECKPOINT.json MASCARA PASOS BIN_NATIVO');
     console.log(JSON.stringify(queryTemporal(params[3],JSON.parse(readFileSync(params[0],'utf8')),[{mask:Number(params[1]),steps:Number(params[2])}]),null,2));return;
+  }
+  if(command==='universo-global'){
+    must(params.length<=1,'uso: universo-global [RESULTADO_NUEVO.json]');
+    const result=await observeGlobalUniverse();
+    const output=JSON.stringify(result,null,2)+'\n';
+    if(params[0])writeFileSync(params[0],output,{flag:'wx'});
+    console.log(output.trim());return;
+  }
+  if(command==='verificar-universo-global'){
+    must(params.length===2,'uso: verificar-universo-global CAPTURA_U002.json BIN_XI');
+    const capture=JSON.parse(readFileSync(params[0],'utf8'));
+    const snapshot=capture?.universal_state??capture;
+    console.log(JSON.stringify(proveGlobalEther(params[1],snapshot),null,2));return;
   }
   if(command==='universo-btc-15m'){
     must(params.length<=1,'uso: universo-btc-15m [RESULTADO_NUEVO.json]');
