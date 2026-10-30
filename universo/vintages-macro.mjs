@@ -10,7 +10,8 @@ import {EXACT_VINTAGE_SERIES} from './catalogo-u003.mjs';
 export const MACRO_JOURNAL='macro-vintages.jsonl';
 const ZERO='0'.repeat(64),MAX_BYTES=32*1024*1024,MAX_ENTRIES=65536;
 const DOMAINS=new Set(['macro_global','empleo_macro','empleo_alta_frecuencia','tasas_mercado',
-  'tasas_bancos_centrales','tasas_oficiales_directas','macro_vintage_dates']);
+  'tasas_bancos_centrales','tasas_oficiales_directas','macro_vintage_dates',
+  'posicionamiento_cot','curva_tesoro','liquidez_eeuu']);
 const need=(ok,message)=>{if(!ok)throw Error(message)};
 function cleanObservation(raw){
   const item=observation(raw),source=new URL(item.source_url);

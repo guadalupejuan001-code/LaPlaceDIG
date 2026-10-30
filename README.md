@@ -1,5 +1,16 @@
 # LaPlaceDIG
 
+## U004 — capital y liquidez
+
+Primera fase del proyecto de fuentes financieras: COT de siete mercados,
+curva Treasury diaria y componentes Fed/TGA/ON RRP de EE. UU. La recopilación
+entra en U003 y en el diario de revisiones; la integración predictiva permanece
+pendiente. [Alcance, fuentes y pendientes](docs/CAPITAL_U004.md).
+
+```bash
+npm run capital -- registros/capital-u004
+```
+
 ## U003 — mundo económico, logístico y de información
 
 U003 extiende U002/369 por **dominios reales**, no por un contador fijo:
