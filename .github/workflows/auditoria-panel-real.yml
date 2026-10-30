@@ -43,6 +43,21 @@ jobs:
           curl --silent http://127.0.0.1:4179/api/estado > evidencia-auditoria/estado-final.json
           curl --silent http://127.0.0.1:4179/ > evidencia-auditoria/pagina-real.html
           node --input-type=module -e 'import{readFileSync}from"node:fs";const a=JSON.parse(readFileSync("evidencia-auditoria/actualizacion.json"));console.log(JSON.stringify({captura:!!a.ultima,error:a.error??null,fuentes:a.ultima?.source_count,fecha:a.ultima?.at,historial:a.historial?.length}));'
+      - name: Obtener solamente los instrumentos de auditoria de la rama
+        uses: actions/checkout@v4
+        with:
+          ref: test/panel-auditoria-20261029
+          path: _auditoria
+          persist-credentials: false
+      - name: Preparar automatizacion del navegador
+        run: |
+          python3 -m venv "$RUNNER_TEMP/panel-pw"
+          "$RUNNER_TEMP/panel-pw/bin/pip" install --disable-pip-version-check playwright==1.55.0
+          google-chrome --version >> evidencia-auditoria/entorno.txt
+      - name: Probar botones, graficas, tiempo y pantallas moviles
+        run: |
+          set -o pipefail
+          "$RUNNER_TEMP/panel-pw/bin/python" _auditoria/auditoria/probar-panel-navegador.py | tee evidencia-auditoria/navegador-salida.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -50,3 +65,6 @@ jobs:
           path: evidencia-auditoria/**
           retention-days: 14
           if-no-files-found: error
+      - name: No ocultar las aserciones fallidas
+        run: |
+          python3 -c 'import json; r=json.load(open("evidencia-auditoria/resultados-navegador.json")); print("Aprobadas:",r["aprobadas"],"Fallidas:",r["fallidas"]); assert r["fallidas"]==0, "La auditoria encontro defectos reproducibles; revisar el artefacto"'
