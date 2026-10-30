@@ -173,7 +173,8 @@ export async function fetchElectricity({fetchImpl=fetch,now=()=>new Date().toISO
 export const PORTWATCH_URL='https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Ports_Data/FeatureServer/0/query';
 export function parsePortWatch(raw,{capturedAt,url}={}){
   need(Array.isArray(raw?.features)&&raw.features.length>=1,'PortWatch respuesta inválida');
-  const a=raw.features[0].attributes??{},time=Number(a.date),known=iso(capturedAt);
+  const a=raw.features[0].attributes??{},known=iso(capturedAt),rawDate=a.date;
+  let time=Number(rawDate);if(!Number.isFinite(time)||time<=0){const d=String(rawDate??'').slice(0,10);time=Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(d)?d+'T00:00:00Z':String(rawDate??''));}
   need(Number.isFinite(time),'PortWatch sin fecha');
   const observed=iso(time),out=[];
   for(const [field,name,unit] of PORTWATCH_FIELDS){const value=Number(a[field+'_sum']??a[field]);if(Number.isFinite(value))out.push(obs('portwatch-'+field+'-'+observed,'transporte_maritimo',name,value,unit,observed,known,url));}
@@ -203,12 +204,18 @@ export function parseGdeltGeo(raw,{topic,capturedAt,url}={}){
 }
 export async function fetchGeoNews({fetchImpl=fetch,now=()=>new Date().toISOString(),timeoutMs=15000,topics=NEWS_TOPICS}={}){
   const captured=iso(now()),settled=await pool(topics,2,async topic=>{
-    const u=new URL('https://api.gdeltproject.org/api/v2/geo/geo');u.searchParams.set('query',topic.query);u.searchParams.set('mode','pointdata');u.searchParams.set('format','geojson');u.searchParams.set('timespan','1h');u.searchParams.set('maxpoints','250');u.searchParams.set('geores','1');
-    const url=u.toString(),raw=await requestJson(url,{fetchImpl,timeoutMs,maxBytes:4_000_000}),rows=parseGdeltGeo(raw,{topic:topic.id,capturedAt:captured,url});
-    return {topic,url,rows};
+    const v2=new URL('https://api.gdeltproject.org/api/v2/geo/geo');v2.searchParams.set('query',topic.query);v2.searchParams.set('mode','pointdata');v2.searchParams.set('format','geojson');v2.searchParams.set('timespan','1h');v2.searchParams.set('maxpoints','250');v2.searchParams.set('geores','1');
+    try{
+      const url=v2.toString(),raw=await requestJson(url,{fetchImpl,timeoutMs}),rows=parseGdeltGeo(raw,{topic:topic.id,capturedAt:captured,url});
+      return {topic,url,rows,api:'GEO2'};
+    }catch(primary){
+      const v1=new URL('https://api.gdeltproject.org/api/v1/gkg_geojson');v1.searchParams.set('QUERY',topic.gkg);v1.searchParams.set('TIMESPAN','60');v1.searchParams.set('OUTPUTTYPE','2');
+      const url=v1.toString(),raw=await requestJson(url,{fetchImpl,timeoutMs}),rows=parseGdeltGeo(raw,{topic:topic.id,capturedAt:captured,url});
+      return {topic,url,rows,api:'GKG_GEOJSON1',fallback_reason:String(primary.message).slice(0,100)};
+    }
   });
   const observations=[],sources=[];
-  settled.forEach((r,i)=>{const name=topics[i].id;if(r.ok){observations.push(...r.value.rows);sources.push({name:'GDELT-'+name,status:'observed',signals:r.value.rows.length,url:r.value.url})}else sources.push({name:'GDELT-'+name,status:'unavailable',reason:String(r.error.message).slice(0,180)})});
+  settled.forEach((r,i)=>{const name=topics[i].id;if(r.ok){observations.push(...r.value.rows);sources.push({name:'GDELT-'+name,status:'observed',signals:r.value.rows.length,url:r.value.url,api:r.value.api})}else sources.push({name:'GDELT-'+name,status:'unavailable',reason:String(r.error.message).slice(0,180)})});
   return {captured_at:captured,observations,sources};
 }
 
