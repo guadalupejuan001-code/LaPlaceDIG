@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  parseBisPolicyCsv,parseBls,parseFredCsv,parseNeso,parsePortWatch,
+  parseBisPolicyCsv,parseBls,parseFredCsv,parseFredInitialRelease,parseNeso,parsePortWatch,
   parseGdeltGeo,parseOpenSky,parseJQuantsTopix
 } from '../universo/fuentes-u003.mjs';
 import {cleanSymbol} from '../bolsa/mercado.mjs';
@@ -38,6 +38,17 @@ test('FRED public CSV parser supports weekly claims without an API key',()=>{
   const csv='DATE,ICSA\n2026-10-17,195000\n2026-10-24,194000\n';
   const row=parseFredCsv(csv,{series:'ICSA',capturedAt:captured,url:'https://fred.stlouisfed.org/graph/fredgraph.csv?id=ICSA'});
   assert.equal(row.value,194000);assert.equal(row.variable,'us_initial_unemployment_claims');
+});
+test('ALFRED initial-release parser preserves the vintage date as known_at',()=>{
+  const raw={observations:[
+    {date:'2026-07-01',realtime_start:'2026-08-07',realtime_end:'2026-08-26',value:'4.3'},
+    {date:'2026-08-01',realtime_start:'2026-09-04',realtime_end:'2026-09-30',value:'4.4'}
+  ]};
+  const row=parseFredInitialRelease(raw,{series:'UNRATE',capturedAt:captured,url:'https://api.stlouisfed.org/fred/series/observations'});
+  assert.equal(row.variable,'us_unemployment_rate_vintage');
+  assert.equal(row.value,4.4);
+  assert.equal(row.known_at,'2026-09-04T00:00:00.000Z');
+  assert.equal(row.observed_at,'2026-08-01T00:00:00.000Z');
 });
 test('NESO parser extracts actual half-hour electricity state',()=>{
   const rec={SETTLEMENT_DATE:'2026-10-29',SETTLEMENT_PERIOD:48,FORECAST_ACTUAL_INDICATOR:'A',
