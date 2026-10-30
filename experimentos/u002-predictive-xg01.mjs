@@ -8,7 +8,7 @@ import {chartUrl,parseChart} from '../bolsa/mercado.mjs';
 
 export const XG01_SCHEMA='laplace-u002-predictive-ab-xg01-v1';
 export const TARGETS=Object.freeze(['SPY','AAPL','NVDA']);
-export const PLAN=Object.freeze({train:600,validation:160,test:160,strength:8,weights:[0,.25,.5,.75,1],min_global_coverage:28});
+export const PLAN=Object.freeze({train:120,validation:40,test:40,strength:8,weights:[0,.25,.5,.75,1],min_global_coverage:28});
 const need=(c,m)=>{if(!c)throw Error(m)};
 const avg=a=>a.reduce((s,x)=>s+x,0)/a.length;
 const brier=rows=>rows.length?avg(rows.map(x=>(x.p-x.y)**2)):null;
