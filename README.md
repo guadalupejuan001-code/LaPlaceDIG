@@ -1,5 +1,21 @@
 # LaPlaceDIG
 
+## U003 — mundo económico, logístico y de información
+
+U003 extiende U002/369 por **dominios reales**, no por un contador fijo:
+benchmarks regionales, futuros de commodities, tasas BIS de bancos centrales,
+empleo BLS/FRED, vintages macro ALFRED opcionales, electricidad NESO,
+transporte marítimo PortWatch, noticias geolocalizadas GDELT y adaptadores
+autorizados para OpenSky/JPX. Las fuentes con credenciales o licencia faltante
+se marcan explícitamente y no se sustituyen por datos ficticios.
+
+```
+node tools/laplace.mjs universo-global-u003 captura-u003.json
+node tools/laplace.mjs verificar-universo-global captura-u003.json RUTA_MUNDO_X_QUANTUM
+```
+
+[Diseño, cobertura y reglas temporales](docs/UNIVERSO_U003_REAL_WORLD.md).
+
 ## U002 — expansión global de estados hacia XI/Ether
 
 LAPLACE incorpora una malla mundial extensible de señales observables: mercados
