@@ -61,7 +61,7 @@ export async function fetchGlobalCrypto({fetchImpl=fetch,now=()=>new Date().toIS
   const captured=iso(now()),settled=await poolMap(products,2,async product=>{
     const url=CB+encodeURIComponent(product)+'/ticker',raw=await json(url,{fetchImpl,timeoutMs,maxBytes:200000});
     const price=Number(raw?.price),t=Date.parse(raw?.time);need(Number.isFinite(price)&&price>0&&Number.isFinite(t),'ticker cripto inválido '+product);
-    need(t<=Date.parse(captured)+5000,'ticker cripto futuro');
+    need(t<=Date.parse(captured),'ticker cripto futuro');
     return {product,url,price,observed_at:iso(t)};
   });
   const observations=[],sources=[];
