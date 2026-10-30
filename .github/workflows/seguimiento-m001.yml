@@ -22,6 +22,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Instalar dependencias I001/P001 fijadas
+        run: npm ci --no-audit --no-fund
       - run: node --test tests/seguimiento.test.mjs tests/panel.test.mjs tests/panel-regresion.test.mjs tests/intradia15.test.mjs tests/universo.test.mjs
       - name: Primera prueba real aislada, sin puntuar futuros que no han ocurrido
         if: github.event_name == 'pull_request'
@@ -53,6 +55,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Instalar dependencias I001/P001 fijadas
+        run: npm ci --no-audit --no-fund
       - name: Abrir exclusivamente la rama de datos, sin alterar main
         uses: actions/checkout@v4
         with:

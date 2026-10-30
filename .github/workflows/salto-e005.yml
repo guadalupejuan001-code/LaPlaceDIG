@@ -45,6 +45,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Instalar dependencias I001/P001 fijadas
+        run: npm ci --no-audit --no-fund
       - name: Comprobar referencias, compilación de fuente y pruebas sin binario
         run: |
           set -euo pipefail

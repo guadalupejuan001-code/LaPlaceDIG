@@ -2,6 +2,8 @@
 'use strict';
 // LaPlaceDIG: local data ingestion and proof. This is not a trading bot.
 import {readFileSync,writeFileSync} from 'node:fs';
+import {runInstitutions} from './instituciones.mjs';
+import {runInput} from './entrada.mjs';
 import {parseJSONL,canonicalLedger,canonicalFact,stringifyJSONL,ledgerHash,
         asOf,persistenceBaseline,timestamp,KIND} from '../historia/contrato.mjs';
 import {proveWithOriginalEther} from '../historia/ether-xi.mjs';
@@ -104,6 +106,8 @@ function summary(rows){
 }
 async function main(){
   const [, ,command,...params]=process.argv;
+  if(command==='instituciones'){await runInstitutions(params);return;}
+  if(command==='entrada'){await runInput(params);return;}
   if(!command||['ayuda','help','--help'].includes(command)){usage();return;}
   if(command==='crear-exabyte'){
     must(params.length===2,'uso: crear-exabyte PARAMETROS.json SALIDA.xi');
