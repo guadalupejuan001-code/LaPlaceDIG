@@ -15,6 +15,9 @@ on:
       - '.github/workflows/universo-u003-registro.yml'
 permissions:
   contents: read
+concurrency:
+  group: laplace-u003-ciclo-${{ github.event_name == 'pull_request' && github.event.pull_request.number || 'registro' }}
+  cancel-in-progress: false
 jobs:
   capturar:
     runs-on: ubuntu-latest
@@ -24,6 +27,17 @@ jobs:
         with: {persist-credentials: false}
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
+      - uses: actions/checkout@v4
+        with:
+          ref: laplace-registro
+          path: _registro-previo
+          persist-credentials: false
+      - name: Recuperar revisiones macro conservadas
+        run: |
+          mkdir -p ci-u003-registro
+          if test -f _registro-previo/universo/macro-vintages.jsonl; then
+            cp _registro-previo/universo/macro-vintages.jsonl ci-u003-registro/macro-vintages.jsonl
+          fi
       - name: Capturar U003 punto-en-tiempo
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
@@ -68,10 +82,23 @@ jobs:
           mkdir -p _registro/universo
           cp _captura/u003-latest.json _registro/universo/u003-latest.json
           cp _captura/u003-summary.json _registro/universo/u003-summary.json
+          if test -f _captura/macro-vintages.jsonl; then
+            cp _captura/macro-vintages.jsonl _registro/universo/macro-vintages.jsonl
+            git -C _registro add -f -- universo/macro-vintages.jsonl
+          fi
           git -C _registro config user.name 'LAPLACE U003 registro'
           git -C _registro config user.email 'laplace-registro@users.noreply.github.com'
           git -C _registro add -- universo/u003-latest.json universo/u003-summary.json
           if ! git -C _registro diff --cached --quiet; then
             git -C _registro commit -m "U003 world vintage $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            git -C _registro push origin HEAD:laplace-registro
+            for attempt in 1 2 3; do
+              if git -C _registro push origin HEAD:laplace-registro; then
+                break
+              fi
+              if test "$attempt" = 3; then
+                exit 1
+              fi
+              git -C _registro fetch origin laplace-registro
+              git -C _registro rebase FETCH_HEAD
+            done
           fi

@@ -15,6 +15,12 @@ Canadá/Brasil/BCE. ALFRED conserva el día del vintage separado del instante de
 recepción: no se inventan horas de publicación. La captura manual
 `npm run fuentes:oficiales -- DIRECTORIO` archiva respuestas originales por hash.
 
+GDACS añade alertas oficiales de desastres con coordenadas y fechas separadas
+de su recepción; la falta de GDELT queda declarada por tema. El diario
+`universo/vintages-macro.mjs` conserva cambios de valores macro sin sobrescribir
+versiones previas y permite reconstruir un corte temporal. El registro U003
+recupera ese diario en cada ciclo antes de añadir nuevas observaciones.
+
 ```
 node tools/laplace.mjs universo-global-u003 captura-u003.json
 node tools/laplace.mjs verificar-universo-global captura-u003.json RUTA_MUNDO_X_QUANTUM

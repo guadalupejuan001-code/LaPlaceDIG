@@ -12,7 +12,7 @@ import {
 } from './fuentes-u003.mjs';
 import {fetchOfficialCentralBanks,fetchPublicDirectExchanges,fetchDatedCommodityContracts} from './fuentes-oficiales.mjs';
 
-export const U003_VERSION='laplace-universo-global-u003-v2';
+export const U003_VERSION='laplace-universo-global-u003-v3';
 const need=(c,m)=>{if(!c)throw Error(m)};
 export async function observeWorldU003({
   fetchImpl=fetch,now=()=>new Date().toISOString(),timeoutMs=15000,
@@ -44,11 +44,14 @@ export async function observeWorldU003({
     catch(error){return {name,status:'rejected',reason:String(error.message).slice(0,220)}}
   }))]);
   const captured=utcTime(now());
-  const observations=[...base.universal_state.states],sources=[...base.source_status.map(x=>({...x,group:'u002_base'}))],groups=[],contracts=[],vintages=[];
+  const observations=[...base.universal_state.states],sources=[...base.source_status.map(x=>({...x,group:'u002_base'}))],groups=[],contracts=[],vintages=[],alerts=[];
+  let geoCoverage=null;
   for(const g of settled){
     if(g.status==='fulfilled'){
       observations.push(...g.value.observations);
       contracts.push(...(g.value.contracts??[]));vintages.push(...(g.value.vintages??[]));
+      alerts.push(...(g.value.geolocated_alerts??[]));
+      if(g.name==='geo_news')geoCoverage=g.value.coverage??null;
       sources.push(...g.value.sources.map(x=>({...x,group:g.name})));
       groups.push({group:g.name,status:g.value.observations.length?'observed':
         g.value.sources.some(x=>['requires_credentials','requires_license'].includes(x.status))?'requires_access':'unavailable',signals:g.value.observations.length,
@@ -72,6 +75,7 @@ export async function observeWorldU003({
     },
     source_status:sources,
     contract_metadata:contracts,macro_vintages:vintages,
+    geolocated_alerts:alerts,geo_news_coverage:geoCoverage,
     availability_policy:{
       known_at:'momento_de_captura_o_primera_observacion_por_laplace',
       vintage_date:'ALFRED initial-release date when FRED_API_KEY is configured; day precision only',

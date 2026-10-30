@@ -81,6 +81,13 @@ presentan como feed directo/licenciado de cada bolsa.
 - GDELT GEO 2.0: conteos y distribución hemisférica de ubicaciones asociadas a
   conflicto, protesta, comercio, energía, shipping, ciber y desastres.
 - Los conteos representan geografía de cobertura/noticias, no hechos causales.
+- GDACS aporta una segunda fuente primaria de alertas de desastres naturales.
+  `geolocated_alerts` conserva coordenadas, país, nivel, URL y fechas del evento,
+  publicación, modificación y recepción. Se deduplican episodios del mismo evento;
+  se excluyen alertas inactivas, futuras o sin coordenadas válidas.
+- GDACS no completa conflicto/comercio ni los otros temas de GDELT.
+  `geo_news_coverage` conserva qué temas respondieron y cuáles siguen ausentes.
+  Un feed vacío no genera proporciones hemisféricas ficticias.
 
 ## Vintages y tiempo conocido
 
@@ -93,6 +100,30 @@ verificada. Cada captura registra:
 El registro programado podrá conservar sucesivas capturas como vintages
 punto-en-tiempo. Para una fuente que no expone timestamp de publicación, esto
 produce un **primer-visto por LAPLACE**, no una publicación histórica exacta.
+
+### Diario de revisiones macro
+
+`universo/vintages-macro.mjs` conserva las observaciones macro de cada captura
+sellada. Un cambio de valor produce una entrada nueva con su captura de origen
+y hash encadenado; valores repetidos se deduplican y una reversión posterior se
+registra como otra revisión. Cambiar de período de referencia no se cuenta como
+revisar el período anterior. La recepción y el día de vintage del proveedor se
+mantienen separados.
+
+`macroAsOf` solo devuelve versiones incluidas en capturas anteriores al corte.
+No transforma valores descargados hoy en conocimiento histórico. Los archivos
+truncados, alterados o bloqueados por otro escritor no se sobrescriben. El
+presupuesto de 32 MiB / 65.536 entradas exige archivar conservando datos cuando
+se alcanza; no se eliminan revisiones silenciosamente.
+
+```bash
+node tools/vintages-macro.mjs CAPTURA_U003.json registros/macro CORTE_UTC
+```
+
+El ciclo U003 recupera el diario de `laplace-registro`, añade versiones nuevas
+y vuelve a conservarlo. El historial prospectivo funciona con las fuentes
+públicas ya consultadas; reconstruir todas las revisiones anteriores y su hora
+oficial de publicación sigue requiriendo evidencia del proveedor.
 
 ## XI / Ether
 
@@ -124,6 +155,7 @@ Referencias primarias:
 - [B3 cotizaciones públicas](https://cotacao.b3.com.br/)
 - [MOEX ISS](https://iss.moex.com/iss/reference/)
 - [FRED: períodos de tiempo real](https://fred.stlouisfed.org/docs/api/fred/realtime_period.html)
+- [GDACS RSS](https://www.gdacs.org/xml/rss.xml)
 
 ## Pendientes que esta revisión no cierra
 

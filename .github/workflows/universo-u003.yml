@@ -6,6 +6,7 @@ on:
       - 'universo/**'
       - 'tests/global-u003.test.mjs'
       - 'tests/fuentes-oficiales.test.mjs'
+      - 'tests/noticias-vintages.test.mjs'
       - 'tools/laplace.mjs'
       - 'docs/UNIVERSO_U003_REAL_WORLD.md'
       - '.github/workflows/universo-u003.yml'
@@ -33,9 +34,11 @@ jobs:
           node --check universo/fuentes-u003.mjs
           node --check universo/fuentes-oficiales.mjs
           node --check tools/fuentes-oficiales.mjs
+          node --check universo/noticias-oficiales.mjs
+          node --check universo/vintages-macro.mjs
           node --check universo/global-u003.mjs
           node --check tools/laplace.mjs
-          node --test tests/fuentes-oficiales.test.mjs tests/global-u003.test.mjs tests/global.test.mjs tests/universo.test.mjs
+          node --test tests/noticias-vintages.test.mjs tests/fuentes-oficiales.test.mjs tests/global-u003.test.mjs tests/global.test.mjs tests/universo.test.mjs
       - name: Compilar XI Ether original
         run: |
           cmake -S deps/mundo-X/quantum-runtime -B build-ether -DCMAKE_BUILD_TYPE=Release

@@ -13,7 +13,8 @@
     "seguimiento:continuo": "node seguimiento/ciclo.mjs --continuo",
     "test:seguimiento": "node --test tests/seguimiento.test.mjs",
     "fuentes:oficiales": "node tools/fuentes-oficiales.mjs",
-    "test:fuentes": "node --test tests/fuentes-oficiales.test.mjs tests/global-u003.test.mjs tests/global.test.mjs"
+    "test:fuentes": "node --test tests/fuentes-oficiales.test.mjs tests/global-u003.test.mjs tests/global.test.mjs tests/noticias-vintages.test.mjs",
+    "vintages:macro": "node tools/vintages-macro.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -5,6 +5,7 @@
  */
 import {chartUrl,parseChart} from '../bolsa/mercado.mjs';
 import {numeric,dateOnly} from './fuentes-oficiales.mjs';
+import {fetchGdacs} from './noticias-oficiales.mjs';
 import {
   REGIONAL_MARKET_SYMBOLS,COMMODITY_FUTURES,POLICY_AREAS,BLS_SERIES,
   FRED_PUBLIC_SERIES,NEWS_TOPICS,PORTWATCH_FIELDS,NESO_FIELDS,OPEN_SKY_REGIONS,EXACT_VINTAGE_SERIES
@@ -277,27 +278,35 @@ export function parseGdeltGeo(raw,{topic,capturedAt,url}={}){
     .filter(c=>Array.isArray(c)&&Number.isFinite(numeric(c[0]))&&Number.isFinite(numeric(c[1]))&&Math.abs(numeric(c[0]))<=180&&Math.abs(numeric(c[1]))<=90)
     .map(c=>({lon:numeric(c[0]),lat:numeric(c[1])}));
   const known=iso(capturedAt),base='gdelt_'+String(topic).toLowerCase().replace(/[^a-z0-9]+/g,'_'),n=points.length;
-  return [
-    obs('gdelt-'+topic+'-count-'+known,'noticias_geolocalizadas',base+'_locations',n,'count',known,known,url),
-    obs('gdelt-'+topic+'-north-'+known,'noticias_geolocalizadas',base+'_north_share',n?points.filter(p=>p.lat>=0).length/n:0,'ratio',known,known,url),
-    obs('gdelt-'+topic+'-east-'+known,'noticias_geolocalizadas',base+'_east_share',n?points.filter(p=>p.lon>=0).length/n:0,'ratio',known,known,url)
-  ];
+  need(!raw.features.length||n>0,'GDELT devolvió elementos sin coordenadas válidas');
+  const rows=[obs('gdelt-'+topic+'-count-'+known,'noticias_geolocalizadas',base+'_locations',n,'count',known,known,url)];
+  if(n)rows.push(
+    obs('gdelt-'+topic+'-north-'+known,'noticias_geolocalizadas',base+'_north_share',points.filter(p=>p.lat>=0).length/n,'ratio',known,known,url),
+    obs('gdelt-'+topic+'-east-'+known,'noticias_geolocalizadas',base+'_east_share',points.filter(p=>p.lon>=0).length/n,'ratio',known,known,url));
+  return rows;
 }
 export async function fetchGeoNews({fetchImpl=fetch,now=()=>new Date().toISOString(),timeoutMs=15000,topics=NEWS_TOPICS}={}){
-  const captured=iso(now()),settled=await pool(topics,2,async topic=>{
+  const official=fetchGdacs({fetchImpl,now,timeoutMs});
+  const settled=await pool(topics,2,async topic=>{
     const v2=new URL('https://api.gdeltproject.org/api/v2/geo/geo');v2.searchParams.set('query',topic.query);v2.searchParams.set('mode','pointdata');v2.searchParams.set('format','geojson');v2.searchParams.set('timespan','1h');v2.searchParams.set('maxpoints','250');v2.searchParams.set('geores','1');
     try{
-      const url=v2.toString(),raw=await requestJson(url,{fetchImpl,timeoutMs}),rows=parseGdeltGeo(raw,{topic:topic.id,capturedAt:now(),url});
+      const url=v2.toString(),raw=await requestJson(url,{fetchImpl,timeoutMs,retries:0}),rows=parseGdeltGeo(raw,{topic:topic.id,capturedAt:now(),url});
       return {topic,url,rows,api:'GEO2'};
     }catch(primary){
       const v1=new URL('https://api.gdeltproject.org/api/v1/gkg_geojson');v1.searchParams.set('QUERY',topic.gkg);v1.searchParams.set('TIMESPAN','60');v1.searchParams.set('OUTPUTTYPE','2');
-      const url=v1.toString(),raw=await requestJson(url,{fetchImpl,timeoutMs}),rows=parseGdeltGeo(raw,{topic:topic.id,capturedAt:now(),url});
+      const url=v1.toString(),raw=await requestJson(url,{fetchImpl,timeoutMs,retries:0}),rows=parseGdeltGeo(raw,{topic:topic.id,capturedAt:now(),url});
       return {topic,url,rows,api:'GKG_GEOJSON1',fallback_reason:String(primary.message).slice(0,100)};
     }
   });
   const observations=[],sources=[];
   settled.forEach((r,i)=>{const name=topics[i].id;if(r.ok){observations.push(...r.value.rows);sources.push({name:'GDELT-'+name,status:'observed',signals:r.value.rows.length,url:r.value.url,api:r.value.api})}else sources.push({name:'GDELT-'+name,status:'unavailable',reason:String(r.error.message).slice(0,180)})});
-  return {captured_at:captured,observations,sources};
+  const gdacs=await official;
+  observations.push(...gdacs.observations);sources.push(...gdacs.sources);
+  return {captured_at:iso(now()),observations,sources,geolocated_alerts:gdacs.alerts,
+    coverage:{gdelt_topics_observed:settled.filter(x=>x.ok).map(x=>x.value.topic.id),
+      gdelt_topics_unavailable:settled.flatMap((x,i)=>x.ok?[]:[topics[i].id]),
+      gdacs_disaster_alerts:gdacs.alerts.length,
+      all_requested_topics_available:settled.every(x=>x.ok)}};
 }
 
 export function parseOpenSky(raw,{capturedAt,url}={}){
