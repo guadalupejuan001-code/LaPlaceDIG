@@ -91,7 +91,7 @@ export function parseWorldBank(raw,{indicator,capturedAt,url,economies=MACRO_ECO
   const known=iso(capturedAt),observations=[];
   for(const code of economies){
     const r=by.get(code);if(!r)continue;
-    const observed=iso(Date.UTC(r.year,11,31,23,59,59));
+    const observed=iso(Date.UTC(r.year,0,1,0,0,0));
     observations.push(observation('macro-'+code+'-'+def.name+'-'+r.year,'macro_global',code+'_'+def.name,r.value,def.unit,observed,known,url));
   }
   return observations;
