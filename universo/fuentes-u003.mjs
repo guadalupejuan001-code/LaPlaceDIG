@@ -161,7 +161,7 @@ export function parseNeso(raw,{capturedAt,url}={}){
 }
 export async function fetchElectricity({fetchImpl=fetch,now=()=>new Date().toISOString(),timeoutMs=12000}={}){
   const captured=iso(now()),resource='177f6fa4-ae49-4182-81ea-0c6b35f26ca6';
-  const sql='SELECT * FROM "'+resource+'" WHERE "FORECAST_ACTUAL_INDICATOR" = \\'A\\' ORDER BY "SETTLEMENT_DATE" DESC, "SETTLEMENT_PERIOD" DESC LIMIT 1';
+  const sql="SELECT * FROM \""+resource+"\" WHERE \"FORECAST_ACTUAL_INDICATOR\" = 'A' ORDER BY \"SETTLEMENT_DATE\" DESC, \"SETTLEMENT_PERIOD\" DESC LIMIT 1";
   const url=NESO_URL+'?sql='+encodeURIComponent(sql);
   try{
     const raw=await requestJson(url,{fetchImpl,timeoutMs}),observations=parseNeso(raw,{capturedAt:captured,url});
