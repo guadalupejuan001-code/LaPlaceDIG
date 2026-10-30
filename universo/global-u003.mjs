@@ -7,7 +7,7 @@ import {universeSnapshot,utcTime} from './estados.mjs';
 import {sellarCaptura} from './integridad.mjs';
 import {
   fetchRegionalMarkets,fetchCommodityFutures,fetchPolicyRates,fetchBlsEmployment,
-  fetchHighFrequencyLabour,fetchElectricity,fetchMaritime,fetchGeoNews,
+  fetchHighFrequencyLabour,fetchExactMacroVintages,fetchElectricity,fetchMaritime,fetchGeoNews,
   fetchAirTraffic,fetchDirectExchanges
 } from './fuentes-u003.mjs';
 
@@ -28,6 +28,7 @@ export async function observeWorldU003({
     ['policy_rates',()=>fetchPolicyRates({fetchImpl,now:()=>captured,timeoutMs})],
     ['employment_monthly',()=>fetchBlsEmployment({fetchImpl,now:()=>captured,timeoutMs})],
     ['employment_high_frequency',()=>fetchHighFrequencyLabour({fetchImpl,now:()=>captured,timeoutMs})],
+    ['macro_exact_vintages',()=>fetchExactMacroVintages({fetchImpl,now:()=>captured,timeoutMs})],
     ['electricity',()=>fetchElectricity({fetchImpl,now:()=>captured,timeoutMs})],
     ['maritime',()=>fetchMaritime({fetchImpl,now:()=>captured,timeoutMs})],
     ['geo_news',()=>fetchGeoNews({fetchImpl,now:()=>captured,timeoutMs})]
@@ -65,7 +66,7 @@ export async function observeWorldU003({
     source_status:sources,
     availability_policy:{
       known_at:'momento_de_captura_o_primera_observacion_por_laplace',
-      exact_historical_vintage:false,
+      exact_historical_vintage:'available through macro_exact_vintages when FRED_API_KEY is configured',
       archive_future_captures:true,
       note:'U003 no retroinventa la fecha de publicación. Cada ejecución crea un vintage punto-en-tiempo; fuentes que expongan timestamp de publicación podrán conservarlo en una revisión posterior.'
     },
