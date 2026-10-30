@@ -34,4 +34,9 @@ test('XI/Ether aprende y puntua la dirección en un conjunto reservado',native,(
   assert.ok(r.native.brier<r.baseline.brier);
   assert.ok(r.native.accuracy>r.baseline.accuracy);
   assert.ok(r.folds===4);
+  assert.equal(r.fold_results.length,4);assert.equal(r.alpha_selection_metric,'transition_log_loss');
+  for(const f of r.fold_results){
+    const selected=f.validation.find(x=>x.alpha===f.selected_alpha);
+    assert.ok(f.validation.every(x=>selected.transition_log_loss<=x.transition_log_loss));
+  }
 });

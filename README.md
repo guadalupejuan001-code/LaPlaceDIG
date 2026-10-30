@@ -1,5 +1,55 @@
 # LaPlaceDIG
 
+## X002 — entrenamiento y recalibración verificables
+
+Cinco horizontes BTC (15/30/60/240/1440 minutos), cuatro particiones temporales,
+conteos y probabilidades en el ejecutor nativo XI/Ether, calibración escalar
+clásica y comparación con M001/persistencia. Conserva modelos, predicciones,
+resultados y respuestas HTTP por hash. [Método y límites](docs/ENTRENAMIENTO_X002.md).
+
+```bash
+npm run entrenar -- RUTA_LAPLACE_TEMPORAL DIRECTORIO_NUEVO
+```
+
+## U004 — capital y liquidez
+
+Primera fase del proyecto de fuentes financieras: COT de siete mercados,
+curva Treasury diaria y componentes Fed/TGA/ON RRP de EE. UU. La recopilación
+entra en U003 y en el diario de revisiones; la integración predictiva permanece
+pendiente. [Alcance, fuentes y pendientes](docs/CAPITAL_U004.md).
+
+```bash
+npm run capital -- registros/capital-u004
+```
+
+## U003 — mundo económico, logístico y de información
+
+U003 extiende U002/369 por **dominios reales**, no por un contador fijo:
+benchmarks regionales, futuros de commodities, tasas BIS de bancos centrales,
+empleo BLS/FRED, vintages macro ALFRED opcionales, electricidad NESO,
+transporte marítimo PortWatch, noticias geolocalizadas GDELT y adaptadores
+autorizados para OpenSky/JPX. Las fuentes con credenciales o licencia faltante
+se marcan explícitamente y no se sustituyen por datos ficticios.
+
+La revisión de fuentes primarias agrega TWSE diario, una muestra pública de B3,
+IMOEX/MOEX, contratos MOEX de commodities con vencimiento y tasas directas de
+Canadá/Brasil/BCE. ALFRED conserva el día del vintage separado del instante de
+recepción: no se inventan horas de publicación. La captura manual
+`npm run fuentes:oficiales -- DIRECTORIO` archiva respuestas originales por hash.
+
+GDACS añade alertas oficiales de desastres con coordenadas y fechas separadas
+de su recepción; la falta de GDELT queda declarada por tema. El diario
+`universo/vintages-macro.mjs` conserva cambios de valores macro sin sobrescribir
+versiones previas y permite reconstruir un corte temporal. El registro U003
+recupera ese diario en cada ciclo antes de añadir nuevas observaciones.
+
+```
+node tools/laplace.mjs universo-global-u003 captura-u003.json
+node tools/laplace.mjs verificar-universo-global captura-u003.json RUTA_MUNDO_X_QUANTUM
+```
+
+[Diseño, cobertura y reglas temporales](docs/UNIVERSO_U003_REAL_WORLD.md).
+
 ## U002 — expansión global de estados hacia XI/Ether
 
 LAPLACE incorpora una malla mundial extensible de señales observables: mercados

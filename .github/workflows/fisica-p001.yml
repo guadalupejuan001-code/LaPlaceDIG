@@ -35,6 +35,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
+      - name: Instalar dependencias I001/P001 fijadas
+        run: npm ci --no-audit --no-fund
       - name: Comprobar hashes, gramática y casos sin binario
         run: |
           set -euo pipefail

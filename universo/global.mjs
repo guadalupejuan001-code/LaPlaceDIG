@@ -15,23 +15,23 @@ export async function observeGlobalUniverse({
 }={}){
   const allowed=new Set(['markets','crypto','macro','weather','physical']);
   need(Array.isArray(groups)&&groups.length&&groups.every(x=>allowed.has(x)),'grupos globales inválidos');
-  const captured=utcTime(now());
   const jobs={
-    markets:()=>fetchGlobalMarkets({fetchImpl,now:()=>captured,timeoutMs}),
-    crypto:()=>fetchGlobalCrypto({fetchImpl,now:()=>captured,timeoutMs}),
-    macro:()=>fetchGlobalMacro({fetchImpl,now:()=>captured,timeoutMs}),
-    weather:()=>fetchGlobalWeather({fetchImpl,now:()=>captured,timeoutMs}),
-    physical:()=>fetchGlobalPhysical({fetchImpl,now:()=>captured,timeoutMs})
+    markets:()=>fetchGlobalMarkets({fetchImpl,now,timeoutMs}),
+    crypto:()=>fetchGlobalCrypto({fetchImpl,now,timeoutMs}),
+    macro:()=>fetchGlobalMacro({fetchImpl,now,timeoutMs}),
+    weather:()=>fetchGlobalWeather({fetchImpl,now,timeoutMs}),
+    physical:()=>fetchGlobalPhysical({fetchImpl,now,timeoutMs})
   };
   const settled=await Promise.all(groups.map(async name=>{
     try{return {name,status:'fulfilled',value:await jobs[name]()}}
     catch(error){return {name,status:'rejected',reason:String(error.message).slice(0,220)}}
   }));
+  const captured=utcTime(now());
   const observations=[...additionalObservations],sources=[],groupSummary=[];
   for(const g of settled){
     if(g.status==='fulfilled'){
       observations.push(...g.value.observations);sources.push(...g.value.sources.map(x=>({...x,group:g.name})));
-      groupSummary.push({group:g.name,status:'observed',signals:g.value.observations.length,
+      groupSummary.push({group:g.name,status:g.value.observations.length?'observed':'unavailable',signals:g.value.observations.length,
         sources_ok:g.value.sources.filter(x=>x.status==='observed').length,
         sources_failed:g.value.sources.filter(x=>x.status!=='observed').length});
     }else groupSummary.push({group:g.name,status:'unavailable',signals:0,sources_ok:0,sources_failed:1,reason:g.reason});

@@ -52,6 +52,7 @@ function grabar(path,registro){
   renameSync(temporal,path);
 }
 export function crearServidor({capturar=observeUniverseBTC,archivo=ARCHIVO_PREDETERMINADO,
+    entradaDirectorio=process.env.LAPLACE_INPUT_DIRECTORIO??'registros/input',
     ahora=()=>Date.now()}={}){
   let estado=leer(archivo),ocupado=false,ultimaLectura=0;
   const server=createServer(async(req,res)=>{
@@ -71,6 +72,15 @@ export function crearServidor({capturar=observeUniverseBTC,archivo=ARCHIVO_PREDE
       try{const html=paginaSeguimiento(process.env.LAPLACE_SEGUIMIENTO_DIRECTORIO??'registros/seguimiento');
         res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);
       }catch(error){json(res,500,{error:'No se pudo verificar el diario: '+errorExplicito(error)});}
+      return;
+    }
+    if(req.method==='GET'&&url==='/api/entrada'){
+      try{
+        const path=join(entradaDirectorio,'health.json');debe(statSync(path).size<=131072,'Resumen de entrada excesivo');
+        const entrada=JSON.parse(readFileSync(path,'utf8'));debe(entrada.schema==='laplace.input.health.i001','Resumen de entrada incompatible');
+        const reciente=ahora()-Date.parse(entrada.at)<15000;
+        json(res,200,{status:entrada.ready&&reciente?'activa':entrada.stopped_at?'detenida':'sin_actualizacion',entrada});
+      }catch(error){if(error.code==='ENOENT')json(res,200,{status:'no_iniciada',entrada:null});else json(res,500,{error:'No se pudo leer el estado de entrada'})}
       return;
     }
     if(req.method==='GET'&&url==='/api/estado'){
@@ -116,9 +126,9 @@ export function crearServidor({capturar=observeUniverseBTC,archivo=ARCHIVO_PREDE
   });
   return server;
 }
-export async function iniciarPanel({puerto=PUERTO_PREDETERMINADO,archivo=ARCHIVO_PREDETERMINADO}={}){
-  debe(Number.isSafeInteger(puerto)&&puerto>=1&&puerto<=65535,'Puerto local inválido');
-  const server=crearServidor({archivo});
+export async function iniciarPanel({puerto=PUERTO_PREDETERMINADO,archivo=ARCHIVO_PREDETERMINADO,entradaDirectorio}={}){
+  debe(Number.isSafeInteger(puerto)&&puerto>=0&&puerto<=65535,'Puerto local inválido');
+  const server=crearServidor({archivo,entradaDirectorio});
   await new Promise((resolver,rechazar)=>{
     server.once('error',rechazar);
     server.listen(puerto,DIRECCION_LOCAL,resolver);

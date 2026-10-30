@@ -41,23 +41,27 @@ export function rowsFromBars(bars,start,end){
   for(let i=0;i<out.length-1;i++)out[i].link=out[i+1].index===out[i].index+1;
   return out;
 }
-function program(rows,queries,alpha){
-  need(rows.length>=16&&rows.length<=256,'Filas nativas fuera de presupuesto');
+export function nativeProgram(rows,queries,alpha,priorStrength=PLAN.prior_strength){
+  need(Array.isArray(rows)&&rows.length>=1&&rows.length<=256,'Filas nativas fuera de presupuesto');
+  need(Number.isInteger(alpha)&&alpha>=0&&alpha<=64&&Number.isInteger(priorStrength)&&priorStrength>=1&&priorStrength<=64,'Regularización nativa inválida');
+  need(Array.isArray(queries)&&queries.length<=2048&&queries.every(q=>Number.isInteger(q.mask)&&q.mask>=0&&q.mask<16&&Number.isInteger(q.steps)&&q.steps>=0&&q.steps<=10000),'Consultas nativas fuera de presupuesto');
   const bytes=Buffer.alloc(rows.length*4);
   for(let i=0;i<rows.length;i++){
     const r=rows[i];need(Number.isInteger(r.mask)&&r.mask>=0&&r.mask<16,'Estado fuera de 4 bits');
+    need(r.y===0||r.y===1,'Etiqueta nativa inválida');
+    need(typeof r.link==='boolean'&&(!r.link||i+1<rows.length),'Enlace nativo inválido');
     bytes.writeUInt16LE(r.mask,i*4);bytes[i*4+2]=r.y;bytes[i*4+3]=r.link?1:0;
   }
   const lines=['mem_reset 0'];
   for(let i=0;i<bytes.length;i++)if(bytes[i])lines.push('mem_store '+(BASE+i)+' '+bytes[i]);
-  lines.push('laplace_fit '+BASE+' '+rows.length+' '+alpha+' '+PLAN.prior_strength,'laplace_report');
+  lines.push('laplace_fit '+BASE+' '+rows.length+' '+alpha+' '+priorStrength,'laplace_report');
   for(const q of queries)lines.push('laplace_evolve '+q.mask+' '+q.steps);
   lines.push('mem_stats','stats');
   return lines.join('\n')+'\n';
 }
-export function nativeRun(binary,rows,queries,alpha){
+export function nativeRun(binary,rows,queries,alpha,priorStrength=PLAN.prior_strength){
   need(typeof binary==='string'&&binary.length,'Ejecutor temporal requerido');
-  const xi=program(rows,queries,alpha);
+  const xi=nativeProgram(rows,queries,alpha,priorStrength);
   const run=spawnSync(resolve(binary),['-'],{input:xi,encoding:'utf8',timeout:30000,maxBuffer:8*1024*1024});
   if(run.error)throw run.error;
   need(run.status===0,'Fallo XI/Ether: '+String(run.stderr||run.stdout).slice(0,500));
@@ -109,7 +113,7 @@ export function experiment(binary,raw,{cutoff,folds=PLAN.folds,compareM001=true,
     const train=rowsFromBars(bars,trainStart,valStart);
     const validation=rowsFromBars(bars,valStart,testStart);
     const candidates=ALPHAS.map(alpha=>({alpha,...scoreNative(binary,train,validation,alpha)}))
-      .sort((a,b)=>(a.brier??Infinity)-(b.brier??Infinity)||a.alpha-b.alpha);
+      .sort((a,b)=>(a.transition_log_loss??Infinity)-(b.transition_log_loss??Infinity)||a.alpha-b.alpha);
     const selected=candidates[0];
     const fitRows=rowsFromBars(bars,trainStart,testStart);
     const testRows=rowsFromBars(bars,testStart,testStart+PLAN.test);
@@ -125,7 +129,8 @@ export function experiment(binary,raw,{cutoff,folds=PLAN.folds,compareM001=true,
         states:native.run.learned.state_masks},
       baseline:{count:baseline.length,brier:brier(baseline),accuracy:accuracy(baseline),prior},
       m001:{count:m001.length,accuracy:m001.length?avg(m001.map(x=>Number(x.predicted===x.actual))):null},
-      validation:candidates.map(x=>({alpha:x.alpha,brier:x.brier,accuracy:x.accuracy}))
+      validation:candidates.map(x=>({alpha:x.alpha,brier:x.brier,accuracy:x.accuracy,
+        transition_log_loss:x.transition_log_loss,transition_count:x.transition_count}))
     });
   }
   const weighted=(key,sub,countKey='count')=>{
@@ -143,6 +148,10 @@ export function experiment(binary,raw,{cutoff,folds=PLAN.folds,compareM001=true,
     native_brier_skill:bb.value?1-nb.value/bb.value:null,
     native_accuracy_minus_m001:compareM001&&Number.isFinite(na.value)&&Number.isFinite(ma.value)?na.value-ma.value:null,
     native_accuracy_minus_baseline:Number.isFinite(na.value)&&Number.isFinite(ba.value)?na.value-ba.value:null,
+    fold_results:foldResults,
+    direction_regularization_tuned:false,
+    alpha_selection_metric:'transition_log_loss',
+    alpha_selection_note:'alpha se selecciona por pérdida de transición; no modifica la emisión direccional de paso cero. X002 selecciona prior_strength.',
     production_changed:false,orders_executed:0,
     interpretation:'Prueba de dirección a 5 minutos para '+asset+'. El núcleo nativo aprende/emite en Inverse Ether Memory; no es todavía un predictor de precio absoluto.'
   };

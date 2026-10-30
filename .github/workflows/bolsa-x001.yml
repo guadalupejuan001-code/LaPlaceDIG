@@ -20,6 +20,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
+      - name: Instalar dependencias I001/P001 fijadas
+        run: npm ci --no-audit --no-fund
       - name: Compilar ejecutor temporal nativo
         run: |
           cmake -S native -B build-laplace -DCMAKE_BUILD_TYPE=Release

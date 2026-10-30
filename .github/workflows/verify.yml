@@ -25,6 +25,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
+      - name: Instalar dependencias I001/P001 fijadas
+        run: npm ci --no-audit --no-fund
       - name: "Procedencia: núcleo XI del demonio migrado sin cambios"
         run: |
           set -euo pipefail
