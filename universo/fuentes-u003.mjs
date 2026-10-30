@@ -19,20 +19,22 @@ const sleep=ms=>new Promise(ok=>setTimeout(ok,ms));
 async function requestText(url,{fetchImpl=fetch,timeoutMs=15000,headers={},method='GET',body,retries=2}={}){
   let last;
   for(let attempt=0;attempt<=retries;attempt++){
+    let r;
     try{
-      const r=await fetchImpl(url,{method,body,signal:AbortSignal.timeout(timeoutMs),cache:'no-store',
+      r=await fetchImpl(url,{method,body,signal:AbortSignal.timeout(timeoutMs),cache:'no-store',
         headers:{'User-Agent':'LaPlaceDIG-U003/1.0',...headers}});
-      if(r.ok){
-        const text=await r.text();need(text.length<=8_000_000,'respuesta demasiado grande '+new URL(url).hostname);return text;
-      }
-      const retryable=r.status===429||r.status===502||r.status===503||r.status===504;
-      last=Error('HTTP '+r.status+' '+new URL(url).hostname);
-      if(!retryable||attempt===retries)throw last;
-      const retryAfter=Number(r.headers?.get?.('retry-after'));const delay=Number.isFinite(retryAfter)&&retryAfter>=0?Math.min(8000,retryAfter*1000):450*(2**attempt);
-      await sleep(delay);
     }catch(error){
-      last=error;if(attempt===retries)throw error;await sleep(450*(2**attempt));
+      last=error;if(attempt===retries)throw error;await sleep(450*(2**attempt));continue;
     }
+    if(r.ok){
+      const text=await r.text();need(text.length<=8_000_000,'respuesta demasiado grande '+new URL(url).hostname);return text;
+    }
+    const retryable=r.status===429||r.status===502||r.status===503||r.status===504;
+    last=Error('HTTP '+r.status+' '+new URL(url).hostname);
+    if(!retryable||attempt===retries)throw last;
+    const retryAfter=Number(r.headers?.get?.('retry-after'));
+    const delay=Number.isFinite(retryAfter)&&retryAfter>=0?Math.min(8000,retryAfter*1000):450*(2**attempt);
+    await sleep(delay);
   }
   throw last??Error('consulta fallida');
 }
@@ -173,7 +175,7 @@ export async function fetchExactMacroVintages({fetchImpl=fetch,now=()=>new Date(
   const series=Object.keys(EXACT_VINTAGE_SERIES),settled=await pool(series,2,async id=>{
     const u=new URL(base);u.searchParams.set('series_id',id);u.searchParams.set('api_key',apiKey);u.searchParams.set('file_type','json');
     u.searchParams.set('output_type','4');u.searchParams.set('sort_order','desc');u.searchParams.set('limit','120');
-    u.searchParams.set('realtime_end',captured.slice(0,10));
+    u.searchParams.set('realtime_start','1776-07-04');u.searchParams.set('realtime_end',captured.slice(0,10));
     const url=u.toString(),raw=await requestJson(url,{fetchImpl,timeoutMs});
     return {id,url,row:parseFredInitialRelease(raw,{series:id,capturedAt:captured,url})};
   });
