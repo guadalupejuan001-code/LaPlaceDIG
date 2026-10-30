@@ -6,7 +6,7 @@
 import {chartUrl,parseChart} from '../bolsa/mercado.mjs';
 import {
   REGIONAL_MARKET_SYMBOLS,COMMODITY_FUTURES,POLICY_AREAS,BLS_SERIES,
-  FRED_PUBLIC_SERIES,NEWS_TOPICS,PORTWATCH_FIELDS,NESO_FIELDS,OPEN_SKY_REGIONS
+  FRED_PUBLIC_SERIES,NEWS_TOPICS,PORTWATCH_FIELDS,NESO_FIELDS,OPEN_SKY_REGIONS,EXACT_VINTAGE_SERIES
 } from './catalogo-u003.mjs';
 
 const need=(c,m)=>{if(!c)throw Error(m)};
@@ -15,11 +15,26 @@ const safe=s=>String(s).toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_+|_+
 const obs=(id,domain,variable,value,unit,observedAt,knownAt,sourceUrl)=>({
   id,domain,variable,value,unit,observed_at:iso(observedAt),known_at:iso(knownAt),source_url:sourceUrl
 });
-async function requestText(url,{fetchImpl=fetch,timeoutMs=15000,headers={},method='GET',body}={}){
-  const r=await fetchImpl(url,{method,body,signal:AbortSignal.timeout(timeoutMs),cache:'no-store',
-    headers:{'User-Agent':'LaPlaceDIG-U003/1.0',...headers}});
-  need(r.ok,'HTTP '+r.status+' '+new URL(url).hostname);
-  const text=await r.text();need(text.length<=8_000_000,'respuesta demasiado grande '+new URL(url).hostname);return text;
+const sleep=ms=>new Promise(ok=>setTimeout(ok,ms));
+async function requestText(url,{fetchImpl=fetch,timeoutMs=15000,headers={},method='GET',body,retries=2}={}){
+  let last;
+  for(let attempt=0;attempt<=retries;attempt++){
+    try{
+      const r=await fetchImpl(url,{method,body,signal:AbortSignal.timeout(timeoutMs),cache:'no-store',
+        headers:{'User-Agent':'LaPlaceDIG-U003/1.0',...headers}});
+      if(r.ok){
+        const text=await r.text();need(text.length<=8_000_000,'respuesta demasiado grande '+new URL(url).hostname);return text;
+      }
+      const retryable=r.status===429||r.status===502||r.status===503||r.status===504;
+      last=Error('HTTP '+r.status+' '+new URL(url).hostname);
+      if(!retryable||attempt===retries)throw last;
+      const retryAfter=Number(r.headers?.get?.('retry-after'));const delay=Number.isFinite(retryAfter)&&retryAfter>=0?Math.min(8000,retryAfter*1000):450*(2**attempt);
+      await sleep(delay);
+    }catch(error){
+      last=error;if(attempt===retries)throw error;await sleep(450*(2**attempt));
+    }
+  }
+  throw last??Error('consulta fallida');
 }
 async function requestJson(url,options={}){
   return JSON.parse(await requestText(url,{...options,headers:{Accept:'application/json',...(options.headers??{})}}));
@@ -139,6 +154,35 @@ export function parseFredCsv(text,{series,capturedAt,url}={}){
   return obs('fred-'+series+'-'+latest.date,'empleo_alta_frecuencia',def.name,latest.value,def.unit,
     latest.date+'T00:00:00.000Z',capturedAt,url);
 }
+export function parseFredInitialRelease(raw,{series,capturedAt,url}={}){
+  const def=EXACT_VINTAGE_SERIES[series];need(def,'serie vintage no registrada');
+  need(Array.isArray(raw?.observations),'FRED vintage sin observaciones');
+  const captureDay=iso(capturedAt).slice(0,10),rows=raw.observations.filter(x=>
+    /^\d{4}-\d{2}-\d{2}$/.test(String(x.date??''))&&
+    /^\d{4}-\d{2}-\d{2}$/.test(String(x.realtime_start??''))&&
+    x.realtime_start<=captureDay&&Number.isFinite(Number(x.value))
+  );
+  rows.sort((a,b)=>String(b.realtime_start).localeCompare(String(a.realtime_start))||String(b.date).localeCompare(String(a.date)));
+  const x=rows[0];need(x,'FRED vintage sin release inicial anterior al corte');
+  return obs('alfred-'+series+'-'+x.date+'-'+x.realtime_start,'macro_vintages_exactos',def.name,
+    Number(x.value),def.unit,x.date+'T00:00:00.000Z',x.realtime_start+'T00:00:00.000Z',url);
+}
+export async function fetchExactMacroVintages({fetchImpl=fetch,now=()=>new Date().toISOString(),timeoutMs=15000,apiKey=process.env.FRED_API_KEY}={}){
+  const captured=iso(now()),base='https://api.stlouisfed.org/fred/series/observations';
+  if(!apiKey)return {captured_at:captured,observations:[],sources:[{name:'FRED-ALFRED-vintages',status:'requires_credentials',signals:0,url:base,reason:'FRED_API_KEY requerido para output_type=4 / initial release'}]};
+  const series=Object.keys(EXACT_VINTAGE_SERIES),settled=await pool(series,2,async id=>{
+    const u=new URL(base);u.searchParams.set('series_id',id);u.searchParams.set('api_key',apiKey);u.searchParams.set('file_type','json');
+    u.searchParams.set('output_type','4');u.searchParams.set('sort_order','desc');u.searchParams.set('limit','120');
+    u.searchParams.set('realtime_end',captured.slice(0,10));
+    const url=u.toString(),raw=await requestJson(url,{fetchImpl,timeoutMs});
+    return {id,url,row:parseFredInitialRelease(raw,{series:id,capturedAt:captured,url})};
+  });
+  const observations=[],sources=[];
+  settled.forEach((r,i)=>{const id=series[i];if(r.ok){observations.push(r.value.row);sources.push({name:'ALFRED-'+id,status:'observed',signals:1,url:r.value.url,exact_vintage:true})}
+    else sources.push({name:'ALFRED-'+id,status:'unavailable',signals:0,reason:String(r.error.message).slice(0,180),exact_vintage:true});});
+  return {captured_at:captured,observations,sources};
+}
+
 export async function fetchHighFrequencyLabour({fetchImpl=fetch,now=()=>new Date().toISOString(),timeoutMs=12000}={}){
   const captured=iso(now()),observations=[],sources=[];
   const settled=await pool(Object.keys(FRED_PUBLIC_SERIES),2,async series=>{
