@@ -39,7 +39,7 @@ export function compileGlobalEther(snapshot){
   let nonzero=0;
   for(let i=0;i<enc.bytes.length;i++)if(enc.bytes[i]!==0){source.push('mem_store '+(BASE+BigInt(i))+' '+enc.bytes[i]);nonzero++;}
   source.push('mem_materialize '+BASE+' '+enc.bytes.length,'mem_stats','stats');
-  const xi=source.join('\\n')+'\\n';need(Buffer.byteLength(xi)<=MAX_PROGRAM,'programa U002 XI excede 4 MiB');
+  const xi=source.join('\n')+'\n';need(Buffer.byteLength(xi)<=MAX_PROGRAM,'programa U002 XI excede 4 MiB');
   return {...enc,xi,xi_sha256:sha(xi),nonzero_bytes:nonzero};
 }
 export function proveGlobalEther(binary,snapshot){
@@ -48,7 +48,7 @@ export function proveGlobalEther(binary,snapshot){
     input:compiled.xi,encoding:'utf8',timeout:60000,maxBuffer:16*1024*1024
   });
   if(run.error)throw run.error;need(run.status===0,'XI/Ether U002 falló: '+String(run.stderr||run.stdout).slice(0,800));
-  let rows;try{rows=run.stdout.trim().split(/\\r?\\n/).filter(Boolean).map(JSON.parse)}
+  let rows;try{rows=run.stdout.trim().split(/\r?\n/).filter(Boolean).map(JSON.parse)}
   catch{throw Error('salida XI/Ether U002 no es JSONL')};
   const mat=rows.find(x=>x.type==='memory_materialization'),mem=rows.find(x=>x.type==='memory_stats'),core=rows.find(x=>x.type==='stats');
   need(mat?.address===compiled.base_address&&mat.bytes===compiled.bytes.length,'materialización U002 incorrecta: '+JSON.stringify({actual:mat??null,esperado:{address:compiled.base_address,bytes:compiled.bytes.length}}));
