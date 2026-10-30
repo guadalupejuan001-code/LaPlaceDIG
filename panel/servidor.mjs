@@ -1,16 +1,17 @@
 /* Servidor local del panel LAPLACE. No expone Internet ni abre operaciones. */
 import {createServer} from 'node:http';
-import {readFileSync,writeFileSync,renameSync,mkdirSync} from 'node:fs';
+import {readFileSync,writeFileSync,renameSync,mkdirSync,statSync,copyFileSync,constants} from 'node:fs';
 import {join,dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {observeUniverseBTC} from '../universo/mercado.mjs';
-import {registroVacio,normalizarRegistro,añadirCaptura} from './registro.mjs';
+import {registroVacio,normalizarRegistro,añadirCaptura,migrarRegistroAnterior} from './registro.mjs';
 
 const raiz=dirname(fileURLToPath(import.meta.url));
 const archivos=Object.freeze({
   '/':'index.html',
   '/panel.css':'panel.css',
-  '/panel.js':'panel.js'
+  '/panel.js':'panel.js',
+  '/grafica.js':'grafica.js'
 });
 const tipos={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8',
   '.js':'text/javascript; charset=utf-8'};
@@ -30,8 +31,18 @@ function errorExplicito(err){
   return String(err?.message??'Error desconocido').replace(/[\u0000-\u001f]/g,' ').slice(0,240);
 }
 function leer(path){
-  try{return normalizarRegistro(JSON.parse(readFileSync(path,'utf8')))}
-  catch(err){if(err.code==='ENOENT')return registroVacio();throw err}
+  try{
+    if(statSync(path).size>8*1024*1024)throw Error('El registro supera el presupuesto de 8 MiB');
+    const raw=JSON.parse(readFileSync(path,'utf8'));
+    if(raw.schema==='laplace-panel-v1'){
+      const convertido=migrarRegistroAnterior(raw);
+      // No se borra ni se sobrescribe el respaldo del historial sin sello.
+      copyFileSync(path,path+'.v1-respaldo.json',constants.COPYFILE_EXCL);
+      grabar(path,convertido);
+      return convertido;
+    }
+    return normalizarRegistro(raw);
+  }catch(err){if(err.code==='ENOENT')return registroVacio();throw err}
 }
 function grabar(path,registro){
   mkdirSync(dirname(path),{recursive:true});
@@ -43,7 +54,7 @@ export function crearServidor({capturar=observeUniverseBTC,archivo=ARCHIVO_PREDE
     ahora=()=>Date.now()}={}){
   let estado=leer(archivo),ocupado=false,ultimaLectura=0;
   const server=createServer(async(req,res)=>{
-    const origen='http://'+DIRECCION_LOCAL+':'+(server.address()?.port??PUERTO_PREDETERMINADO);
+    const puerto=server.address()?.port??PUERTO_PREDETERMINADO;
     const url=(req.url??'/').split('?')[0];
     res.setHeader('X-Content-Type-Options','nosniff');
     res.setHeader('Referrer-Policy','no-referrer');
@@ -51,9 +62,10 @@ export function crearServidor({capturar=observeUniverseBTC,archivo=ARCHIVO_PREDE
       "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; frame-ancestors 'none'");
     // No permitir un Host remoto ni una solicitud POST de otro origen.
     const host=req.headers.host??'';
-    if(!new RegExp('^(127\\.0\\.0\\.1|localhost)(:\\d+)?$').test(host)){
+    if(!['127.0.0.1:'+puerto,'localhost:'+puerto].includes(host)){
       json(res,403,{error:'Solo se permiten conexiones locales'});return;
     }
+    const origen='http://'+host;
     if(req.method==='GET'&&url==='/api/estado'){
       json(res,200,{...estado,servidor_en:new Date(ahora()).toISOString(),
         horizonte_disponible_minutos:15,actualizacion_automatica:false});return;
@@ -64,10 +76,10 @@ export function crearServidor({capturar=observeUniverseBTC,archivo=ARCHIVO_PREDE
       json(res,200,estado.ultima);return;
     }
     if(req.method==='POST'&&url==='/api/actualizar'){
-      if(req.headers.origin&&req.headers.origin!==origen){
+      if((req.headers.origin&&req.headers.origin!==origen)||req.headers['sec-fetch-site']==='cross-site'){
         json(res,403,{error:'Solicitud externa bloqueada'});return;
       }
-      if(Number(req.headers['content-length']??0)>0){
+      if(Number(req.headers['content-length']??0)>0||req.headers['transfer-encoding']){
         json(res,400,{error:'La actualización no admite parámetros enviados'});return;
       }
       if(ocupado){json(res,409,{error:'Ya hay una lectura en curso'});return;}
@@ -77,6 +89,7 @@ export function crearServidor({capturar=observeUniverseBTC,archivo=ARCHIVO_PREDE
       ocupado=true;ultimaLectura=ahora();
       try{
         const nueva=await capturar();
+        if(Date.parse(nueva.at)>ahora()+5000)throw Error('La captura tiene una fecha futura');
         const actualizado=añadirCaptura(estado,nueva);
         grabar(archivo,actualizado);
         estado=actualizado;

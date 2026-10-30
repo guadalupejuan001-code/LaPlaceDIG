@@ -7,6 +7,7 @@ import {createHash} from 'node:crypto';
 import {observeAndProject15m} from '../bitcoin/intradia15.mjs';
 import {universeSnapshot,utcTime} from './estados.mjs';
 import {fetchKp} from './geomagnetismo.mjs';
+import {sellarCaptura} from './integridad.mjs';
 const ROOT='https://api.exchange.coinbase.com/products/';
 export const U001_VERSION='laplace-universo-btc-u001-v1';
 export const URLS=Object.freeze({
@@ -171,7 +172,7 @@ export async function observeUniverseBTC({
   }
   // Valor total del universo NO fue observado; se conoce solo su cobertura.
   const graph=universeSnapshot(observations,{cutoff:captured,hypotheses:links});
-  return {schema:U001_VERSION,at:captured,
+  return sellarCaptura({schema:U001_VERSION,at:captured,
     instrument_15m:instrument,
     measured_market:tasks,
     measured_space_weather:physical,
@@ -188,5 +189,5 @@ export async function observeUniverseBTC({
     projection_is_from:'I015 sin fusion estadistica no validada con nuevas variables',
     execution_orders:0,deterministic_math:true,
     input_hash_sha256:sha(JSON.stringify({primary:instrument.input_sha256,
-      market:tasks,physical,extra:additionalObservations}))};
+      market:tasks,physical,extra:additionalObservations}))});
 }

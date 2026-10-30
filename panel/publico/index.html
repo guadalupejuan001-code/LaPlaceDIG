@@ -8,6 +8,7 @@
   <meta name="description" content="LAPLACE: panel local de mediciones, estados y verificación temporal.">
   <title>LAPLACE · Panel de análisis</title>
   <link rel="stylesheet" href="/panel.css">
+  <script defer src="/grafica.js"></script>
   <script defer src="/panel.js"></script>
 </head>
 <body>
@@ -31,6 +32,7 @@
         <p id="horaLectura" class="sello">Sin una captura registrada</p>
       </div>
       <p id="aviso" class="aviso" role="alert" hidden></p>
+      <p id="avisoIntegridad" class="aviso" role="status" hidden></p>
       <nav class="pestanas" aria-label="Secciones de Laplace">
         <button class="pestana activo" data-vista="mercado" aria-current="page" type="button">Mercado</button>
         <button class="pestana" data-vista="factores" type="button">Factores observados</button>
@@ -52,12 +54,13 @@
         </div>
         <article class="tarjeta grafica-tarjeta">
           <div class="tarjeta-cabecera">
-            <div><h3>Trayectoria del precio</h3><p class="subdato">Velas de 5 minutos ya cerradas y estimación separada</p></div>
+            <div><h3>Trayectoria del precio</h3><p class="subdato">Cierres de 5 minutos, cotización exacta y estimación separada</p></div>
             <div class="leyendas"><span><i class="linea-observada"></i>Observado</span><span><i class="linea-estimada"></i>Calculado</span></div>
           </div>
           <svg id="grafico" role="img" aria-label="Gráfico de cotizaciones observadas y proyección a quince minutos" viewBox="0 0 800 240" preserveAspectRatio="xMidYMid meet">
             <text x="400" y="122" text-anchor="middle" fill="#8192a3" font-size="14">Actualiza una lectura para mostrar los precios reales.</text>
           </svg>
+          <p class="pie" id="graficaDetalle"></p>
           <p class="pie" id="graficaNota">El tramo calculado no representa un precio futuro observado.</p>
         </article>
         <div class="tres-columnas">
@@ -123,8 +126,9 @@
           <dl class="filas">
             <div><dt>Estados observados</dt><dd id="numeroEstados">—</dd></div>
             <div><dt>Dominios con datos</dt><dd id="numeroDominios">—</dd></div>
-            <div><dt>Huella de memoria universal</dt><dd id="huella">—</dd></div>
+            <div><dt>Huella de la captura completa</dt><dd id="huella">—</dd></div>
             <div><dt>Fecha del objetivo +15 minutos</dt><dd id="objetivoValidacion">—</dd></div>
+            <div><dt>Alcance del sello</dt><dd>Integridad local, no firma del proveedor</dd></div>
             <div><dt>Ejecución de operaciones</dt><dd>Ninguna</dd></div>
           </dl>
         </article>
