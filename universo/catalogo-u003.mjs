@@ -24,13 +24,13 @@ export const FRED_PUBLIC_SERIES=Object.freeze({
   DFF:{name:'us_effective_federal_funds_rate',unit:'pct'}
 });
 export const NEWS_TOPICS=Object.freeze([
-  {id:'conflict',query:'(war OR conflict OR military OR attack)'},
-  {id:'protest',query:'(protest OR strike OR demonstration)'},
-  {id:'trade',query:'(trade OR tariff OR export OR import)'},
-  {id:'energy',query:'(oil OR gas OR electricity OR energy)'},
-  {id:'shipping',query:'(shipping OR port OR vessel OR maritime)'},
-  {id:'cyber',query:'(cyberattack OR ransomware OR outage)'},
-  {id:'disaster',query:'(earthquake OR flood OR wildfire OR hurricane)'}
+  {id:'conflict',query:'(war OR conflict OR military OR attack)',gkg:'ARMEDCONFLICT'},
+  {id:'protest',query:'(protest OR strike OR demonstration)',gkg:'PROTEST'},
+  {id:'trade',query:'(trade OR tariff OR export OR import)',gkg:'TRADE'},
+  {id:'energy',query:'(oil OR gas OR electricity OR energy)',gkg:'ENERGY'},
+  {id:'shipping',query:'(shipping OR port OR vessel OR maritime)',gkg:'MARITIME'},
+  {id:'cyber',query:'(cyberattack OR ransomware OR outage)',gkg:'CYBER_ATTACK'},
+  {id:'disaster',query:'(earthquake OR flood OR wildfire OR hurricane)',gkg:'NATURAL_DISASTER'}
 ]);
 export const PORTWATCH_FIELDS=Object.freeze([
   ['portcalls','global_port_calls','count'],
