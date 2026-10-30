@@ -96,7 +96,7 @@ function m001At(bars,row){
   return {predicted:Number(p.precio_predicho>p.precio_inicial),actual:row.y,
     predicted_price:p.precio_predicho,initial:p.precio_inicial};
 }
-export function experiment(binary,raw,{cutoff,folds=PLAN.folds}={}){
+export function experiment(binary,raw,{cutoff,folds=PLAN.folds,compareM001=true,asset='BTC-USD'}={}){
   const bars=validarVelas(raw,{corte:cutoff,maximo:10000});
   const needed=PLAN.train+PLAN.validation+PLAN.test*folds+7;
   need(bars.length>=needed,'Historia insuficiente para X001');
@@ -116,7 +116,7 @@ export function experiment(binary,raw,{cutoff,folds=PLAN.folds}={}){
     const native=scoreNative(binary,fitRows,testRows,selected.alpha);
     const prior=(fitRows.reduce((s,r)=>s+r.y,0)+1)/(fitRows.length+2);
     const baseline=testRows.map(r=>({p:prior,y:r.y}));
-    const m001=testRows.map(r=>m001At(bars,r)).filter(Boolean);
+    const m001=compareM001?testRows.map(r=>m001At(bars,r)).filter(Boolean):[];
     foldResults.push({fold:f+1,selected_alpha:selected.alpha,
       partitions:{train:[trainStart,valStart],validation:[valStart,testStart],test:[testStart,testStart+PLAN.test]},
       native:{count:native.direction.length,brier:native.brier,accuracy:native.accuracy,
@@ -135,15 +135,15 @@ export function experiment(binary,raw,{cutoff,folds=PLAN.folds}={}){
   const nb=weighted('brier','native'),bb=weighted('brier','baseline');
   const na=weighted('accuracy','native'),ba=weighted('accuracy','baseline'),ma=weighted('accuracy','m001');
   return {schema:X001_SCHEMA,generated_at:new Date().toISOString(),cutoff,folds:foldResults.length,
-    target:'direccion_del_siguiente_intervalo_cerrado_de_5_minutos',
+    asset,target:'direccion_del_siguiente_intervalo_cerrado_de_5_minutos',
     state_bits:['retorno_5m_no_negativo','retorno_15m_no_negativo','movimiento_5m_mayor_que_rms_30m','volumen_mayor_que_media_30m'],
     native:{direction_count:nb.count,brier:nb.value,accuracy:na.value},
     baseline:{direction_count:bb.count,brier:bb.value,accuracy:ba.value},
-    m001:{direction_count:ma.count,accuracy:ma.value},
+    m001:{enabled:compareM001,direction_count:ma.count,accuracy:ma.value},
     native_brier_skill:bb.value?1-nb.value/bb.value:null,
-    native_accuracy_minus_m001:Number.isFinite(na.value)&&Number.isFinite(ma.value)?na.value-ma.value:null,
+    native_accuracy_minus_m001:compareM001&&Number.isFinite(na.value)&&Number.isFinite(ma.value)?na.value-ma.value:null,
     native_accuracy_minus_baseline:Number.isFinite(na.value)&&Number.isFinite(ba.value)?na.value-ba.value:null,
     production_changed:false,orders_executed:0,
-    interpretation:'Prueba de dirección a 5 minutos. El núcleo nativo aprende/emite en Inverse Ether Memory; no es todavía un predictor de precio absoluto.'
+    interpretation:'Prueba de dirección a 5 minutos para '+asset+'. El núcleo nativo aprende/emite en Inverse Ether Memory; no es todavía un predictor de precio absoluto.'
   };
 }
