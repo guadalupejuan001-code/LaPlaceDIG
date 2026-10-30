@@ -5,6 +5,8 @@
 export const MARKET_SYMBOLS=Object.freeze([
   // Índices / regiones
   'SPY','QQQ','DIA','IWM','^VIX','EEM','VWO','EWJ','EWU','EWG','EWZ','FXI','INDA','EWA','EWC',
+  // Divisas principales frente a USD / cruces líquidos
+  'EURUSD=X','GBPUSD=X','JPY=X','AUDUSD=X','CAD=X','CHF=X',
   // Renta fija / crédito
   'TLT','IEF','SHY','HYG','LQD',
   // Materias primas / energía
