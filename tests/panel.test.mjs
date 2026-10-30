@@ -4,6 +4,7 @@ import {mkdtempSync,readFileSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {universeSnapshot} from '../universo/estados.mjs';
+import {sellarCaptura,huellaContenido} from '../universo/integridad.mjs';
 import {registroVacio,añadirCaptura,normalizarRegistro,MAX_CAPTURAS}
   from '../panel/registro.mjs';
 import {crearServidor} from '../panel/servidor.mjs';
@@ -14,7 +15,7 @@ function captura(fecha=instante){
     value:80700,unit:'USD',observed_at:fecha,known_at:fecha,
     source_url:'https://api.exchange.coinbase.com/products/BTC-USD/ticker'};
   const memoria=universeSnapshot([observacion],{cutoff:fecha});
-  return {schema:'laplace-universo-btc-u001-v1',at:fecha,
+  return sellarCaptura({schema:'laplace-universo-btc-u001-v1',at:fecha,
     instrument_15m:{schema:'laplace-btc-intradia-i015-v1',observed_price_usd:80700,
       projected_price_usd:80700,model_candidate_price_usd:80720,
       observed_at:fecha,known_at:fecha,target_at:new Date(Date.parse(fecha)+900000).toISOString(),
@@ -24,7 +25,7 @@ function captura(fecha=instante){
     source_count:1,universal_state:memoria,
     measured_market:['book','trades','eth','euro'].map(name=>({name,status:'unavailable'})),
     measured_space_weather:{status:'unavailable'},
-    projected_price_usd:80700,execution_orders:0};
+    projected_price_usd:80700,execution_orders:0});
 }
 function entorno(){
   const dir=mkdtempSync(join(tmpdir(),'laplace-panel-'));
@@ -41,7 +42,9 @@ test('el contrato de memoria respeta marcas temporales, huellas y límite de 144
   assert.throws(()=>añadirCaptura(uno,c),/ya existe/);
   assert.throws(()=>normalizarRegistro({...uno,ultima:{...c,
     universal_state:{...c.universal_state,known_states:99}}}),/modificado/);
-  const largo={...uno,historial:Array.from({length:MAX_CAPTURAS+1},()=>uno.historial[0])};
+  const {registro_sha256,...body}=uno;
+  const largo={...body,historial:Array.from({length:MAX_CAPTURAS+1},()=>uno.historial[0])};
+  largo.registro_sha256=huellaContenido(largo);
   assert.throws(()=>normalizarRegistro(largo),/Demasiadas capturas/);
 });
 test('interfaz en español: sin cifras inventadas ni textos de marca extranjeros',()=>{
@@ -96,7 +99,7 @@ test('servidor solo local: estado vacío, captura real inyectada, exportación y
   }finally{await cerrar(reopened);e.eliminar()}
 });
 test('rechaza lecturas demasiado seguidas y conserva la última válida tras un error',async()=>{
-  const e=entorno();let t=3000000,llamadas=0;
+  const e=entorno();let t=Date.parse(instante)+1000,llamadas=0;
   const server=crearServidor({archivo:e.archivo,ahora:()=>t,capturar:async()=>{
     llamadas++;if(llamadas===2)throw Error('Coinbase sin respuesta');
     return captura();

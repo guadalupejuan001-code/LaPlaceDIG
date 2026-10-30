@@ -65,3 +65,10 @@ footer{border-top:1px solid var(--borde);padding:19px 0 35px;color:#8496a7;font-
 @media(max-width:800px){.envoltura{padding:0 15px}.dos-columnas,.factores-cuadricula{grid-template-columns:1fr}.tres-columnas{grid-template-columns:repeat(2,minmax(0,1fr))}.encabezado{height:auto;min-height:75px;padding:15px 0;align-items:flex-start}.contexto{align-items:flex-start}.valor-principal{font-size:31px}}
 @media(max-width:540px){.encabezado{display:block}.encabezado-acciones{justify-content:flex-start;margin-top:13px}.principal{padding-top:22px}.contexto{display:block;margin-bottom:22px}.contexto .sello{text-align:left;margin-top:11px}.tres-columnas{grid-template-columns:1fr}.tarjeta{padding:15px}.tarjeta-cabecera{flex-wrap:wrap}.indicadores .tarjeta{min-height:125px}.grafica-tarjeta .pie{line-height:1.6}.valor-principal{font-size:31px}}
 @media(prefers-reduced-motion:no-preference){button,.tarjeta{transition:background .15s,border-color .15s}}
+
+/* El historial completo permanece accesible sin truncar las filas. */
+.tabla-contenedor{max-height:65vh;overflow:auto}
+th{position:sticky;top:0;background:#14202b;z-index:1}
+#historiaContador{white-space:normal}
+.grafica-tarjeta svg{min-height:240px;max-height:330px}
+@media(max-width:540px){.subdato,.pie{font-size:12px}.pestana{min-height:44px;padding:10px 12px}.boton{min-height:44px}.leyendas{font-size:12px}.tabla-contenedor{max-height:60vh}}
