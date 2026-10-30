@@ -52,3 +52,12 @@ export const OPEN_SKY_REGIONS=Object.freeze([
   ['europe',35,72,-15,45],['africa',-40,35,-20,55],
   ['asia',5,75,45,150],['oceania',-50,5,100,180]
 ]);
+
+export const EXACT_VINTAGE_SERIES=Object.freeze({
+  GDP:{name:'us_gdp',unit:'billions_usd'},
+  CPIAUCSL:{name:'us_cpi_all_urban',unit:'index'},
+  UNRATE:{name:'us_unemployment_rate_vintage',unit:'pct'},
+  PAYEMS:{name:'us_payrolls_vintage',unit:'thousand_persons'},
+  RSAFS:{name:'us_retail_sales_vintage',unit:'millions_usd'},
+  INDPRO:{name:'us_industrial_production_vintage',unit:'index'}
+});
