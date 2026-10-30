@@ -194,7 +194,7 @@ export async function fetchMaritime({fetchImpl=fetch,now=()=>new Date().toISOStr
 export function parseGdeltGeo(raw,{topic,capturedAt,url}={}){
   need(raw?.type==='FeatureCollection'&&Array.isArray(raw.features),'GDELT GeoJSON inválido');
   const points=raw.features.map(f=>f?.geometry?.coordinates).filter(c=>Array.isArray(c)&&Number.isFinite(Number(c[0]))&&Number.isFinite(Number(c[1]))).map(c=>({lon:Number(c[0]),lat:Number(c[1])}));
-  const known=iso(capturedAt),base='gdelt_'+safe(topic),n=points.length;
+  const known=iso(capturedAt),base='gdelt_'+String(topic).toLowerCase().replace(/[^a-z0-9]+/g,'_'),n=points.length;
   return [
     obs('gdelt-'+topic+'-count-'+known,'noticias_geolocalizadas',base+'_locations',n,'count',known,known,url),
     obs('gdelt-'+topic+'-north-'+known,'noticias_geolocalizadas',base+'_north_share',n?points.filter(p=>p.lat>=0).length/n:0,'ratio',known,known,url),
