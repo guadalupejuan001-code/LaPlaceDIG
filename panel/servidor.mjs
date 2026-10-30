@@ -1,3 +1,4 @@
+import {paginaSeguimiento} from '../seguimiento/panel.mjs';
 /* Servidor local del panel LAPLACE. No expone Internet ni abre operaciones. */
 import {createServer} from 'node:http';
 import {readFileSync,writeFileSync,renameSync,mkdirSync,statSync,copyFileSync,constants} from 'node:fs';
@@ -66,6 +67,12 @@ export function crearServidor({capturar=observeUniverseBTC,archivo=ARCHIVO_PREDE
       json(res,403,{error:'Solo se permiten conexiones locales'});return;
     }
     const origen='http://'+host;
+    if(req.method==='GET'&&url==='/seguimiento'){
+      try{const html=paginaSeguimiento(process.env.LAPLACE_SEGUIMIENTO_DIRECTORIO??'registros/seguimiento');
+        res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);
+      }catch(error){json(res,500,{error:'No se pudo verificar el diario: '+errorExplicito(error)});}
+      return;
+    }
     if(req.method==='GET'&&url==='/api/estado'){
       json(res,200,{...estado,servidor_en:new Date(ahora()).toISOString(),
         horizonte_disponible_minutos:15,actualizacion_automatica:false});return;
