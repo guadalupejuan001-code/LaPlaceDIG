@@ -1,0 +1,43 @@
+name: LAPLACE XG01 - U002 predictivo A/B
+on:
+  pull_request:
+    branches: [main]
+    paths: ['experimentos/u002-predictive-xg01.mjs','tests/u002-predictive-xg01.test.mjs','.github/workflows/u002-predictive-xg01.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  xg01:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Pruebas cronológicas XG01
+        run: |
+          node --check experimentos/u002-predictive-xg01.mjs
+          node --test tests/u002-predictive-xg01.test.mjs
+      - name: A/B real con porción intradía histórica de U002
+        run: |
+          mkdir -p ci-xg01
+          node --input-type=module <<'JS' | tee ci-xg01/resultado.json
+          import {runXG01} from './experimentos/u002-predictive-xg01.mjs';
+          console.log(JSON.stringify(await runXG01(),null,2));
+          JS
+      - name: Resumen sin promoción automática
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync} from 'node:fs';import assert from 'node:assert/strict';
+          const r=JSON.parse(readFileSync('ci-xg01/resultado.json'));
+          assert.equal(r.production_changed,false);assert.equal(r.automatic_trading,false);
+          assert.ok(r.aggregate.local.count>=100);assert.equal(r.aggregate.local.count,r.aggregate.fused.count);
+          console.log(JSON.stringify({series:r.market_series_loaded,failed:r.market_series_failed.length,local:r.aggregate.local,global:r.aggregate.global,fused:r.aggregate.fused,baseline:r.aggregate.baseline}));
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: laplace-xg01-u002-ab
+          path: ci-xg01/**
+          retention-days: 14
