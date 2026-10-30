@@ -4,6 +4,7 @@ import {
   parseBisPolicyCsv,parseBls,parseFredCsv,parseNeso,parsePortWatch,
   parseGdeltGeo,parseOpenSky,parseJQuantsTopix
 } from '../universo/fuentes-u003.mjs';
+import {cleanSymbol} from '../bolsa/mercado.mjs';
 import {
   REGIONAL_MARKET_SYMBOLS,COMMODITY_FUTURES,POLICY_AREAS,NEWS_TOPICS,NESO_FIELDS
 } from '../universo/catalogo-u003.mjs';
@@ -13,6 +14,7 @@ test('U003 catalog adds regional exchanges and real commodity futures without re
   assert.ok(REGIONAL_MARKET_SYMBOLS.includes('^N225'));
   assert.ok(REGIONAL_MARKET_SYMBOLS.includes('^BVSP'));
   assert.ok(REGIONAL_MARKET_SYMBOLS.includes('^GDAXI'));
+  assert.equal(cleanSymbol('000001.SS'),'000001.SS');
   assert.ok(COMMODITY_FUTURES.includes('CL=F'));
   assert.ok(COMMODITY_FUTURES.includes('GC=F'));
   assert.ok(POLICY_AREAS.length>=15);
@@ -45,7 +47,7 @@ test('NESO parser extracts actual half-hour electricity state',()=>{
   assert.equal(rows.length,NESO_FIELDS.length);assert.equal(rows.find(x=>x.variable==='gb_national_demand').value,27000);
 });
 test('PortWatch parser aggregates port calls and estimated trade separately',()=>{
-  const raw={features:[{attributes:{date:Date.parse('2026-10-28T00:00:00Z'),portcalls_sum:1200,portcalls_cargo_sum:700,portcalls_tanker_sum:250,import_sum:5e7,export_sum:4e7}}]};
+  const raw={features:[{attributes:{date:'2026-10-28',portcalls_sum:1200,portcalls_cargo_sum:700,portcalls_tanker_sum:250,import_sum:5e7,export_sum:4e7}}]};
   const rows=parsePortWatch(raw,{capturedAt:captured,url:'https://portwatch.imf.org/test'});
   assert.equal(rows.length,5);assert.equal(rows.find(x=>x.variable==='global_port_calls').value,1200);
 });
