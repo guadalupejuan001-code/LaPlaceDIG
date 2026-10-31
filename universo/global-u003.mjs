@@ -12,6 +12,7 @@ import {
 } from './fuentes-u003.mjs';
 import {fetchOfficialCentralBanks,fetchPublicDirectExchanges,fetchDatedCommodityContracts} from './fuentes-oficiales.mjs';
 import {observeCapital} from './capital/global.mjs';
+import {observeFinraOffExchange} from './otc/finra-regsho.mjs';
 
 export const U003_VERSION='laplace-universo-global-u003-v4';
 const need=(c,m)=>{if(!c)throw Error(m)};
@@ -20,7 +21,8 @@ export async function observeWorldU003({
   includeAir=true,includeDirectExchanges=true,
   openSkyClientId=process.env.OPENSKY_CLIENT_ID,
   openSkyClientSecret=process.env.OPENSKY_CLIENT_SECRET,
-  jquantsApiKey=process.env.JQUANTS_API_KEY
+  jquantsApiKey=process.env.JQUANTS_API_KEY,
+  finraTradeDate=process.env.LAPLACE_FINRA_TRADE_DATE??null
 }={}){
   const jobs=[
     ['regional_markets',()=>fetchRegionalMarkets({fetchImpl,now,timeoutMs})],
@@ -42,6 +44,10 @@ export async function observeWorldU003({
           project_modules:capture.project_modules}};
     }]
   ];
+  // FINRA no es un feed intradía. Activar sólo para un día explícito publicado.
+  // Si falla, U003 conserva el fallo sin inventar volumen ni reemplazarlo por cero.
+  if(finraTradeDate)jobs.push(['finra_off_exchange',()=>observeFinraOffExchange({
+    tradeDate:finraTradeDate,fetchImpl,now,timeoutMs})]);
   if(includeAir)jobs.push(['air_traffic',()=>fetchAirTraffic({fetchImpl,now,timeoutMs,clientId:openSkyClientId,clientSecret:openSkyClientSecret})]);
   if(includeDirectExchanges){
     jobs.push(['direct_exchanges',()=>fetchDirectExchanges({fetchImpl,now,timeoutMs,jquantsApiKey})]);
