@@ -188,8 +188,24 @@ export async function observeWeeklyFinra({weekStart,targets=[{symbol:'AAPL',tier
       source_url:FINRA_API+'/data/group/otcMarket/name/weeklySummary'
     }));
   }
+  const reconciliation=[];
+  for(const target of selected)for(const segment of WEEKLY_SEGMENTS){
+    const base=byPair.get(segment+'|'+target.symbol);
+    const venueGroup=groups.find(g=>g.scope===[weekStart,target.tier,target.symbol,
+      segment,'venue'].join('|'));
+    if(!base||!venueGroup||venueGroup.status!=='observed')continue;
+    const shares=venueGroup.rows.reduce((a,r)=>a+BigInt(r.shares),0n);
+    const trades=venueGroup.rows.reduce((a,r)=>a+BigInt(r.trades),0n);
+    reconciliation.push({segment,symbol:target.symbol,tier:target.tier,
+      reported_symbol_shares:base.shares,
+      venue_shares_sum:shares.toString(),reported_symbol_trades:base.trades,
+      venue_trades_sum:trades.toString(),
+      equal_shares:shares===BigInt(base.shares),
+      equal_trades:trades===BigInt(base.trades),
+      interpretation:'Metadata de contraste; nunca sumar vistas ni inferir volumen oculto del desajuste.'});
+  }
   return {schema:WEEKLY_SCHEMA,status:observations.length?'observed':'partial_or_unavailable',
-    week_start:weekStart,targets:selected,observations,venues,sources,
+    week_start:weekStart,targets:selected,observations,venues,sources,reconciliation,
     coverage:{requested_sources:jobs.length,observed_sources:sources.filter(s=>s.status==='observed').length,
       unavailable_sources:sources.filter(s=>s.status!=='observed').length},
     venue_semantics:'Reported ATS/Non-ATS trading firm is public; investor or order origin not identified.',
