@@ -14,7 +14,7 @@ export const DEFAULT_TRACKED=Object.freeze(MARKET_SYMBOLS.filter(s=>/^[A-Z]{1,8}
 const need=(yes,why)=>{if(!yes)throw Error(why)};
 const sha256=raw=>createHash('sha256').update(raw).digest('hex');
 const DATE=/^\d{8}$/;
-const SYMBOL=/^[A-Za-z0-9.^$-]{1,14}$/;
+const SYMBOL=/^[A-Za-z0-9.^$/-]{1,14}$/;
 const MAX_BYTES=6_000_000,MAX_ROWS=50_000,MAX_TRACKED=64;
 const HEAD='Date|Symbol|ShortVolume|ShortExemptVolume|TotalVolume|Market';
 function validateDate(value){
