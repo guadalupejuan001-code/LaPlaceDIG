@@ -27,7 +27,9 @@
     "fusion": "node tools/fusion.mjs",
     "test:fusion": "node --test tests/fusion-temporal.test.mjs",
     "finra:o001": "node tools/finra-o001.mjs",
-    "test:finra": "node --test tests/finra-o001.test.mjs"
+    "test:finra": "node --test tests/finra-o001.test.mjs",
+    "finra:o001b": "node tools/finra-o001b.mjs",
+    "test:finra-o001b": "node --test tests/finra-o001b.test.mjs"
   },
   "engines": {
     "node": ">=20"
