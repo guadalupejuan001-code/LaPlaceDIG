@@ -60,8 +60,29 @@ export async function boundedJSON(url,{fetchImpl=fetch,timeoutMs=12000,method='G
   need(parsed.protocol==='https:'&&Object.values(D001_ROOTS).includes(parsed.origin)&&
     !parsed.username&&!parsed.password,'Host de mercado no autorizado');
   need(['GET','POST'].includes(method),'Método de solo lectura requerido');
-  if(method==='POST')need(parsed.origin===D001_ROOTS.hyperliquid&&parsed.pathname==='/info'&&
-    typeof body==='string'&&body.length<=200,'POST restringido al catálogo público Hyperliquid');
+  if(parsed.origin===D001_ROOTS.binance){
+    const allowed=['/fapi/v1/premiumIndex','/fapi/v1/openInterest','/fapi/v1/fundingRate'];
+    need(method==='GET'&&allowed.includes(parsed.pathname)&&
+      ['BTCUSDT','ETHUSDT'].includes(parsed.searchParams.get('symbol'))&&
+      parsed.searchParams.size===(parsed.pathname.endsWith('/fundingRate')?2:1)&&
+      (!parsed.pathname.endsWith('/fundingRate')||parsed.searchParams.get('limit')==='1'),
+      'Binance: sólo endpoints públicos predeclarados de mercado');
+  }else if(parsed.origin===D001_ROOTS.deribit){
+    need(method==='GET'&&
+      ['/api/v2/public/get_instruments','/api/v2/public/get_book_summary_by_currency'].includes(parsed.pathname)&&
+      ['BTC','ETH'].includes(parsed.searchParams.get('currency'))&&
+      parsed.searchParams.get('kind')==='option'&&
+      parsed.searchParams.size===(parsed.pathname.endsWith('get_instruments')?3:2)&&
+      (!parsed.pathname.endsWith('get_instruments')||parsed.searchParams.get('expired')==='false'),
+      'Deribit: sólo métodos de mercado de opciones públicos');
+  }else{
+    let payload=null;
+    try{payload=JSON.parse(body)}catch{}
+    need(method==='POST'&&parsed.pathname==='/info'&&!parsed.search&&
+      payload?.type==='metaAndAssetCtxs'&&payload.dex===''&&
+      Object.keys(payload).length===2&&typeof body==='string'&&body.length<=200,
+      'Hyperliquid: sólo metaAndAssetCtxs público');
+  }
   const response=await fetchImpl(url,{method,body,signal:AbortSignal.timeout(timeoutMs),
     redirect:'error',cache:'no-store',
     headers:{Accept:'application/json','User-Agent':'LaPlaceDIG-D001/1.0',
