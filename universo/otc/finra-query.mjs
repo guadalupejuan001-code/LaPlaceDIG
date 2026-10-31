@@ -55,22 +55,26 @@ export function createFinraClient({clientId=process.env.FINRA_API_CLIENT_ID,
   clientSecret=process.env.FINRA_API_CLIENT_SECRET,fetchImpl=fetch,
   now=()=>new Date().toISOString(),timeoutMs=15000}={}){
   const enabled=authConfigured({clientId,clientSecret});
-  let accessToken=null,expiresAt=0;
+  let accessToken=null,expiresAt=0,pendingToken=null;
   async function token(){
     need(enabled,'FINRA: requiere credenciales públicas válidas');
     if(accessToken&&Date.parse(now())+120000<expiresAt)return accessToken;
-    const basic=Buffer.from(clientId+':'+clientSecret,'utf8').toString('base64');
-    const response=await fetchImpl(FINRA_TOKEN,{
-      method:'POST',redirect:'error',cache:'no-store',signal:AbortSignal.timeout(timeoutMs),
-      headers:{Authorization:'Basic '+basic,Accept:'application/json'}
-    });
-    const raw=await bounded(response,65536),body=JSON.parse(raw);
-    need(typeof body.access_token==='string'&&body.access_token.length>=10&&
-      Number.isFinite(Number(body.expires_in))&&Number(body.expires_in)>0,
-      'FINRA: respuesta OAuth inválida');
-    accessToken=body.access_token;
-    expiresAt=Date.parse(now())+Math.min(3600,Number(body.expires_in))*1000;
-    return accessToken;
+    if(pendingToken)return pendingToken; // OAuth single-flight para consultas concurrentes.
+    pendingToken=(async()=>{
+      const basic=Buffer.from(clientId+':'+clientSecret,'utf8').toString('base64');
+      const response=await fetchImpl(FINRA_TOKEN,{
+        method:'POST',redirect:'error',cache:'no-store',signal:AbortSignal.timeout(timeoutMs),
+        headers:{Authorization:'Basic '+basic,Accept:'application/json'}
+      });
+      const raw=await bounded(response,65536),body=JSON.parse(raw);
+      need(typeof body.access_token==='string'&&body.access_token.length>=10&&
+        Number.isFinite(Number(body.expires_in))&&Number(body.expires_in)>0,
+        'FINRA: respuesta OAuth inválida');
+      accessToken=body.access_token;
+      expiresAt=Date.parse(now())+Math.min(3600,Number(body.expires_in))*1000;
+      return accessToken;
+    })();
+    try{return await pendingToken}finally{pendingToken=null}
   }
   async function request({dataset,limit=300,offset=0,compareFilters=[]}){
     const params=validateQuery({dataset,limit,offset,compareFilters});
