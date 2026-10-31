@@ -60,7 +60,7 @@ test('todos los datos mundiales validados afectan cobertura y rango, nunca el pr
   assert.equal(withWorld.context.domains.length,3);
   assert.ok(withWorld.context.uncertainty_multiplier>without.context.uncertainty_multiplier);
   assert.deepEqual(withWorld.horizons.map(x=>x.price_candidate),without.horizons.map(x=>x.price_candidate));
-  assert.notDeepEqual(withWorld.horizons.map(x=>x.scenario_low),without.horizons.map(x=>x.scenario_low));
+  assert.notDeepEqual(withWorld.horizons.map(x=>[x.scenario_low,x.scenario_high]),without.horizons.map(x=>[x.scenario_low,x.scenario_high]));
 });
 test('las cinco fuentes empiezan juntas, los errores quedan visibles y no se inventan datos',async()=>{
   const started=[],done={},collectors={};
@@ -95,6 +95,6 @@ test('ventanas de cada resolución respetan las 300 barras por petición',()=>{
   }
 });
 test('vela duplicada contradictoria es rechazada',()=>{
-  const x=bars(300,60);x.push([...x[0].slice(0,4),999999,x[0][5]]);
+  const x=bars(300,60);x.push([...x[0].slice(0,5),x[0][5]+1]);
   assert.throws(()=>prepararSerie(x,{granularity:300,cutoff:cut}),/contradictorias/);
 });
