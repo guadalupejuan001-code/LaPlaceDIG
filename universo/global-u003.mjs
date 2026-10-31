@@ -16,6 +16,7 @@ import {observeFinraOffExchange} from './otc/finra-regsho.mjs';
 import {createFinraClient} from './otc/finra-query.mjs';
 import {observeWeeklyFinra} from './otc/finra-weekly.mjs';
 import {observeMonthlyBlocks} from './otc/finra-blocks.mjs';
+import {observeDerivatives} from './derivados/global.mjs';
 
 export const U003_VERSION='laplace-universo-global-u003-v4';
 const need=(c,m)=>{if(!c)throw Error(m)};
@@ -27,7 +28,8 @@ export async function observeWorldU003({
   jquantsApiKey=process.env.JQUANTS_API_KEY,
   finraTradeDate=process.env.LAPLACE_FINRA_TRADE_DATE??null,
   finraWeekStart=process.env.LAPLACE_FINRA_WEEK_START??null,
-  finraMonthStart=process.env.LAPLACE_FINRA_MONTH_START??null
+  finraMonthStart=process.env.LAPLACE_FINRA_MONTH_START??null,
+  includeDerivatives=process.env.LAPLACE_D001_ENABLED==='true'
 }={}){
   const jobs=[
     ['regional_markets',()=>fetchRegionalMarkets({fetchImpl,now,timeoutMs})],
@@ -49,6 +51,14 @@ export async function observeWorldU003({
           project_modules:capture.project_modules}};
     }]
   ];
+  // D001 queda opt-in para no alterar la cobertura previa ni el predictor.
+  if(includeDerivatives)jobs.push(['derivatives_d001',async()=>{
+    const report=await observeDerivatives({fetchImpl,now,timeoutMs});
+    return {observations:report.observations,sources:report.sources,
+      contracts:report.contracts,derivatives_metadata:{coverage:report.coverage,
+        started_at:report.started_at,at:report.at,
+        prediction_inputs_enabled:false,automatic_trading:false}};
+  }]);
   // FINRA O001-B no consulta sin un período solicitado.
   // Credenciales públicas de FINRA permanecen en variables del servidor.
   const finraClient=finraWeekStart||finraMonthStart?
@@ -84,7 +94,7 @@ export async function observeWorldU003({
   }))]);
   const captured=utcTime(now());
   const observations=[...base.universal_state.states],sources=[...base.source_status.map(x=>({...x,group:'u002_base'}))],groups=[],contracts=[],vintages=[],alerts=[];
-  let geoCoverage=null,capitalMetadata=null,finraWeeklyMetadata=null,finraMonthlyMetadata=null;
+  let geoCoverage=null,capitalMetadata=null,finraWeeklyMetadata=null,finraMonthlyMetadata=null,derivativesMetadata=null;
   for(const g of settled){
     if(g.status==='fulfilled'){
       observations.push(...g.value.observations);
@@ -92,6 +102,7 @@ export async function observeWorldU003({
       alerts.push(...(g.value.geolocated_alerts??[]));
       if(g.name==='geo_news')geoCoverage=g.value.coverage??null;
       if(g.name==='capital_u004')capitalMetadata=g.value.capital_metadata??null;
+      if(g.name==='derivatives_d001')derivativesMetadata=g.value.derivatives_metadata??null;
       if(g.name==='finra_ats_otc_weekly')finraWeeklyMetadata=g.value.finra_weekly_metadata??null;
       if(g.name==='finra_ats_otc_monthly_blocks')finraMonthlyMetadata=g.value.finra_monthly_metadata??null;
       sources.push(...g.value.sources.map(x=>({...x,group:g.name})));
@@ -118,7 +129,7 @@ export async function observeWorldU003({
     source_status:sources,
     contract_metadata:contracts,macro_vintages:vintages,
     geolocated_alerts:alerts,geo_news_coverage:geoCoverage,
-    capital_u004:capitalMetadata,
+    capital_u004:capitalMetadata,derivatives_d001:derivativesMetadata,
     finra_weekly:finraWeeklyMetadata,finra_monthly_blocks:finraMonthlyMetadata,
     availability_policy:{
       known_at:'momento_de_captura_o_primera_observacion_por_laplace',
