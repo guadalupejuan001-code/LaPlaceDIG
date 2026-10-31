@@ -29,6 +29,13 @@ test('O001: parser comprueba encabezado, número de registros, volúmenes y deci
   assert.equal(parsed.records[0].total,80500000n);
   assert.match(parsed.raw_sha256,/^[a-f0-9]{64}$/);
 });
+test('O001: símbolos publicados con barra como AAC/U se preservan sin inferir identidad',()=>{
+  const raw=[header,'20261030|AAC/U|11|1|22|N','1'].join('\n');
+  const x=parseRegSho(raw,{tradeDate:day});
+  assert.equal(x.records[0].symbol,'AAC/U');
+  const r=summarizeRegSho(x,{capturedAt:cut,sourceUrl:url,symbols:['AAC/U']});
+  assert.equal(r.observations.length,4);
+});
 test('O001: no interpreta volumen short como short interest ni revela contrapartes',()=>{
   const parsed=parseRegSho(file,{tradeDate:day});
   const result=summarizeRegSho(parsed,{capturedAt:cut,sourceUrl:url,symbols:['AAPL','SPY','NVDA']});
