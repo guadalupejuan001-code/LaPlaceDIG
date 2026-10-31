@@ -62,7 +62,9 @@ export function parseRegSho(text,{tradeDate,facility='CNMS'}){
     const row=line.split('|');
     need(row.length===6,'Fila FINRA truncada');
     const [d,symbol,sv,sev,tv,market]=row;
-    need(d===tradeDate&&SYMBOL.test(symbol),'Fecha/símbolo FINRA incoherente');
+    need(d===tradeDate&&SYMBOL.test(symbol),
+      'Fecha/símbolo FINRA incoherente (fila '+(records.length+2)+', fecha='+d+
+      ', símbolo='+JSON.stringify(symbol.slice(0,24))+', formato='+String(SYMBOL.test(symbol))+')');
     need((facility==='FORF'?/^(?:O(?:,O)*)?$/:/^(?:[NBQD](?:,[NBQD])*)?$/).test(market),
       'Código de centro FINRA desconocido para '+facility);
     const short=shares(sv),exempt=shares(sev),total=shares(tv);
