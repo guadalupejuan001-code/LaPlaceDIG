@@ -25,7 +25,9 @@
     "input:status": "node tools/laplace.mjs entrada estado",
     "test:input": "node --test tests/input*.test.mjs",
     "fusion": "node tools/fusion.mjs",
-    "test:fusion": "node --test tests/fusion-temporal.test.mjs"
+    "test:fusion": "node --test tests/fusion-temporal.test.mjs",
+    "finra:o001": "node tools/finra-o001.mjs",
+    "test:finra": "node --test tests/finra-o001.test.mjs"
   },
   "engines": {
     "node": ">=20"
