@@ -55,7 +55,7 @@ test('O001: rechaza tráiler incorrecto, campos sobrantes, volúmenes imposibles
   assert.throws(()=>parseRegSho(file.replace('SPY|15|0|50|N','SPY|15|0|50|N|EXTRA'),{tradeDate:day}),/truncada/);
   assert.throws(()=>parseRegSho(file,{tradeDate:'20261029'}),/Fecha/);
   assert.throws(()=>parseRegSho([header,row1,row1,'2'].join('\n'),{tradeDate:day}),/Duplicado/);
-  assert.throws(()=>parseRegSho(file.replace('AAPL|20.125000','BAD/TICKER|20.125000'),{tradeDate:day}),/Fecha\/símbolo/);
+  assert.throws(()=>parseRegSho(file.replace('AAPL|20.125000','BAD TICKER|20.125000'),{tradeDate:day}),/Fecha\/símbolo/);
 });
 test('O001: fecha de conocimiento no se retrotrae a la sesión',()=>{
   const parsed=parseRegSho(file,{tradeDate:day});
