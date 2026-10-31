@@ -4,8 +4,8 @@
  * Se exige fecha explícita y se conserva el primer conocimiento real.
  */
 import {createHash} from 'node:crypto';
-import {observation,utcTime} from '../universo/estados.mjs';
-import {MARKET_SYMBOLS} from '../universo/catalogo-global.mjs';
+import {observation,utcTime} from '../estados.mjs';
+import {MARKET_SYMBOLS} from '../catalogo-global.mjs';
 
 export const REGSHO_SCHEMA='laplace-finra-regsho-o001-v1';
 export const FACILITIES=Object.freeze({CNMS:'listed_off_exchange',FORF:'unlisted_otc'});
