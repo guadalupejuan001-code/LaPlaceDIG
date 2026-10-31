@@ -91,7 +91,7 @@ test('O001: CNMS y FORF inician juntas, pero son universos separados',async()=>{
   assert.equal(x.observations.length,12);
   assert.equal(x.sources.length,2);
   assert.equal(x.sources[0].status,'observed');
-  assert.equal(x.sources[1].status,'unavailable'); // Código O no es NMS: se marca ausente, no mezclado.
+  assert.equal(x.sources[1].status,'observed'); // O corresponde a ORF, universo independiente.
   assert.equal(x.prediction_inputs_enabled,false);
 });
 test('O001: fichero válido de cero registros informa ausencia de cobertura, no de actividad total',()=>{
