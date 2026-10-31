@@ -75,6 +75,19 @@ test('OAuth y POST acotado usan endpoints oficiales y token no sale en recibos',
   assert.ok(!JSON.stringify(a).includes('token-very-long'));
   assert.equal(b.rows.length,1);
 });
+test('OAuth concurrente comparte una sola petición de token',async()=>{
+  let tokenCalls=0,apiCalls=0;
+  const c=createFinraClient({clientId:'id',clientSecret:'secret',now:()=>CAPTURE,
+    fetchImpl:async url=>{
+      if(url===FINRA_TOKEN){tokenCalls++;return new Response(JSON.stringify({
+        access_token:'shared-token-very-long',expires_in:3600}),{status:200})}
+      apiCalls++;return new Response(JSON.stringify([weekly()]),{status:200});
+    }});
+  const q={dataset:'weeklySummary',
+    compareFilters:weeklyFilters({weekStart:WEEK,...T,segment:'ATS'})};
+  const rows=await Promise.all([c.request(q),c.request(q),c.request(q)]);
+  assert.equal(rows.length,3);assert.equal(tokenCalls,1);assert.equal(apiCalls,3);
+});
 test('fecha semanal exige lunes, tier explícito y símbolos finra con slash',()=>{
   assert.equal(dateOnly(WEEK,{monday:true}),WEEK);
   assert.throws(()=>dateOnly('2026-10-30',{monday:true}),/lunes/);
