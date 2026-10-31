@@ -1,0 +1,47 @@
+name: Exportar binarios grandes para Entidad Laplace
+on:
+  push:
+    paths:
+      - .github/workflows/exportar-entidad-laplace.yml
+permissions:
+  contents: write
+jobs:
+  exportar:
+    if: github.ref == 'refs/heads/migration/entidad-laplace-binarios-20261031'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Dividir datos originales en partes base64 verificadas
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, json, subprocess
+          from pathlib import Path
+          wanted = {
+            "raw": ("evidencia/pulso-20261030/raw/2e119cb5d8cb393d720d080a56370794e2513e03de11a4c1c6d90dd36743fe82.txt.gz","2d87334d97b6751a2bf8987716efc816617739bc"),
+            "registry": ("evidencia/pulso-20261030/resultado/registry.json.gz","3143ccb04f231c01088e490e7aad82a3e78be744")
+          }
+          target=Path("migracion-entidad-binarios")
+          target.mkdir(exist_ok=True)
+          result={}
+          for key,(path,sha) in wanted.items():
+            data=Path(path).read_bytes()
+            actual=subprocess.check_output(["git","hash-object",path],text=True).strip()
+            if actual!=sha: raise RuntimeError("Hash inesperado: "+path)
+            encoded=base64.b64encode(data).decode("ascii")
+            chunks=[encoded[i:i+600000] for i in range(0,len(encoded),600000)]
+            for i,chunk in enumerate(chunks):
+              (target/f"{key}-{i:02d}.b64").write_text(chunk,encoding="ascii")
+            result[key]={"path":path,"blob_sha":sha,"size":len(data),"chunks":len(chunks)}
+          (target/"manifest.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf8")
+          print(result)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add migracion-entidad-binarios
+          git diff --staged --quiet || git commit -m "Preparar binarios verificables para migración de Entidad Laplace"
+          git push origin HEAD:refs/heads/migration/entidad-laplace-binarios-20261031
