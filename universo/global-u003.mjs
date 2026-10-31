@@ -13,6 +13,9 @@ import {
 import {fetchOfficialCentralBanks,fetchPublicDirectExchanges,fetchDatedCommodityContracts} from './fuentes-oficiales.mjs';
 import {observeCapital} from './capital/global.mjs';
 import {observeFinraOffExchange} from './otc/finra-regsho.mjs';
+import {createFinraClient} from './otc/finra-query.mjs';
+import {observeWeeklyFinra} from './otc/finra-weekly.mjs';
+import {observeMonthlyBlocks} from './otc/finra-blocks.mjs';
 
 export const U003_VERSION='laplace-universo-global-u003-v4';
 const need=(c,m)=>{if(!c)throw Error(m)};
@@ -22,7 +25,9 @@ export async function observeWorldU003({
   openSkyClientId=process.env.OPENSKY_CLIENT_ID,
   openSkyClientSecret=process.env.OPENSKY_CLIENT_SECRET,
   jquantsApiKey=process.env.JQUANTS_API_KEY,
-  finraTradeDate=process.env.LAPLACE_FINRA_TRADE_DATE??null
+  finraTradeDate=process.env.LAPLACE_FINRA_TRADE_DATE??null,
+  finraWeekStart=process.env.LAPLACE_FINRA_WEEK_START??null,
+  finraMonthStart=process.env.LAPLACE_FINRA_MONTH_START??null
 }={}){
   const jobs=[
     ['regional_markets',()=>fetchRegionalMarkets({fetchImpl,now,timeoutMs})],
@@ -44,6 +49,26 @@ export async function observeWorldU003({
           project_modules:capture.project_modules}};
     }]
   ];
+  // FINRA O001-B no consulta sin un período solicitado.
+  // Credenciales públicas de FINRA permanecen en variables del servidor.
+  const finraClient=finraWeekStart||finraMonthStart?
+    createFinraClient({fetchImpl,now,timeoutMs}):null;
+  if(finraWeekStart)jobs.push(['finra_ats_otc_weekly',async()=>{
+    const report=await observeWeeklyFinra({weekStart:finraWeekStart,
+      client:finraClient,now});
+    return {observations:report.observations,sources:report.sources,
+      finra_weekly_metadata:{week_start:report.week_start,coverage:report.coverage,
+        venue_count:report.venues?.length??0,status:report.status,
+        no_double_counting:true}};
+  }]);
+  if(finraMonthStart)jobs.push(['finra_ats_otc_monthly_blocks',async()=>{
+    const report=await observeMonthlyBlocks({monthStart:finraMonthStart,
+      client:finraClient,now});
+    return {observations:report.observations,sources:report.sources,
+      finra_monthly_metadata:{month_start:report.month_start,
+        coverage:report.coverage,venue_count:report.venues?.length??0,
+        status:report.status,no_double_counting:true}};
+  }]);
   // FINRA no es un feed intradía. Activar sólo para un día explícito publicado.
   // Si falla, U003 conserva el fallo sin inventar volumen ni reemplazarlo por cero.
   if(finraTradeDate)jobs.push(['finra_off_exchange',()=>observeFinraOffExchange({
@@ -59,7 +84,7 @@ export async function observeWorldU003({
   }))]);
   const captured=utcTime(now());
   const observations=[...base.universal_state.states],sources=[...base.source_status.map(x=>({...x,group:'u002_base'}))],groups=[],contracts=[],vintages=[],alerts=[];
-  let geoCoverage=null,capitalMetadata=null;
+  let geoCoverage=null,capitalMetadata=null,finraWeeklyMetadata=null,finraMonthlyMetadata=null;
   for(const g of settled){
     if(g.status==='fulfilled'){
       observations.push(...g.value.observations);
@@ -67,6 +92,8 @@ export async function observeWorldU003({
       alerts.push(...(g.value.geolocated_alerts??[]));
       if(g.name==='geo_news')geoCoverage=g.value.coverage??null;
       if(g.name==='capital_u004')capitalMetadata=g.value.capital_metadata??null;
+      if(g.name==='finra_ats_otc_weekly')finraWeeklyMetadata=g.value.finra_weekly_metadata??null;
+      if(g.name==='finra_ats_otc_monthly_blocks')finraMonthlyMetadata=g.value.finra_monthly_metadata??null;
       sources.push(...g.value.sources.map(x=>({...x,group:g.name})));
       groups.push({group:g.name,status:g.value.observations.length?'observed':
         g.value.sources.some(x=>['requires_credentials','requires_license'].includes(x.status))?'requires_access':'unavailable',signals:g.value.observations.length,
@@ -92,6 +119,7 @@ export async function observeWorldU003({
     contract_metadata:contracts,macro_vintages:vintages,
     geolocated_alerts:alerts,geo_news_coverage:geoCoverage,
     capital_u004:capitalMetadata,
+    finra_weekly:finraWeeklyMetadata,finra_monthly_blocks:finraMonthlyMetadata,
     availability_policy:{
       known_at:'momento_de_captura_o_primera_observacion_por_laplace',
       vintage_date:'ALFRED initial-release date when FRED_API_KEY is configured; day precision only',
