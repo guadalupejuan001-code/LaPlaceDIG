@@ -29,7 +29,9 @@
     "finra:o001": "node tools/finra-o001.mjs",
     "test:finra": "node --test tests/finra-o001.test.mjs",
     "finra:o001b": "node tools/finra-o001b.mjs",
-    "test:finra-o001b": "node --test tests/finra-o001b.test.mjs"
+    "test:finra-o001b": "node --test tests/finra-o001b.test.mjs",
+    "derivados:d001": "node tools/derivados-d001.mjs",
+    "test:derivados": "node --test tests/derivados-d001.test.mjs"
   },
   "engines": {
     "node": ">=20"
