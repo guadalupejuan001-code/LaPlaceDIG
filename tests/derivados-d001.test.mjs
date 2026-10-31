@@ -146,9 +146,9 @@ test('D001: opciones sólo se descargan por endpoints públicos y una falla se c
 });
 test('D001: validación de sólo hosts permitidos y límites de red',async()=>{
   await assert.rejects(()=>boundedJSON('https://evil.example/api'),/Host/);
-  await assert.rejects(()=>boundedJSON('https://www.deribit.com/api/v2/private/get_positions',{method:'POST',
-    body:'{}'}),/POST/);
-  await assert.rejects(()=>boundedJSON(HYPERLIQUID_INFO,{method:'POST',body:'X'.repeat(201)}),/POST/);
+  await assert.rejects(()=>boundedJSON('https://www.deribit.com/api/v2/private/get_positions',{method:'GET'}),/Deribit/);
+  await assert.rejects(()=>boundedJSON(HYPERLIQUID_INFO,{method:'POST',body:'X'.repeat(201)}),/Hyperliquid/);
+  await assert.rejects(()=>boundedJSON('https://fapi.binance.com/fapi/v1/account?symbol=BTCUSDT'),/Binance/);
 });
 test('D001: tres vías empiezan juntas y combinan resultados sin sumar OI entre venues',async()=>{
   const requests=[];
