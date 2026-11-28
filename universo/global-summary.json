@@ -1,12 +1,12 @@
 {
   "schema": "laplace-u002-global-summary-v1",
-  "at": "2026-11-28T04:01:51.664Z",
+  "at": "2026-11-28T13:21:45.715Z",
   "known_signals": 369,
   "domains": 6,
   "observed_sources": 52,
   "failed_sources": 0,
-  "snapshot_sha256": "108b24d7c6116e22ebe23d1946cad3d0fde0f65d6949d8cc895fa7a81f82f50c",
-  "capture_sha256": "377b93e071bed6eb7a6550cf3f44dbb10056a2b86c82ea7534c68435a8774b24",
+  "snapshot_sha256": "bc2ecdbd15ea278dd52e32aefd2f53a391f09d0f956ca2493985968ad64146b9",
+  "capture_sha256": "1b45ec5434de67947863dca2a80e9f5f71698df8d2e1afb905b724fa3a124c86",
   "prediction_inputs_enabled": false,
   "automatic_trading": false
 }
